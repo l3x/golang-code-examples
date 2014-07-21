@@ -6,11 +6,13 @@ The best way to learn is by example.
 
 This is a collection of Go language examples that demonstrate various concepts.
 
+Read the companion articles at the [Golang Code Examples web site] (http://l3x.github.io/golang-code-examples/) 
+
 These examples could be useful for your projects, thesis and learning.
 
-Feel free to use any of the code examples in your projects.
+Feel free to use any of the code examples in your endeavors.
 
-I hope that your find this resource helpful.
+I hope this ressource is helpful to you.
 
 Best Regards,
 
@@ -24,7 +26,7 @@ This reference has been prepared for programmers with beginning to intermediate 
 
 I'm making the assumption that you are already familiar with Golang and it's concepts.  
 
-If not, see general Golang references below.
+If not, see the references section below.
 
 ### Supported Platforms
 * darwin/386
@@ -41,8 +43,9 @@ If not, see general Golang references below.
 
 Each code example can be run from the command line like this:  ```$ go run <FILE_NAME>```
 
-## General Golang References
+## References
 
+* [Golang Code Examples web site] (http://l3x.github.io/golang-code-examples/)
 * [A Tour of Go] (http://tour.golang.org/) 
 * [An Introduction to Programming in Go] (http://www.golang-book.com/)
 * [How to Write Go Code] (http://golang.org/doc/code.html)
