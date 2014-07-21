@@ -1,0 +1,157 @@
+<!DOCTYPE html><html><head><meta charset=utf-8><meta http-equiv=X-UA-Compatible content="IE=edge,chrome=1"><title>Custom Error Handling</title><meta name=viewport content="width=device-width"><link rel=stylesheet href=/css/main.4e17.css><script src=https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js></script><!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]--><meta name=viewport content="width=device-width, initial-scale=1, user-scalable=no"><!--[if !IE]><!--><script>fixScale();                               // fix current scale on iOS devices
+        window.onorientationchange = fixScale();  // and when orientation changes</script><!--<![endif]--></head><body><div class=site><header><h1><a class=home-link href="/">Golang Code Examples</a></h1></header><div id=banner><span id=logo></span> <a href=https://github.com/l3x/golang-code-examples class="button fork"><strong>View On GitHub</strong></a><div class=downloads><span>Downloads:</span><ul><li><a href=https://github.com/l3x/golang-code-examples/zipball/master class=button>ZIP</a></li><li><a href=https://github.com/l3x/golang-code-examples/tarball/master class=button>TAR</a></li></ul></div></div><!-- end banner --><div class=wrapper><nav><ul></ul></nav><div class=page-title><h2>Custom Error Handling</h2><p class=meta>14 Jul 2014</p></div><div class=post><p><section></section></p><h2>Description</h2><p>This example shows how to create a base class *** that provides consistency in error logging.</p><p>(***) Go uses structs and associated methods which provides the same functionality as a classical &quot;class&quot; with it&#39;s internal methods in Object Oriented (OO) programing.</p><p>You can then create error subclasses that have custom behaviors, e.g., emailing admins or sending a text message to a manager.</p><p>Having consistent error logging patterns become valuable when you use log analysis tools like Splunk.</p><hr><h2>Golang Features</h2><p>This golang code sample demonstrates the following go language features:</p><ul><li>switch statement</li><li>classes (struct + methods)</li><li>variadic function</li><li>include timestamp in error message</li><li>custom error type</li><li>inherit behavior from base class using embedded struct</li></ul><hr><h2>Code Example</h2><div class=highlight><pre><code class="go language-go" data-lang=go><span class=kn>package</span> <span class=nx>main</span>
+
+<span class=kn>import</span> <span class=p>(</span>
+ <span class=s>&quot;fmt&quot;</span>
+ <span class=s>&quot;time&quot;</span>
+<span class=p>)</span>
+
+<span class=kd>type</span> <span class=nx>Err</span> <span class=kd>struct</span> <span class=p>{</span>
+ <span class=nx>errNo</span> <span class=kt>int</span>
+ <span class=nx>when</span> <span class=nx>time</span><span class=p>.</span><span class=nx>Time</span>
+ <span class=nx>msg</span> <span class=kt>string</span>
+<span class=p>}</span>
+
+<span class=kd>func</span> <span class=p>(</span><span class=nx>e</span> <span class=o>*</span><span class=nx>Err</span><span class=p>)</span> <span class=nx>Error</span><span class=p>()</span> <span class=kt>string</span> <span class=p>{</span>
+ <span class=k>return</span> <span class=nx>fmt</span><span class=p>.</span><span class=nx>Sprintf</span><span class=p>(</span><span class=s>&quot;%v [%d] %s&quot;</span><span class=p>,</span> <span class=nx>e</span><span class=p>.</span><span class=nx>when</span><span class=p>,</span> <span class=nx>e</span><span class=p>.</span><span class=nx>errNo</span><span class=p>,</span> <span class=nx>e</span><span class=p>.</span><span class=nx>msg</span><span class=p>)</span>
+<span class=p>}</span>
+<span class=kd>func</span> <span class=p>(</span><span class=nx>err</span> <span class=nx>Err</span><span class=p>)</span> <span class=nx>errorNumber</span><span class=p>()</span> <span class=kt>int</span> <span class=p>{</span>
+ <span class=k>return</span> <span class=nx>err</span><span class=p>.</span><span class=nx>errNo</span>
+<span class=p>}</span>
+
+<span class=kd>type</span> <span class=nx>ErrWidget_A</span> <span class=kd>struct</span> <span class=p>{</span>
+ <span class=nx>Err</span>       <span class=c1>// Err is an embedded struct - ErrWidget_A inherits it&#39;s data and behavior</span>
+<span class=p>}</span>
+<span class=c1>// a behavior only available for the ErrWidget_A</span>
+<span class=kd>func</span> <span class=p>(</span><span class=nx>e</span> <span class=nx>ErrWidget_A</span><span class=p>)</span> <span class=nx>Error</span><span class=p>()</span> <span class=kt>string</span> <span class=p>{</span>
+ <span class=nx>fmt</span><span class=p>.</span><span class=nx>Println</span><span class=p>(</span><span class=s>&quot;do special ErrWidget_A thing...&quot;</span><span class=p>)</span>
+ <span class=k>return</span> <span class=nx>fmt</span><span class=p>.</span><span class=nx>Sprintf</span><span class=p>(</span><span class=s>&quot;%s [%d] %s&quot;</span><span class=p>,</span> <span class=nx>e</span><span class=p>.</span><span class=nx>when</span><span class=p>,</span> <span class=nx>e</span><span class=p>.</span><span class=nx>errNo</span><span class=p>,</span> <span class=nx>e</span><span class=p>.</span><span class=nx>msg</span><span class=p>)</span>
+<span class=p>}</span>
+<span class=c1>// a behavior only available for the ErrWidget_A</span>
+<span class=kd>func</span> <span class=p>(</span><span class=nx>e</span> <span class=nx>ErrWidget_A</span><span class=p>)</span> <span class=nx>optionalErrHandlingOperation</span><span class=p>()</span> <span class=p>{</span>
+ <span class=nx>fmt</span><span class=p>.</span><span class=nx>Println</span><span class=p>(</span><span class=s>&quot;Email the admins...\n&quot;</span><span class=p>)</span>
+<span class=p>}</span>
+
+<span class=kd>type</span> <span class=nx>ErrWidget_B</span> <span class=kd>struct</span> <span class=p>{</span>
+ <span class=nx>Err</span>      <span class=c1>// Err is an embedded struct - ErrWidget_B inherits it&#39;s data and behavior</span>
+<span class=p>}</span>
+<span class=c1>// a behavior only available for the Widget_B</span>
+<span class=kd>func</span> <span class=p>(</span><span class=nx>e</span> <span class=nx>ErrWidget_B</span><span class=p>)</span> <span class=nx>Error</span><span class=p>()</span> <span class=kt>string</span> <span class=p>{</span>
+ <span class=nx>fmt</span><span class=p>.</span><span class=nx>Println</span><span class=p>(</span><span class=s>&quot;do special Widget_B thing...&quot;</span><span class=p>)</span>
+ <span class=k>return</span> <span class=nx>fmt</span><span class=p>.</span><span class=nx>Sprintf</span><span class=p>(</span><span class=s>&quot;%s [%d] %s&quot;</span><span class=p>,</span> <span class=nx>e</span><span class=p>.</span><span class=nx>when</span><span class=p>,</span> <span class=nx>e</span><span class=p>.</span><span class=nx>errNo</span><span class=p>,</span> <span class=nx>e</span><span class=p>.</span><span class=nx>msg</span><span class=p>)</span>
+<span class=p>}</span>
+<span class=c1>// a behavior only available for the Widget_B</span>
+<span class=kd>func</span> <span class=p>(</span><span class=nx>e</span> <span class=nx>ErrWidget_B</span><span class=p>)</span> <span class=nx>optionalErrHandlingOperation</span><span class=p>()</span> <span class=p>{</span>
+ <span class=nx>fmt</span><span class=p>.</span><span class=nx>Println</span><span class=p>(</span><span class=s>&quot;SMS operations manager...\n&quot;</span><span class=p>)</span>
+<span class=p>}</span>
+
+<span class=kd>func</span> <span class=nx>run</span><span class=p>()</span> <span class=kt>error</span> <span class=p>{</span>
+ <span class=k>return</span> <span class=o>&amp;</span><span class=nx>Err</span><span class=p>{</span>
+  <span class=mi>8001</span><span class=p>,</span>
+  <span class=nx>time</span><span class=p>.</span><span class=nx>Now</span><span class=p>(),</span>
+  <span class=s>&quot;generic error occurred\n&quot;</span><span class=p>,</span>
+ <span class=p>}</span>
+<span class=p>}</span>
+
+<span class=kd>func</span> <span class=nx>run2</span><span class=p>()</span> <span class=o>*</span><span class=nx>ErrWidget_B</span> <span class=p>{</span>
+ <span class=nx>errB</span> <span class=o>:=</span> <span class=nb>new</span><span class=p>(</span><span class=nx>ErrWidget_B</span><span class=p>)</span>
+ <span class=nx>errB</span><span class=p>.</span><span class=nx>errNo</span> <span class=p>=</span> <span class=mi>6001</span>
+ <span class=nx>errB</span><span class=p>.</span><span class=nx>when</span> <span class=p>=</span> <span class=nx>time</span><span class=p>.</span><span class=nx>Now</span><span class=p>()</span>
+ <span class=nx>errB</span><span class=p>.</span><span class=nx>msg</span> <span class=p>=</span> <span class=s>&quot;Widget_B error occurred&quot;</span>
+ <span class=k>return</span> <span class=nx>errB</span>
+<span class=p>}</span>
+
+<span class=kd>func</span> <span class=nx>RunWidget</span><span class=p>(</span><span class=nx>modelNo</span> <span class=kt>int</span><span class=p>)</span> <span class=p>(</span><span class=kt>string</span><span class=p>,</span> <span class=kt>error</span><span class=p>)</span> <span class=p>{</span>
+ <span class=c1>// Run valid widgets</span>
+ <span class=k>switch</span> <span class=nx>modelNo</span> <span class=p>{</span>
+ <span class=k>case</span> <span class=mi>1</span><span class=p>:</span>
+  <span class=k>return</span> <span class=nx>fmt</span><span class=p>.</span><span class=nx>Sprintf</span><span class=p>(</span><span class=s>&quot;run widget model %d&quot;</span><span class=p>,</span> <span class=nx>modelNo</span><span class=p>),</span> <span class=kc>nil</span>
+ <span class=k>case</span> <span class=mi>2</span><span class=p>:</span>
+  <span class=k>return</span> <span class=nx>fmt</span><span class=p>.</span><span class=nx>Sprintf</span><span class=p>(</span><span class=s>&quot;run widget model %d&quot;</span><span class=p>,</span> <span class=nx>modelNo</span><span class=p>),</span> <span class=kc>nil</span>
+ <span class=k>default</span><span class=p>:</span>
+  <span class=c1>// Error condition - unknown widget model number</span>
+  <span class=nx>errA</span> <span class=o>:=</span> <span class=nb>new</span><span class=p>(</span><span class=nx>ErrWidget_A</span><span class=p>)</span>
+  <span class=nx>errA</span><span class=p>.</span><span class=nx>errNo</span> <span class=p>=</span> <span class=mi>5002</span>
+  <span class=nx>errA</span><span class=p>.</span><span class=nx>when</span> <span class=p>=</span> <span class=nx>time</span><span class=p>.</span><span class=nx>Now</span><span class=p>()</span>
+  <span class=nx>errA</span><span class=p>.</span><span class=nx>msg</span> <span class=p>=</span> <span class=s>&quot;Widget_A error occurred&quot;</span>
+  <span class=k>return</span> <span class=nx>fmt</span><span class=p>.</span><span class=nx>Sprintf</span><span class=p>(</span><span class=s>&quot;unable to run unknown model %d&quot;</span><span class=p>,</span> <span class=nx>modelNo</span><span class=p>),</span> <span class=nx>errA</span>
+ <span class=p>}</span>
+<span class=p>}</span>
+
+<span class=c1>// Split multiple (variadic) return values into a slice of values</span>
+<span class=c1>// in this case, where [0] = value and [1] = the error message</span>
+<span class=kd>func</span> <span class=nx>split</span><span class=p>(</span><span class=nx>args</span> <span class=o>...</span><span class=kd>interface</span><span class=p>{})</span> <span class=p>[]</span><span class=kd>interface</span><span class=p>{}</span> <span class=p>{</span>
+ <span class=k>return</span> <span class=nx>args</span>
+<span class=p>}</span>
+
+<span class=kd>func</span> <span class=nx>main</span><span class=p>()</span> <span class=p>{</span>
+
+ <span class=c1>// Execute RunWidget function and handle error if necessary</span>
+ <span class=nx>msg</span> <span class=o>:=</span> <span class=s>&quot;&quot;</span>
+ <span class=c1>// RunWidget(1) succeeds</span>
+ <span class=nx>x</span> <span class=o>:=</span> <span class=nx>split</span><span class=p>(</span><span class=nx>RunWidget</span><span class=p>(</span><span class=mi>1</span><span class=p>))</span>
+ <span class=nx>msg</span> <span class=p>=</span> <span class=s>&quot;\n\n&quot;</span><span class=p>;</span> <span class=k>if</span> <span class=nx>x</span><span class=p>[</span><span class=mi>1</span><span class=p>]</span> <span class=o>!=</span> <span class=kc>nil</span> <span class=p>{</span><span class=nx>msg</span> <span class=p>=</span> <span class=nx>fmt</span><span class=p>.</span><span class=nx>Sprintf</span><span class=p>(</span><span class=s>&quot;, err(%v)\n\n&quot;</span><span class=p>,</span> <span class=nx>x</span><span class=p>[</span><span class=mi>1</span><span class=p>])}</span>
+ <span class=nx>fmt</span><span class=p>.</span><span class=nx>Printf</span><span class=p>(</span><span class=s>&quot;RunWidget(1) =&gt; result(%s)&quot;</span> <span class=o>+</span> <span class=nx>msg</span><span class=p>,</span> <span class=nx>x</span><span class=p>[</span><span class=mi>0</span><span class=p>])</span>
+
+ <span class=c1>// RunWidget(2) succeeds</span>
+ <span class=nx>x</span> <span class=p>=</span> <span class=nx>split</span><span class=p>(</span><span class=nx>RunWidget</span><span class=p>(</span><span class=mi>2</span><span class=p>))</span>
+ <span class=nx>msg</span> <span class=p>=</span> <span class=s>&quot;\n\n&quot;</span><span class=p>;</span> <span class=k>if</span> <span class=nx>x</span><span class=p>[</span><span class=mi>1</span><span class=p>]</span> <span class=o>!=</span> <span class=kc>nil</span> <span class=p>{</span><span class=nx>msg</span> <span class=p>=</span> <span class=nx>fmt</span><span class=p>.</span><span class=nx>Sprintf</span><span class=p>(</span><span class=s>&quot;, err(%v)\n\n&quot;</span><span class=p>,</span> <span class=nx>x</span><span class=p>[</span><span class=mi>1</span><span class=p>])}</span>
+ <span class=nx>fmt</span><span class=p>.</span><span class=nx>Printf</span><span class=p>(</span><span class=s>&quot;RunWidget(2) =&gt; result(%s)&quot;</span> <span class=o>+</span> <span class=nx>msg</span><span class=p>,</span> <span class=nx>x</span><span class=p>[</span><span class=mi>0</span><span class=p>])</span>
+
+ <span class=c1>// RunWidget(666) fails -</span>
+ <span class=nx>x</span> <span class=p>=</span> <span class=nx>split</span><span class=p>(</span><span class=nx>RunWidget</span><span class=p>(</span><span class=mi>666</span><span class=p>))</span>
+ <span class=nx>msg</span> <span class=p>=</span> <span class=s>&quot;\n\n&quot;</span><span class=p>;</span> <span class=k>if</span> <span class=nx>x</span><span class=p>[</span><span class=mi>1</span><span class=p>]</span> <span class=o>!=</span> <span class=kc>nil</span> <span class=p>{</span><span class=nx>msg</span> <span class=p>=</span> <span class=nx>fmt</span><span class=p>.</span><span class=nx>Sprintf</span><span class=p>(</span><span class=s>&quot;, err(%v)\n\n&quot;</span><span class=p>,</span> <span class=nx>x</span><span class=p>[</span><span class=mi>1</span><span class=p>])}</span>
+ <span class=nx>fmt</span><span class=p>.</span><span class=nx>Printf</span><span class=p>(</span><span class=s>&quot;RunWidget(666) =&gt; result(%s)&quot;</span> <span class=o>+</span> <span class=nx>msg</span><span class=p>,</span> <span class=nx>x</span><span class=p>[</span><span class=mi>0</span><span class=p>])</span>
+
+
+ <span class=c1>// Throw generic custom error type and handle it</span>
+ <span class=k>if</span> <span class=nx>err</span> <span class=o>:=</span> <span class=nx>run</span><span class=p>();</span> <span class=nx>err</span> <span class=o>!=</span> <span class=kc>nil</span> <span class=p>{</span> <span class=nx>fmt</span><span class=p>.</span><span class=nx>Println</span><span class=p>(</span><span class=nx>err</span><span class=p>)</span> <span class=p>}</span>
+
+ <span class=c1>// Throw ErrWidget_B error and handle it by printing and running optional custom behavior</span>
+ <span class=nx>widget_B_error</span> <span class=o>:=</span> <span class=nx>run2</span><span class=p>();</span> <span class=k>if</span> <span class=nx>widget_B_error</span><span class=p>.</span><span class=nx>errNo</span> <span class=o>!=</span> <span class=mi>0</span> <span class=p>{</span>
+  <span class=nx>fmt</span><span class=p>.</span><span class=nx>Println</span><span class=p>(</span><span class=nx>widget_B_error</span><span class=p>)</span>
+ <span class=p>}</span>
+ <span class=nx>fmt</span><span class=p>.</span><span class=nx>Println</span><span class=p>(</span><span class=s>&quot;&quot;</span><span class=p>)</span>
+
+
+ <span class=nx>timeNow</span> <span class=o>:=</span> <span class=nx>time</span><span class=p>.</span><span class=nx>Now</span><span class=p>()</span>
+ <span class=c1>// Create and print ErrWidget_A, then call custom behavior</span>
+ <span class=nx>a</span> <span class=o>:=</span> <span class=nx>ErrWidget_A</span> <span class=p>{</span><span class=nx>Err</span><span class=p>{</span><span class=mi>5001</span><span class=p>,</span> <span class=nx>timeNow</span><span class=p>,</span> <span class=s>&quot;test&quot;</span><span class=p>}}</span>
+ <span class=nx>fmt</span><span class=p>.</span><span class=nx>Println</span><span class=p>(</span><span class=nx>a</span><span class=p>)</span>  <span class=c1>// fmt will execute Error() method that can have special behavior</span>
+ <span class=nx>fmt</span><span class=p>.</span><span class=nx>Println</span><span class=p>(</span><span class=s>&quot;A ErrWidget_A has this error number: &quot;</span><span class=p>,</span> <span class=nx>a</span><span class=p>.</span><span class=nx>errorNumber</span><span class=p>())</span>
+ <span class=nx>a</span><span class=p>.</span><span class=nx>optionalErrHandlingOperation</span><span class=p>()</span>  <span class=c1>// Widget_A emails admins</span>
+
+ <span class=c1>// Create ErrWidget_B, then call custom behavior</span>
+ <span class=nx>b</span> <span class=o>:=</span> <span class=nx>ErrWidget_B</span> <span class=p>{</span><span class=nx>Err</span><span class=p>{</span><span class=mi>6001</span><span class=p>,</span> <span class=nx>timeNow</span><span class=p>,</span> <span class=s>&quot;test&quot;</span><span class=p>}}</span>
+ <span class=nx>fmt</span><span class=p>.</span><span class=nx>Println</span><span class=p>(</span><span class=s>&quot;A ErrWidget_B has this error number: &quot;</span><span class=p>,</span> <span class=nx>b</span><span class=p>.</span><span class=nx>errorNumber</span><span class=p>())</span>
+ <span class=nx>b</span><span class=p>.</span><span class=nx>optionalErrHandlingOperation</span><span class=p>()</span>  <span class=c1>// Widget_B sends SMS message to managers</span>
+ <span class=c1>// Since b was not printed by fmt, the special ErrWidget_B behavior is not triggered</span>
+<span class=p>}</span>
+</code></pre></div><p><br><hr></p><h2>Output</h2><div class=highlight><pre><code class="text language-text" data-lang=text>RunWidget(1) =&gt; result(run widget model 1)
+
+RunWidget(2) =&gt; result(run widget model 2)
+
+do special ErrWidget_A thing...
+RunWidget(666) =&gt; result(unable to run unknown model 666), err(2014-07-19 14:59:19.94525681 -0400 EDT [5002] Widget_A error occurred)
+
+2014-07-19 14:59:19.945377402 -0400 EDT [8001] generic error occurred
+
+do special Widget_B thing...
+2014-07-19 14:59:19.945384269 -0400 EDT [6001] Widget_B error occurred
+
+do special ErrWidget_A thing...
+2014-07-19 14:59:19.945391131 -0400 EDT [5001] test
+A ErrWidget_A has this error number:  5001
+Email the admins...
+
+A ErrWidget_B has this error number:  6001
+SMS operations manager...
+
+
+Process finished with exit code 0
+</code></pre></div><p><br><hr></p><h2>Notes</h2><p>In Go, an error is something that implements an Error() function that returns a string. Here&#39;s the predefined, built-in interface type error:</p><div class=highlight><pre><code class="go language-go" data-lang=go><span class=kd>type</span> <span class=kt>error</span> <span class=kd>interface</span> <span class=p>{</span>
+    <span class=nx>Error</span><span class=p>()</span> <span class=kt>string</span>
+<span class=p>}</span>
+</code></pre></div><p>The fmt package functions automatically call the Error() function when asked to print an error.</p><hr><h2>References</h2><ul><li><a href=http://www.golangbootcamp.com/book/interfaces#sec-errors>Go Bootcamp - Errors</a></li><li><a href=https://gobyexample.com/errors>Go By Example - Errors</a></li><li><a href=http://tour.golang.org/#58>Golang Tour</a></li></ul><p></p></div></div><div class=footer><div class=contact><p><div id=name-gravatar class=float-left><span>By Lex Sheehan</span> <span class=l3x-gravatar></span></div><div class=float-right><strong>It's Go Time!</strong></div></p></div></div></div><script src=/js/scripts.d41d.js></script></body></html>
