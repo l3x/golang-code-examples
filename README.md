@@ -6,7 +6,7 @@ The best way to learn is by example.
 
 This is a collection of Go language examples that demonstrate various concepts.
 
-Read the companion articles at the [Golang Code Examples web site] (http://l3x.github.io/golang-code-examples/) 
+Read the companion articles at the [Golang Code Examples web site] (http://l3x.github.io/golang-code-examples/).
 
 These examples could be useful for your projects, thesis and learning.
 
