@@ -1,4 +1,4 @@
-<img align="right" src="https://github.com/l3x/golang-code-examples/blob/master/golang600.png">
+<img align="right" src="https://github.com/l3x/golang-code-examples/blob/master/golang-gopher.png">
 
 # Golang Code Examples
 
@@ -35,7 +35,7 @@ Each code example can be run from the command line like this:  ```$ go run <FILE
 
 ## General Golang References
 
-[A Tour of Go] (http://tour.golang.org/)
-[An Introduction to Programming in Go] (http://www.golang-book.com/)
-[How to Write Go Code] (http://golang.org/doc/code.html)
+* [A Tour of Go] (http://tour.golang.org/) 
+* [An Introduction to Programming in Go] (http://www.golang-book.com/)
+* [How to Write Go Code] (http://golang.org/doc/code.html)
 
