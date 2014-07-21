@@ -1,6 +1,6 @@
-<img align="right" src="https://github.com/l3x/golang-code-examples/blob/master/golang-gopher.png">
-
 # Golang Code Examples
+
+<img align="right" src="https://github.com/l3x/golang-code-examples/blob/master/golang-gopher.png">
 
 The best way to learn is by example.  
 
@@ -16,7 +16,9 @@ This reference has been prepared for programmers with beginning to intermediate 
 
 ## Prerequisites
 
-I'm making the assumption that you are already familiar with Golang and it's concepts.  If not, see general Golang references below.
+I'm making the assumption that you are already familiar with Golang and it's concepts.  
+
+If not, see general Golang references below.
 
 ### Supported Platforms
 * darwin/386
@@ -38,4 +40,3 @@ Each code example can be run from the command line like this:  ```$ go run <FILE
 * [A Tour of Go] (http://tour.golang.org/) 
 * [An Introduction to Programming in Go] (http://www.golang-book.com/)
 * [How to Write Go Code] (http://golang.org/doc/code.html)
-
