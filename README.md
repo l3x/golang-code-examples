@@ -6,9 +6,15 @@ The best way to learn is by example.
 
 This is a collection of Go language examples that demonstrate various concepts.
 
+These examples could be useful for your projects, thesis and learning.
+
 Feel free to use any of the code examples in your projects.
 
-These examples would be very useful for your projects, thesis and learning.
+I hope that your find this resource helpful.
+
+Best Regards,
+
+Lex
 
 ## Audience
 
