@@ -1,0 +1,6 @@
+<!DOCTYPE html><html><head><meta charset=UTF-8><link rel=stylesheet href=/css/dialog.css><link rel=stylesheet href=/css/styles.css><script src=/js/dialog.js></script><script>function changeText(val){
+            document.getElementById('status').innerHTML = val;
+        }
+        function doStuff(val){
+            document.body.style.background = val;
+        }</script></head><body><div id=dialogoverlay></div><div id=dialogbox><div><div id=dialogboxhead></div><div id=dialogboxbody></div><div id=dialogboxfoot></div></div></div><h1 id=status>Default Text</h1><button onclick="Prompt.render('Type some text:','changeText')">Change Text</button> <button onclick="Prompt.render('Type a color name:','doStuff')">Do stuff</button> <button onclick="Alert.render('Send comments to lex(dot)sheehan(at)gmail(dot)com')">Alert</button></body></html>
