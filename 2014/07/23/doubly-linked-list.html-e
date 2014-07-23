@@ -1,0 +1,212 @@
+<!DOCTYPE html><html><head><meta charset=utf-8><meta http-equiv=X-UA-Compatible content="IE=edge,chrome=1"><title>Doubly Linked List</title><meta name=viewport content="width=device-width"><link rel="shortcut icon" href=/favicon.ico type=image/x-icon><link rel=icon href=/favicon.ico type=image/x-icon><link rel=stylesheet href=/golang-code-examples/styles/main.d9bf.css><script src=https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js></script><!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]--><meta name=viewport content="width=device-width, initial-scale=1, user-scalable=no"></head><body><div id=dialogoverlay class=dialogoverlay></div><div id=dialogbox class=dialogbox><div><div id=dialogboxhead class=dialogboxhead></div><div id=dialogboxbody class=dialogboxbody></div><div id=dialogboxfoot class=dialogboxfoot></div></div></div><div class=site><header><h1><a class=home-link href="/golang-code-examples">Golang Code Examples</a></h1></header><div id=banner><span id=logo></span> <a href=https://github.com/l3x/golang-code-examples class="button fork"><strong>View On GitHub</strong></a><div class=downloads><span>Downloads:</span><ul><li><a href=https://github.com/l3x/golang-code-examples/zipball/master class=button>ZIP</a></li><li><a href=https://github.com/l3x/golang-code-examples/tarball/master class=button>TAR</a></li></ul></div></div><!-- end banner --><div class=wrapper><nav><ul></ul></nav><div class=page-title><h2>Doubly Linked List</h2><p class=meta>23 Jul 2014</p></div><div class=post><section><h2>Description</h2><p>This example demonstrates how you could implement a doubly linked list in go.</p><p>An embedded struct is used to store the <strong>Value</strong> for each <strong>Node</strong> in the list.</p><div class=highlight><pre><code class="go language-go" data-lang=go><span class=kd>type</span> <span class=nx>Value</span> <span class=kd>struct</span> <span class=p>{</span>
+    <span class=nx>Name</span> <span class=kt>string</span>
+    <span class=nx>MilesAway</span> <span class=kt>int</span>
+<span class=p>}</span>
+<span class=kd>type</span> <span class=nx>Node</span> <span class=kd>struct</span> <span class=p>{</span>
+    <span class=nx>Value</span>               <span class=c1>// Embedded struct</span>
+    <span class=nx>next</span><span class=p>,</span> <span class=nx>prev</span>  <span class=o>*</span><span class=nx>Node</span>
+<span class=p>}</span>
+</code></pre></div><p>A map is used to track which nodes have been processed:</p><div class=highlight><pre><code class="go language-go" data-lang=go><span class=nx>processed</span> <span class=o>:=</span> <span class=nb>make</span><span class=p>(</span><span class=kd>map</span><span class=p>[</span><span class=o>*</span><span class=nx>Node</span><span class=p>]</span><span class=kt>bool</span><span class=p>)</span>
+</code></pre></div><p>Be sure to read the <strong>Notes</strong> section for a short discussion on the practical implications of using a linked list.</p><hr><h2>Golang Features</h2><p>This golang code sample demonstrates the following go language features:</p><ul><li>home grown doubly linked list</li><li>basic error handling</li><li>iterating linked list</li><li>map indexed by Node to track</li><li>embedded struct</li><li>pointers</li><li>functions</li><li>string package</li></ul><hr><h2>Code Example</h2><div class=highlight><pre><code class="go language-go" data-lang=go><span class=kn>package</span> <span class=nx>main</span>
+<span class=kn>import</span> <span class=p>(</span>
+    <span class=s>&quot;fmt&quot;</span>
+    <span class=s>&quot;errors&quot;</span>
+    <span class=s>&quot;strings&quot;</span>
+<span class=p>)</span>
+<span class=kd>type</span> <span class=nx>Value</span> <span class=kd>struct</span> <span class=p>{</span>
+    <span class=nx>Name</span> <span class=kt>string</span>
+    <span class=nx>MilesAway</span> <span class=kt>int</span>
+<span class=p>}</span>
+<span class=kd>type</span> <span class=nx>Node</span> <span class=kd>struct</span> <span class=p>{</span>
+    <span class=nx>Value</span>               <span class=c1>// Embedded struct</span>
+    <span class=nx>next</span><span class=p>,</span> <span class=nx>prev</span>  <span class=o>*</span><span class=nx>Node</span>
+<span class=p>}</span>
+<span class=kd>type</span> <span class=nx>List</span> <span class=kd>struct</span> <span class=p>{</span>
+    <span class=nx>head</span><span class=p>,</span> <span class=nx>tail</span> <span class=o>*</span><span class=nx>Node</span>
+<span class=p>}</span>
+<span class=kd>func</span> <span class=p>(</span><span class=nx>l</span> <span class=o>*</span><span class=nx>List</span><span class=p>)</span> <span class=nx>First</span><span class=p>()</span> <span class=o>*</span><span class=nx>Node</span> <span class=p>{</span>
+    <span class=k>return</span> <span class=nx>l</span><span class=p>.</span><span class=nx>head</span>
+<span class=p>}</span>
+<span class=kd>func</span> <span class=p>(</span><span class=nx>n</span> <span class=o>*</span><span class=nx>Node</span><span class=p>)</span> <span class=nx>Next</span><span class=p>()</span> <span class=o>*</span><span class=nx>Node</span> <span class=p>{</span>
+    <span class=k>return</span> <span class=nx>n</span><span class=p>.</span><span class=nx>next</span>
+<span class=p>}</span>
+<span class=kd>func</span> <span class=p>(</span><span class=nx>n</span> <span class=o>*</span><span class=nx>Node</span><span class=p>)</span> <span class=nx>Prev</span><span class=p>()</span> <span class=o>*</span><span class=nx>Node</span> <span class=p>{</span>
+    <span class=k>return</span> <span class=nx>n</span><span class=p>.</span><span class=nx>prev</span>
+<span class=p>}</span>
+<span class=c1>// Create new node with value</span>
+<span class=kd>func</span> <span class=p>(</span><span class=nx>l</span> <span class=o>*</span><span class=nx>List</span><span class=p>)</span> <span class=nx>Push</span><span class=p>(</span><span class=nx>v</span> <span class=nx>Value</span><span class=p>)</span> <span class=o>*</span><span class=nx>List</span> <span class=p>{</span>
+    <span class=nx>n</span> <span class=o>:=</span> <span class=o>&amp;</span><span class=nx>Node</span><span class=p>{</span><span class=nx>Value</span><span class=p>:</span> <span class=nx>v</span><span class=p>}</span>
+    <span class=k>if</span> <span class=nx>l</span><span class=p>.</span><span class=nx>head</span> <span class=o>==</span> <span class=kc>nil</span> <span class=p>{</span>
+        <span class=nx>l</span><span class=p>.</span><span class=nx>head</span> <span class=p>=</span> <span class=nx>n</span>      <span class=c1>// First node</span>
+    <span class=p>}</span> <span class=k>else</span> <span class=p>{</span>
+        <span class=nx>l</span><span class=p>.</span><span class=nx>tail</span><span class=p>.</span><span class=nx>next</span> <span class=p>=</span> <span class=nx>n</span> <span class=c1>// Add after prev last node</span>
+        <span class=nx>n</span><span class=p>.</span><span class=nx>prev</span> <span class=p>=</span> <span class=nx>l</span><span class=p>.</span><span class=nx>tail</span> <span class=c1>// Link back to prev last node</span>
+    <span class=p>}</span>
+    <span class=nx>l</span><span class=p>.</span><span class=nx>tail</span> <span class=p>=</span> <span class=nx>n</span>          <span class=c1>// reset tail to newly added node</span>
+    <span class=k>return</span> <span class=nx>l</span>
+<span class=p>}</span>
+<span class=kd>func</span> <span class=p>(</span><span class=nx>l</span> <span class=o>*</span><span class=nx>List</span><span class=p>)</span> <span class=nx>Find</span><span class=p>(</span><span class=nx>name</span> <span class=kt>string</span><span class=p>)</span> <span class=o>*</span><span class=nx>Node</span> <span class=p>{</span>
+    <span class=nx>found</span> <span class=o>:=</span> <span class=kc>false</span>
+    <span class=kd>var</span> <span class=nx>ret</span> <span class=o>*</span><span class=nx>Node</span> <span class=p>=</span> <span class=kc>nil</span>
+    <span class=k>for</span> <span class=nx>n</span> <span class=o>:=</span> <span class=nx>l</span><span class=p>.</span><span class=nx>First</span><span class=p>();</span> <span class=nx>n</span> <span class=o>!=</span> <span class=kc>nil</span> <span class=o>&amp;&amp;</span> <span class=p>!</span><span class=nx>found</span><span class=p>;</span> <span class=nx>n</span> <span class=p>=</span> <span class=nx>n</span><span class=p>.</span><span class=nx>Next</span><span class=p>()</span> <span class=p>{</span>
+        <span class=k>if</span> <span class=nx>n</span><span class=p>.</span><span class=nx>Value</span><span class=p>.</span><span class=nx>Name</span> <span class=o>==</span> <span class=nx>name</span> <span class=p>{</span>
+            <span class=nx>found</span> <span class=p>=</span> <span class=kc>true</span>
+            <span class=nx>ret</span> <span class=p>=</span> <span class=nx>n</span>
+        <span class=p>}</span>
+    <span class=p>}</span>
+    <span class=k>return</span> <span class=nx>ret</span>
+<span class=p>}</span>
+<span class=kd>func</span> <span class=p>(</span><span class=nx>l</span> <span class=o>*</span><span class=nx>List</span><span class=p>)</span> <span class=nx>Delete</span><span class=p>(</span><span class=nx>name</span> <span class=kt>string</span><span class=p>)</span> <span class=kt>bool</span> <span class=p>{</span>
+    <span class=nx>success</span> <span class=o>:=</span> <span class=kc>false</span>
+    <span class=nx>node2del</span> <span class=o>:=</span> <span class=nx>l</span><span class=p>.</span><span class=nx>Find</span><span class=p>(</span><span class=nx>name</span><span class=p>)</span>
+    <span class=k>if</span> <span class=nx>node2del</span> <span class=o>!=</span> <span class=kc>nil</span> <span class=p>{</span>
+        <span class=nx>fmt</span><span class=p>.</span><span class=nx>Println</span><span class=p>(</span><span class=s>&quot;Delete - FOUND: &quot;</span><span class=p>,</span> <span class=nx>name</span><span class=p>)</span>
+        <span class=nx>prev_node</span> <span class=o>:=</span> <span class=nx>node2del</span><span class=p>.</span><span class=nx>prev</span>
+        <span class=nx>next_node</span> <span class=o>:=</span> <span class=nx>node2del</span><span class=p>.</span><span class=nx>next</span>
+        <span class=c1>// Remove this node</span>
+        <span class=nx>prev_node</span><span class=p>.</span><span class=nx>next</span> <span class=p>=</span> <span class=nx>node2del</span><span class=p>.</span><span class=nx>next</span>
+        <span class=nx>next_node</span><span class=p>.</span><span class=nx>prev</span> <span class=p>=</span> <span class=nx>node2del</span><span class=p>.</span><span class=nx>prev</span>
+        <span class=nx>success</span> <span class=p>=</span> <span class=kc>true</span>
+    <span class=p>}</span>
+    <span class=k>return</span> <span class=nx>success</span>
+<span class=p>}</span>
+<span class=kd>var</span> <span class=nx>errEmpty</span> <span class=p>=</span> <span class=nx>errors</span><span class=p>.</span><span class=nx>New</span><span class=p>(</span><span class=s>&quot;ERROR - List is empty&quot;</span><span class=p>)</span>
+<span class=c1>// Pop last item from list</span>
+<span class=kd>func</span> <span class=p>(</span><span class=nx>l</span> <span class=o>*</span><span class=nx>List</span><span class=p>)</span> <span class=nx>Pop</span><span class=p>()</span> <span class=p>(</span><span class=nx>v</span> <span class=nx>Value</span><span class=p>,</span> <span class=nx>err</span> <span class=kt>error</span><span class=p>)</span> <span class=p>{</span>
+    <span class=k>if</span> <span class=nx>l</span><span class=p>.</span><span class=nx>tail</span> <span class=o>==</span> <span class=kc>nil</span> <span class=p>{</span>
+        <span class=nx>err</span> <span class=p>=</span> <span class=nx>errEmpty</span>
+    <span class=p>}</span> <span class=k>else</span> <span class=p>{</span>
+        <span class=nx>v</span> <span class=p>=</span> <span class=nx>l</span><span class=p>.</span><span class=nx>tail</span><span class=p>.</span><span class=nx>Value</span>
+        <span class=nx>l</span><span class=p>.</span><span class=nx>tail</span> <span class=p>=</span> <span class=nx>l</span><span class=p>.</span><span class=nx>tail</span><span class=p>.</span><span class=nx>prev</span>
+        <span class=k>if</span> <span class=nx>l</span><span class=p>.</span><span class=nx>tail</span> <span class=o>==</span> <span class=kc>nil</span> <span class=p>{</span>
+            <span class=nx>l</span><span class=p>.</span><span class=nx>head</span> <span class=p>=</span> <span class=kc>nil</span>
+        <span class=p>}</span>
+    <span class=p>}</span>
+    <span class=k>return</span> <span class=nx>v</span><span class=p>,</span> <span class=nx>err</span>
+<span class=p>}</span>
+
+<span class=kd>func</span> <span class=nx>main</span><span class=p>()</span> <span class=p>{</span>
+    <span class=nx>dashes</span> <span class=o>:=</span> <span class=nx>strings</span><span class=p>.</span><span class=nx>Repeat</span><span class=p>(</span><span class=s>&quot;-&quot;</span><span class=p>,</span> <span class=mi>50</span><span class=p>)</span>
+    <span class=nx>l</span> <span class=o>:=</span> <span class=nb>new</span><span class=p>(</span><span class=nx>List</span><span class=p>)</span>  <span class=c1>// Create Doubly Linked List</span>
+
+    <span class=nx>l</span><span class=p>.</span><span class=nx>Push</span><span class=p>(</span><span class=nx>Value</span><span class=p>{</span><span class=nx>Name</span><span class=p>:</span> <span class=s>&quot;Atlanta&quot;</span><span class=p>,</span> <span class=nx>MilesAway</span><span class=p>:</span> <span class=mi>0</span><span class=p>})</span>
+    <span class=nx>l</span><span class=p>.</span><span class=nx>Push</span><span class=p>(</span><span class=nx>Value</span><span class=p>{</span><span class=nx>Name</span><span class=p>:</span> <span class=s>&quot;Las Vegas&quot;</span><span class=p>,</span> <span class=nx>MilesAway</span><span class=p>:</span> <span class=mi>1961</span><span class=p>})</span>
+    <span class=nx>l</span><span class=p>.</span><span class=nx>Push</span><span class=p>(</span><span class=nx>Value</span><span class=p>{</span><span class=nx>Name</span><span class=p>:</span> <span class=s>&quot;New York&quot;</span><span class=p>,</span> <span class=nx>MilesAway</span><span class=p>:</span> <span class=mi>881</span><span class=p>})</span>
+
+    <span class=nx>processed</span> <span class=o>:=</span> <span class=nb>make</span><span class=p>(</span><span class=kd>map</span><span class=p>[</span><span class=o>*</span><span class=nx>Node</span><span class=p>]</span><span class=kt>bool</span><span class=p>)</span>
+
+    <span class=nx>fmt</span><span class=p>.</span><span class=nx>Println</span><span class=p>(</span><span class=s>&quot;First time through list...&quot;</span><span class=p>)</span>
+    <span class=k>for</span> <span class=nx>n</span> <span class=o>:=</span> <span class=nx>l</span><span class=p>.</span><span class=nx>First</span><span class=p>();</span> <span class=nx>n</span> <span class=o>!=</span> <span class=kc>nil</span><span class=p>;</span> <span class=nx>n</span> <span class=p>=</span> <span class=nx>n</span><span class=p>.</span><span class=nx>Next</span><span class=p>()</span> <span class=p>{</span>
+        <span class=nx>fmt</span><span class=p>.</span><span class=nx>Printf</span><span class=p>(</span><span class=s>&quot;%v\n&quot;</span><span class=p>,</span> <span class=nx>n</span><span class=p>.</span><span class=nx>Value</span><span class=p>)</span>
+        <span class=k>if</span> <span class=nx>processed</span><span class=p>[</span><span class=nx>n</span><span class=p>]</span> <span class=p>{</span>
+            <span class=nx>fmt</span><span class=p>.</span><span class=nx>Printf</span><span class=p>(</span><span class=s>&quot;%s as been processed\n&quot;</span><span class=p>,</span> <span class=nx>n</span><span class=p>.</span><span class=nx>Value</span><span class=p>)</span>
+        <span class=p>}</span>
+        <span class=nx>processed</span><span class=p>[</span><span class=nx>n</span><span class=p>]</span> <span class=p>=</span> <span class=kc>true</span>
+    <span class=p>}</span>
+    <span class=nx>fmt</span><span class=p>.</span><span class=nx>Println</span><span class=p>(</span><span class=nx>dashes</span><span class=p>)</span>
+    <span class=nx>fmt</span><span class=p>.</span><span class=nx>Println</span><span class=p>(</span><span class=s>&quot;Second time through list...&quot;</span><span class=p>)</span>
+    <span class=k>for</span> <span class=nx>n</span> <span class=o>:=</span> <span class=nx>l</span><span class=p>.</span><span class=nx>First</span><span class=p>();</span> <span class=nx>n</span> <span class=o>!=</span> <span class=kc>nil</span><span class=p>;</span> <span class=nx>n</span> <span class=p>=</span> <span class=nx>n</span><span class=p>.</span><span class=nx>Next</span><span class=p>()</span> <span class=p>{</span>
+        <span class=nx>fmt</span><span class=p>.</span><span class=nx>Printf</span><span class=p>(</span><span class=s>&quot;%v&quot;</span><span class=p>,</span> <span class=nx>n</span><span class=p>.</span><span class=nx>Value</span><span class=p>)</span>
+        <span class=k>if</span> <span class=nx>processed</span><span class=p>[</span><span class=nx>n</span><span class=p>]</span> <span class=p>{</span>
+            <span class=nx>fmt</span><span class=p>.</span><span class=nx>Println</span><span class=p>(</span><span class=s>&quot; has been processed&quot;</span><span class=p>)</span>
+        <span class=p>}</span> <span class=k>else</span> <span class=p>{</span> <span class=nx>fmt</span><span class=p>.</span><span class=nx>Println</span><span class=p>()</span> <span class=p>}</span>
+        <span class=nx>processed</span><span class=p>[</span><span class=nx>n</span><span class=p>]</span> <span class=p>=</span> <span class=kc>true</span>
+    <span class=p>}</span>
+
+    <span class=nx>fmt</span><span class=p>.</span><span class=nx>Println</span><span class=p>(</span><span class=nx>dashes</span><span class=p>)</span>
+    <span class=kd>var</span> <span class=nx>found_node</span> <span class=o>*</span><span class=nx>Node</span>
+    <span class=nx>city_to_find</span> <span class=o>:=</span> <span class=s>&quot;New York&quot;</span>
+    <span class=nx>found_node</span> <span class=p>=</span> <span class=nx>l</span><span class=p>.</span><span class=nx>Find</span><span class=p>(</span><span class=nx>city_to_find</span><span class=p>)</span>
+    <span class=k>if</span> <span class=nx>found_node</span> <span class=o>==</span> <span class=kc>nil</span> <span class=p>{</span>
+        <span class=nx>fmt</span><span class=p>.</span><span class=nx>Printf</span><span class=p>(</span><span class=s>&quot;NOT FOUND: %v\n&quot;</span><span class=p>,</span> <span class=nx>city_to_find</span><span class=p>)</span>
+    <span class=p>}</span> <span class=k>else</span> <span class=p>{</span>
+        <span class=nx>fmt</span><span class=p>.</span><span class=nx>Printf</span><span class=p>(</span><span class=s>&quot;FOUND: %v\n&quot;</span><span class=p>,</span> <span class=nx>city_to_find</span><span class=p>)</span>
+    <span class=p>}</span>
+
+    <span class=nx>city_to_find</span> <span class=p>=</span> <span class=s>&quot;Chicago&quot;</span>
+    <span class=nx>found_node</span> <span class=p>=</span> <span class=nx>l</span><span class=p>.</span><span class=nx>Find</span><span class=p>(</span><span class=nx>city_to_find</span><span class=p>)</span>
+    <span class=k>if</span> <span class=nx>found_node</span> <span class=o>==</span> <span class=kc>nil</span> <span class=p>{</span>
+        <span class=nx>fmt</span><span class=p>.</span><span class=nx>Printf</span><span class=p>(</span><span class=s>&quot;NOT FOUND: %v\n&quot;</span><span class=p>,</span> <span class=nx>city_to_find</span><span class=p>)</span>
+    <span class=p>}</span> <span class=k>else</span> <span class=p>{</span>
+        <span class=nx>fmt</span><span class=p>.</span><span class=nx>Printf</span><span class=p>(</span><span class=s>&quot;FOUND: %v\n&quot;</span><span class=p>,</span> <span class=nx>city_to_find</span><span class=p>)</span>
+    <span class=p>}</span>
+
+    <span class=nx>fmt</span><span class=p>.</span><span class=nx>Println</span><span class=p>(</span><span class=nx>dashes</span><span class=p>)</span>
+    <span class=nx>city_to_remove</span> <span class=o>:=</span> <span class=s>&quot;Las Vegas&quot;</span>
+    <span class=nx>successfully_removed_city</span> <span class=o>:=</span> <span class=nx>l</span><span class=p>.</span><span class=nx>Delete</span><span class=p>(</span><span class=nx>city_to_remove</span><span class=p>)</span>
+    <span class=k>if</span> <span class=nx>successfully_removed_city</span> <span class=p>{</span>
+        <span class=nx>fmt</span><span class=p>.</span><span class=nx>Printf</span><span class=p>(</span><span class=s>&quot;REMOVED: %v\n&quot;</span><span class=p>,</span> <span class=nx>city_to_remove</span><span class=p>)</span>
+    <span class=p>}</span> <span class=k>else</span> <span class=p>{</span>
+        <span class=nx>fmt</span><span class=p>.</span><span class=nx>Printf</span><span class=p>(</span><span class=s>&quot;DID NOT REMOVE: %v\n&quot;</span><span class=p>,</span> <span class=nx>city_to_remove</span><span class=p>)</span>
+    <span class=p>}</span>
+
+    <span class=nx>city_to_remove</span> <span class=p>=</span> <span class=s>&quot;Chicago&quot;</span>
+    <span class=nx>successfully_removed_city</span> <span class=p>=</span> <span class=nx>l</span><span class=p>.</span><span class=nx>Delete</span><span class=p>(</span><span class=nx>city_to_remove</span><span class=p>)</span>
+    <span class=k>if</span> <span class=nx>successfully_removed_city</span> <span class=p>{</span>
+        <span class=nx>fmt</span><span class=p>.</span><span class=nx>Printf</span><span class=p>(</span><span class=s>&quot;REMOVED: %v\n&quot;</span><span class=p>,</span> <span class=nx>city_to_remove</span><span class=p>)</span>
+    <span class=p>}</span> <span class=k>else</span> <span class=p>{</span>
+        <span class=nx>fmt</span><span class=p>.</span><span class=nx>Printf</span><span class=p>(</span><span class=s>&quot;DID NOT REMOVE: %v\n&quot;</span><span class=p>,</span> <span class=nx>city_to_remove</span><span class=p>)</span>
+    <span class=p>}</span>
+
+    <span class=nx>fmt</span><span class=p>.</span><span class=nx>Println</span><span class=p>(</span><span class=nx>dashes</span><span class=p>)</span>
+    <span class=nx>fmt</span><span class=p>.</span><span class=nx>Println</span><span class=p>(</span><span class=s>&quot;* Pop each value off list...&quot;</span><span class=p>)</span>
+    <span class=k>for</span> <span class=nx>v</span><span class=p>,</span> <span class=nx>err</span> <span class=o>:=</span> <span class=nx>l</span><span class=p>.</span><span class=nx>Pop</span><span class=p>();</span> <span class=nx>err</span> <span class=o>==</span> <span class=kc>nil</span><span class=p>;</span> <span class=nx>v</span><span class=p>,</span> <span class=nx>err</span> <span class=p>=</span> <span class=nx>l</span><span class=p>.</span><span class=nx>Pop</span><span class=p>()</span> <span class=p>{</span>
+        <span class=nx>fmt</span><span class=p>.</span><span class=nx>Printf</span><span class=p>(</span><span class=s>&quot;%v\n&quot;</span><span class=p>,</span> <span class=nx>v</span><span class=p>)</span>
+    <span class=p>}</span>
+    <span class=nx>fmt</span><span class=p>.</span><span class=nx>Println</span><span class=p>(</span><span class=nx>l</span><span class=p>.</span><span class=nx>Pop</span><span class=p>())</span>  <span class=c1>// Generate error - attempt to pop from empty list</span>
+<span class=p>}</span>
+</code></pre></div><hr><h2>Notes</h2><p>A map of boolean values can be used as a set-like data structure to detect cycles in the list as follows:</p><div class=highlight><pre><code class="go language-go" data-lang=go><span class=nx>processed</span> <span class=o>:=</span> <span class=nb>make</span><span class=p>(</span><span class=kd>map</span><span class=p>[</span><span class=o>*</span><span class=nx>Node</span><span class=p>]</span><span class=kt>bool</span><span class=p>)</span>
+
+<span class=k>for</span> <span class=nx>n</span> <span class=o>:=</span> <span class=nx>l</span><span class=p>.</span><span class=nx>First</span><span class=p>();</span> <span class=nx>n</span> <span class=o>!=</span> <span class=kc>nil</span><span class=p>;</span> <span class=nx>n</span> <span class=p>=</span> <span class=nx>n</span><span class=p>.</span><span class=nx>Next</span><span class=p>()</span> <span class=p>{</span>
+   <span class=k>if</span> <span class=nx>processed</span><span class=p>[</span><span class=nx>n</span><span class=p>]</span> <span class=p>{</span>
+       <span class=nx>fmt</span><span class=p>.</span><span class=nx>Printf</span><span class=p>(</span><span class=s>&quot;%s as been processed\n&quot;</span><span class=p>,</span> <span class=nx>n</span><span class=p>.</span><span class=nx>Value</span><span class=p>)</span>
+   <span class=p>}</span>
+   <span class=nx>processed</span><span class=p>[</span><span class=nx>n</span><span class=p>]</span> <span class=p>=</span> <span class=kc>true</span>
+<span class=p>}</span>
+</code></pre></div><p>The expression processed[n] is true if n has been visited, or false if n is not present. There&#39;s no need to use the two-value form to test for the presence of n in the map; the zero value default does it for us.</p><p>You might notice that that iterations are performed using the <strong>for</strong> clause, rather than <strong>range</strong>; That is mainly because the <strong>range</strong> clause provides a way to iterate over a array, slice, string, map, or channel -- not for iterating over a home-grown doubly linked list.</p><p>Here&#39;s how we iterated using the <strong>for</strong> clause:</p><div class=highlight><pre><code class="go language-go" data-lang=go><span class=nx>found</span> <span class=o>:=</span> <span class=kc>false</span>
+    <span class=kd>var</span> <span class=nx>ret</span> <span class=o>*</span><span class=nx>Node</span> <span class=p>=</span> <span class=kc>nil</span>
+    <span class=k>for</span> <span class=nx>n</span> <span class=o>:=</span> <span class=nx>l</span><span class=p>.</span><span class=nx>First</span><span class=p>();</span> <span class=nx>n</span> <span class=o>!=</span> <span class=kc>nil</span> <span class=o>&amp;&amp;</span> <span class=p>!</span><span class=nx>found</span><span class=p>;</span> <span class=nx>n</span> <span class=p>=</span> <span class=nx>n</span><span class=p>.</span><span class=nx>Next</span><span class=p>()</span> <span class=p>{</span>
+        <span class=k>if</span> <span class=nx>n</span><span class=p>.</span><span class=nx>Value</span><span class=p>.</span><span class=nx>Name</span> <span class=o>==</span> <span class=nx>name</span> <span class=p>{</span>
+            <span class=nx>found</span> <span class=p>=</span> <span class=kc>true</span>
+            <span class=nx>ret</span> <span class=p>=</span> <span class=nx>n</span>
+        <span class=p>}</span>
+    <span class=p>}</span>
+</code></pre></div><p>Here&#39;s how to iterate using the <strong>range</strong> clause:</p><div class=highlight><pre><code class="go language-go" data-lang=go> <span class=k>for</span> <span class=nx>k</span><span class=p>,</span> <span class=nx>v</span> <span class=o>:=</span> <span class=k>range</span> <span class=nx>myMap</span> <span class=p>{</span>
+     <span class=nx>log</span><span class=p>.</span><span class=nx>Printf</span><span class=p>(</span><span class=s>&quot;key=%v, value=%v&quot;</span><span class=p>,</span> <span class=nx>k</span><span class=p>,</span> <span class=nx>v</span><span class=p>)</span>
+ <span class=p>}</span>
+
+ <span class=k>for</span> <span class=nx>v</span> <span class=o>:=</span> <span class=k>range</span> <span class=nx>myChannel</span> <span class=p>{</span>
+     <span class=nx>log</span><span class=p>.</span><span class=nx>Printf</span><span class=p>(</span><span class=s>&quot;value=%v&quot;</span><span class=p>,</span> <span class=nx>v</span><span class=p>)</span>
+ <span class=p>}</span>
+</code></pre></div><p>Note that slices can be utilized, rather than linked lists, to achieve similar goals in go.</p><p>There are valid reasons to use slices (rather than linked lists):</p><ul><li>Slices are <strong>faster</strong> than linked lists</li><li>Linked lists <strong>can&#39;t be serialized</strong> via gob encoding due to its use private variables</li></ul><p><br></p><h3>Golang&#39;s container/list Package</h3><p>This article shows how you might implement a home grown version of what comes out of the box with Go&#39;s container/list Package.</p><p>Here&#39;s what you get in the container/list Package:</p><ul><li><strong>type Element</strong></li><li>func (e *Element) Next() *Element</li><li>func (e *Element) Prev() *Element</li><li><strong>type List</strong></li><li>func New() *List</li><li>func (l *List) Back() *Element</li><li>func (l *List) Front() *Element</li><li>func (l *List) Init() *List</li><li>func (l *List) InsertAfter(v interface{}, mark *Element) *Element</li><li>func (l *List) InsertBefore(v interface{}, mark *Element) *Element</li><li>func (l *List) Len() int</li><li>func (l *List) MoveAfter(e, mark *Element)</li><li>func (l *List) MoveBefore(e, mark *Element)</li><li>func (l *List) MoveToBack(e *Element)</li><li>func (l *List) MoveToFront(e *Element)</li><li>func (l *List) PushBack(v interface{}) *Element</li><li>func (l *List) PushBackList(other *List)</li><li>func (l *List) PushFront(v interface{}) *Element</li><li>func (l *List) PushFrontList(other *List)</li><li>func (l *List) Remove(e *Element) interface{}</li></ul><hr><h2>Output</h2><div class=highlight><pre><code class="text language-text" data-lang=text>First time through list...
+{Atlanta 0}
+{Las Vegas 1961}
+{New York 881}
+--------------------------------------------------
+%sSecond time through list...
+{Atlanta 0} has been processed
+{Las Vegas 1961} has been processed
+{New York 881} has been processed
+--------------------------------------------------
+FOUND: New York
+NOT FOUND: Chicago
+--------------------------------------------------
+Delete - FOUND:  Las Vegas
+REMOVED: Las Vegas
+DID NOT REMOVE: Chicago
+--------------------------------------------------
+* Pop each value off list...
+{New York 881}
+{Atlanta 0}
+{ 0} ERROR - List is empty
+
+Process finished with exit code 0
+</code></pre></div><hr><h2>References</h2><ul><li><a href="http://golang.org/pkg/container/list/">container/list Package</a></li><li><a href="http://golang.org/pkg/strings/#Repeat/">String Package&#39;s Repeat Function</a></li><li><a href=http://blog.golang.org/go-maps-in-action>Maps in Action</a></li><li><a href="http://tour.golang.org/">Golang Tour</a></li></ul></section></div></div><div class=footer><div class=contact><div id=name-gravatar class=float-left><span>By Lex Sheehan</span> <span class=l3x-gravatar></span></div><div class=float-right><strong>It's Go Time!</strong></div></div></div><div class=license-notice>This work is licensed under the <a href="http://creativecommons.org/licenses/by/3.0/">Creative Commons Attribution 3.0 Unported License</a>.</div></div><script src=/golang-code-examples/scripts/scripts.db44.js></script><script>(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+        (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+            m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', 'UA-53073815-1', 'auto');
+    ga('send', 'pageview');</script></body></html>
