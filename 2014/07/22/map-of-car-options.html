@@ -48,7 +48,12 @@
     <span class=nx>fmt</span><span class=p>.</span><span class=nx>Println</span><span class=p>(</span><span class=s>&quot;&quot;</span><span class=p>)</span>
     <span class=nx>fmt</span><span class=p>.</span><span class=nx>Println</span><span class=p>(</span><span class=nb>len</span><span class=p>(</span><span class=nx>car_options</span><span class=p>[</span><span class=s>&quot;Alloy Wheels&quot;</span><span class=p>]),</span> <span class=s>&quot;has Alloy Wheels.&quot;</span><span class=p>)</span>
 <span class=p>}</span>
-</code></pre></div><h2>Notes</h2><p>We could have associated each car with each of it&#39;s options as follows: <code>go // car_options[&quot;GPS&quot;] = []*Car{is250, blazer} // car_options[&quot;Alloy Wheels&quot;] = []*Car{is250, accord, blazer} // car_options[&quot;Roof Rack&quot;] = []*Car{is250, accord} // car_options[&quot;Power Outlets&quot;] = []*Car{is250, blazer} // car_options[&quot;Heated Seats&quot;] = []*Car{is250}</code></p><h2>Output</h2><div class=highlight><pre><code class="text language-text" data-lang=text>Cars:
+</code></pre></div><h2>Notes</h2><p>We could have associated each car with each of it&#39;s options as follows:</p><div class=highlight><pre><code class="go language-go" data-lang=go><span class=c1>//  car_options[&quot;GPS&quot;] = []*Car{is250, blazer}</span>
+<span class=c1>//  car_options[&quot;Alloy Wheels&quot;] = []*Car{is250, accord, blazer}</span>
+<span class=c1>//  car_options[&quot;Roof Rack&quot;] = []*Car{is250, accord}</span>
+<span class=c1>//  car_options[&quot;Power Outlets&quot;] = []*Car{is250, blazer}</span>
+<span class=c1>//  car_options[&quot;Heated Seats&quot;] = []*Car{is250}</span>
+</code></pre></div><h2>Output</h2><div class=highlight><pre><code class="text language-text" data-lang=text>Cars:
 [0x21025b0c0 0x21025b100 0x21025b140]
 
 CARS:
