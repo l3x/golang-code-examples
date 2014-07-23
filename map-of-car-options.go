@@ -3,7 +3,7 @@ filename:  map-of-car-options.go
 author:    Lex Sheehan
 copyright: Lex Sheehan LLC
 license:   GPL
-status:    deployed
+status:    published
 comments:  http://l3x.github.io/golang-code-examples/2014/07/22/map-of-car-options.html
 */
 package main
