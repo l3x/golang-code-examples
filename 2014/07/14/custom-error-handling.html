@@ -153,7 +153,7 @@ Process finished with exit code 0
 </code></pre></div><hr><h2>Notes</h2><p>In Go, an error is something that implements an Error() function that returns a string. Here&#39;s the predefined, built-in interface type error:</p><div class=highlight><pre><code class="go language-go" data-lang=go><span class=kd>type</span> <span class=kt>error</span> <span class=kd>interface</span> <span class=p>{</span>
     <span class=nx>Error</span><span class=p>()</span> <span class=kt>string</span>
 <span class=p>}</span>
-</code></pre></div><p>The fmt package functions automatically call the Error() function when asked to print an error.</p><h3>Basic Error Handling</h3><p>The Error function from a new errors object will return the error string:</p><div class=highlight><pre><code class="go language-go" data-lang=go><span class=kn>package</span> <span class=nx>main</span>
+</code></pre></div><p>The fmt package functions automatically call the Error() function when asked to print an error.</p><p><br></p><h3>Basic Error Handling</h3><p>The Error function from a new errors object will return the error string:</p><div class=highlight><pre><code class="go language-go" data-lang=go><span class=kn>package</span> <span class=nx>main</span>
 
 <span class=kn>import</span> <span class=p>(</span>
     <span class=s>&quot;fmt&quot;</span>
