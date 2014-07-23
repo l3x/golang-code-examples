@@ -1,6 +1,13 @@
 <!DOCTYPE html><html><head><meta charset=utf-8><meta http-equiv=X-UA-Compatible content="IE=edge,chrome=1"><title>Map of Car Options</title><meta name=viewport content="width=device-width"><link rel="shortcut icon" href=/favicon.ico type=image/x-icon><link rel=icon href=/favicon.ico type=image/x-icon><link rel=stylesheet href=/golang-code-examples/styles/main.7ac0.css><script src=https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js></script><!--[if lt IE 9]>
     <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
-    <![endif]--><meta name=viewport content="width=device-width, initial-scale=1, user-scalable=no"></head><body><div id=dialogoverlay class=dialogoverlay></div><div id=dialogbox class=dialogbox><div><div id=dialogboxhead class=dialogboxhead></div><div id=dialogboxbody class=dialogboxbody></div><div id=dialogboxfoot class=dialogboxfoot></div></div></div><div class=site><header><h1><a class=home-link href="/golang-code-examples">Golang Code Examples</a></h1></header><div id=banner><span id=logo></span> <a href=https://github.com/l3x/golang-code-examples class="button fork"><strong>View On GitHub</strong></a><div class=downloads><span>Downloads:</span><ul><li><a href=https://github.com/l3x/golang-code-examples/zipball/master class=button>ZIP</a></li><li><a href=https://github.com/l3x/golang-code-examples/tarball/master class=button>TAR</a></li></ul></div></div><!-- end banner --><div class=wrapper><nav><ul></ul></nav><div class=page-title><h2>Map of Car Options</h2><p class=meta>22 Jul 2014</p></div><div class=post><section><h2>Description</h2><p>This example demonstrates how to initialize a map of slices that associate each car <strong>make</strong>/<strong>model</strong> with it&#39;s <strong>options</strong>.</p><p>Appending to a nil slice as follows ...</p><p><code>go car_options[option] = append(car_options[option], car)</code></p><p>... just allocates a new slice, so it&#39;s a one-liner to append a value to a map of slices; there&#39;s no need to check if the key exists.</p><p>In the following example, the slice cars is populated with <strong>Car</strong> values.</p><p>Each <strong>Car</strong> has a <strong>make</strong>, <strong>model</strong> and a slice of <strong>options</strong>.</p><p>The example creates a map to associate each <strong>option</strong> with a slice of <strong>cars</strong> that was manufactured with that <strong>option</strong> and illustrates various methods of manipulating the data structures to derive business value.</p><hr><h2>Golang Features</h2><p>This golang code sample demonstrates the following go language features:</p><ul><li>map of slices</li><li>initializing slices</li><li>iterating ranges</li><li>pointers</li><li>structs / struct literals</li><li>string package</li></ul><h2>Code Example</h2><div class=highlight><pre><code class="go language-go" data-lang=go><span class=kn>package</span> <span class=nx>main</span>
+    <![endif]--><meta name=viewport content="width=device-width, initial-scale=1, user-scalable=no"></head><body><div id=dialogoverlay class=dialogoverlay></div><div id=dialogbox class=dialogbox><div><div id=dialogboxhead class=dialogboxhead></div><div id=dialogboxbody class=dialogboxbody></div><div id=dialogboxfoot class=dialogboxfoot></div></div></div><div class=site><header><h1><a class=home-link href="/golang-code-examples">Golang Code Examples</a></h1></header><div id=banner><span id=logo></span> <a href=https://github.com/l3x/golang-code-examples class="button fork"><strong>View On GitHub</strong></a><div class=downloads><span>Downloads:</span><ul><li><a href=https://github.com/l3x/golang-code-examples/zipball/master class=button>ZIP</a></li><li><a href=https://github.com/l3x/golang-code-examples/tarball/master class=button>TAR</a></li></ul></div></div><!-- end banner --><div class=wrapper><nav><ul></ul></nav><div class=page-title><h2>Map of Car Options</h2><p class=meta>22 Jul 2014</p></div><div class=post><section><h2>Description</h2><p>This example demonstrates how to initialize a set of <strong>Car</strong> structs:</p><div class=highlight><pre><code class="go language-go" data-lang=go><span class=kd>type</span> <span class=nx>Car</span> <span class=kd>struct</span> <span class=p>{</span>
+    <span class=nx>Make</span>  <span class=kt>string</span>
+    <span class=nx>Model</span>  <span class=kt>string</span>
+    <span class=nx>Options</span> <span class=p>[]</span><span class=kt>string</span>
+<span class=p>}</span>
+</code></pre></div><p>Each <strong>Car</strong> has a <strong>Make</strong>, <strong>Model</strong> and a slice of <strong>Options</strong>.</p><p>Next, we create a map to associate <strong>Options</strong>, such as &quot;Allow Wheels&quot;, with each car:</p><div class=highlight><pre><code class="go language-go" data-lang=go><span class=nx>car_options</span> <span class=o>:=</span> <span class=nb>make</span><span class=p>(</span><span class=kd>map</span><span class=p>[</span><span class=kt>string</span><span class=p>][]</span><span class=o>*</span><span class=nx>Car</span><span class=p>)</span>
+<span class=p>}</span>
+</code></pre></div><p>We iterate over the <strong>Car</strong> structs using the <strong>range</strong> keyword in order to populate the map, thereby associating the current <strong>car</strong> with it&#39;s <strong>Options</strong>.</p><p>Finally, we illustrate various methods of manipulating the map of <strong>Options</strong> for reporting purposes.</p><hr><h2>Golang Features</h2><p>This golang code sample demonstrates the following go language features:</p><ul><li>map of slices</li><li>initializing slices</li><li>iterating ranges</li><li>pointers</li><li>struct</li><li>string package</li></ul><hr><h2>Code Example</h2><div class=highlight><pre><code class="go language-go" data-lang=go><span class=kn>package</span> <span class=nx>main</span>
 
 <span class=kn>import</span> <span class=p>(</span>
     <span class=s>&quot;fmt&quot;</span>
@@ -12,7 +19,6 @@
     <span class=nx>Model</span>  <span class=kt>string</span>
     <span class=nx>Options</span> <span class=p>[]</span><span class=kt>string</span>
 <span class=p>}</span>
-
 
 <span class=kd>func</span> <span class=nx>main</span><span class=p>()</span> <span class=p>{</span>
 
@@ -38,7 +44,7 @@
         <span class=p>}</span>
         <span class=nx>fmt</span><span class=p>.</span><span class=nx>Println</span><span class=p>(</span><span class=nx>dashes</span><span class=p>)</span>
     <span class=p>}</span>
-
+    <span class=nx>fmt</span><span class=p>.</span><span class=nx>Println</span><span class=p>(</span><span class=nx>dashes</span><span class=p>)</span>
 
     <span class=c1>// Print a list of cars with the &quot;GPS&quot; option</span>
     <span class=k>for</span> <span class=nx>_</span><span class=p>,</span> <span class=nx>p</span> <span class=o>:=</span> <span class=k>range</span> <span class=nx>car_options</span><span class=p>[</span><span class=s>&quot;GPS&quot;</span><span class=p>]</span> <span class=p>{</span>
@@ -46,14 +52,15 @@
     <span class=p>}</span>
 
     <span class=nx>fmt</span><span class=p>.</span><span class=nx>Println</span><span class=p>(</span><span class=s>&quot;&quot;</span><span class=p>)</span>
-    <span class=nx>fmt</span><span class=p>.</span><span class=nx>Println</span><span class=p>(</span><span class=nb>len</span><span class=p>(</span><span class=nx>car_options</span><span class=p>[</span><span class=s>&quot;Alloy Wheels&quot;</span><span class=p>]),</span> <span class=s>&quot;have Alloy Wheels.&quot;</span><span class=p>)</span>
+    <span class=nx>fmt</span><span class=p>.</span><span class=nx>Println</span><span class=p>(</span><span class=nb>len</span><span class=p>(</span><span class=nx>car_options</span><span class=p>[</span><span class=s>&quot;Alloy Wheels&quot;</span><span class=p>]),</span> <span class=s>&quot;has Alloy Wheels.&quot;</span><span class=p>)</span>
 <span class=p>}</span>
-</code></pre></div><h2>Notes</h2><p>We could have associated each car with each of it&#39;s options as follows:</p><div class=highlight><pre><code class="go language-go" data-lang=go><span class=nx>car_options</span><span class=p>[</span><span class=s>&quot;GPS&quot;</span><span class=p>]</span> <span class=p>=</span> <span class=p>[]</span><span class=o>*</span><span class=nx>Car</span><span class=p>{</span><span class=nx>is250</span><span class=p>,</span> <span class=nx>blazer</span><span class=p>}</span>
+</code></pre></div><hr><h2>Notes</h2><p>We could have associated each car with each of it&#39;s options as follows:</p><div class=highlight><pre><code class="go language-go" data-lang=go><span class=nx>car_options</span><span class=p>[</span><span class=s>&quot;GPS&quot;</span><span class=p>]</span> <span class=p>=</span> <span class=p>[]</span><span class=o>*</span><span class=nx>Car</span><span class=p>{</span><span class=nx>is250</span><span class=p>,</span> <span class=nx>blazer</span><span class=p>}</span>
 <span class=nx>car_options</span><span class=p>[</span><span class=s>&quot;Alloy Wheels&quot;</span><span class=p>]</span> <span class=p>=</span> <span class=p>[]</span><span class=o>*</span><span class=nx>Car</span><span class=p>{</span><span class=nx>is250</span><span class=p>,</span> <span class=nx>accord</span><span class=p>,</span> <span class=nx>blazer</span><span class=p>}</span>
 <span class=nx>car_options</span><span class=p>[</span><span class=s>&quot;Roof Rack&quot;</span><span class=p>]</span> <span class=p>=</span> <span class=p>[]</span><span class=o>*</span><span class=nx>Car</span><span class=p>{</span><span class=nx>is250</span><span class=p>,</span> <span class=nx>accord</span><span class=p>}</span>
 <span class=nx>car_options</span><span class=p>[</span><span class=s>&quot;Power Outlets&quot;</span><span class=p>]</span> <span class=p>=</span> <span class=p>[]</span><span class=o>*</span><span class=nx>Car</span><span class=p>{</span><span class=nx>is250</span><span class=p>,</span> <span class=nx>blazer</span><span class=p>}</span>
 <span class=nx>car_options</span><span class=p>[</span><span class=s>&quot;Heated Seats&quot;</span><span class=p>]</span> <span class=p>=</span> <span class=p>[]</span><span class=o>*</span><span class=nx>Car</span><span class=p>{</span><span class=nx>is250</span><span class=p>}</span>
-</code></pre></div><h2>Output</h2><div class=highlight><pre><code class="text language-text" data-lang=text>Cars:
+</code></pre></div><p>Appending to a nil slice as follows ...</p><p><code>go car_options[option] = append(car_options[option], car)</code></p><p>... just allocates a new slice, so it&#39;s a one-liner to append a value to a map of slices; there&#39;s no need to check if the key exists.</p><hr><h2>Output</h2><div class=highlight><pre><code class="text language-text" data-lang=text>/usr/local/Cellar/go/1.2.2/libexec/bin/go run /Users/lex/dev/go/samples/src/bitbucket.org/l3x/list/cars.go
+Cars:
 [0x21025b0c0 0x21025b100 0x21025b140]
 
 CARS:
@@ -74,13 +81,14 @@ car_options[option]: GPS
 car_options[option]: Roof Rack
 car_options[option]: Power Outlets
 --------------------------------------------------
+--------------------------------------------------
 Lexus has GPS.
 Chevy has GPS.
 
-2 have Alloy Wheels.
+2 has Alloy Wheels.
 
 Process finished with exit code 0
-</code></pre></div><h2>References</h2><ul><li><a href="http://golang.org/pkg/strings/#Repeat/">String Package&#39;s Repeat Function</a></li><li><a href=http://blog.golang.org/go-maps-in-action>Maps in Action</a></li><li><a href="http://tour.golang.org/">Golang Tour</a></li></ul></section></div></div><div class=footer><div class=contact><div id=name-gravatar class=float-left><span>By Lex Sheehan</span> <span class=l3x-gravatar></span></div><div class=float-right><strong>It's Go Time!</strong></div></div></div></div><script src=/golang-code-examples/scripts/scripts.b8f2.js></script><script>(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+</code></pre></div><hr><h2>References</h2><ul><li><a href="http://golang.org/pkg/strings/#Repeat/">String Package&#39;s Repeat Function</a></li><li><a href=http://blog.golang.org/go-maps-in-action>Maps in Action</a></li><li><a href="http://tour.golang.org/">Golang Tour</a></li></ul></section></div></div><div class=footer><div class=contact><div id=name-gravatar class=float-left><span>By Lex Sheehan</span> <span class=l3x-gravatar></span></div><div class=float-right><strong>It's Go Time!</strong></div></div></div></div><script src=/golang-code-examples/scripts/scripts.b8f2.js></script><script>(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
         (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
             m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
     })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
