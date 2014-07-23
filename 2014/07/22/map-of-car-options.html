@@ -23,7 +23,7 @@
     <span class=nx>blazer</span> <span class=o>:=</span> <span class=o>&amp;</span><span class=nx>Car</span><span class=p>{</span><span class=s>&quot;Chevy&quot;</span><span class=p>,</span> <span class=s>&quot;Blazer&quot;</span><span class=p>,</span> <span class=p>[]</span><span class=kt>string</span><span class=p>{</span><span class=s>&quot;GPS&quot;</span><span class=p>,</span> <span class=s>&quot;Roof Rack&quot;</span><span class=p>,</span> <span class=s>&quot;Power Outlets&quot;</span><span class=p>}}</span>
 
     <span class=nx>cars</span> <span class=o>:=</span> <span class=p>[]</span><span class=o>*</span><span class=nx>Car</span><span class=p>{</span><span class=nx>is250</span><span class=p>,</span> <span class=nx>accord</span><span class=p>,</span> <span class=nx>blazer</span><span class=p>}</span>
-    <span class=nx>fmt</span><span class=p>.</span><span class=nx>Printf</span><span class=p>(</span><span class=s>&quot;Cars:\n%v\n\n&quot;</span><span class=p>,</span> <span class=nx>cars</span><span class=p>)</span>
+    <span class=nx>fmt</span><span class=p>.</span><span class=nx>Printf</span><span class=p>(</span><span class=s>&quot;Cars:\n%v\n\n&quot;</span><span class=p>,</span> <span class=nx>cars</span><span class=p>)</span>  <span class=c1>// cars is a slice of pointers to our three cars</span>
 
     <span class=c1>// Create a map to associate options with each car</span>
     <span class=nx>car_options</span> <span class=o>:=</span> <span class=nb>make</span><span class=p>(</span><span class=kd>map</span><span class=p>[</span><span class=kt>string</span><span class=p>][]</span><span class=o>*</span><span class=nx>Car</span><span class=p>)</span>
