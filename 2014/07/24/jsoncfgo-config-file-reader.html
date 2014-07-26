@@ -1,0 +1,86 @@
+<!DOCTYPE html><html><head><meta charset=utf-8><meta http-equiv=X-UA-Compatible content="IE=edge,chrome=1"><title>jsoncfgo - A JSON Config File Reader</title><meta name=description content="Go Golang Code Examples programming"><meta name=viewport content="width=device-width"><link rel="shortcut icon" href=/golang-code-examples/favicon.ico type=image/x-icon><link rel=icon href=/golang-code-examples/favicon.ico type=image/x-icon><link rel=stylesheet href=/golang-code-examples/styles/main.d9bf.css><script src=https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js></script><!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]--><meta name=viewport content="width=device-width, initial-scale=1, user-scalable=no"><script>(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+            (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+                m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+        })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+        ga('create', 'UA-53073815-1', 'auto');
+        ga('send', 'pageview');</script></head><body><div id=dialogoverlay class=dialogoverlay></div><div id=dialogbox class=dialogbox><div><div id=dialogboxhead class=dialogboxhead></div><div id=dialogboxbody class=dialogboxbody></div><div id=dialogboxfoot class=dialogboxfoot></div></div></div><div class=site><header><h1><a class=home-link href="/golang-code-examples">Golang Code Examples</a></h1></header><div id=banner><span id=logo></span> <a href=https://github.com/l3x/golang-code-examples class="button fork"><strong>View On GitHub</strong></a><div class=downloads><span>Downloads:</span><ul><li><a href=https://github.com/l3x/golang-code-examples/zipball/master class=button>ZIP</a></li><li><a href=https://github.com/l3x/golang-code-examples/tarball/master class=button>TAR</a></li></ul></div></div><!-- end banner --><div class=wrapper><nav><ul></ul></nav><div class=page-title><h2>jsoncfgo - A JSON Config File Reader</h2><p class=meta>24 Jul 2014</p></div><div class=post><section><h2>Description</h2><p>This example demonstrates how you could use the jsoncfgo config file reader.</p><h3>jsoncfgo Features</h3><p>jsoncfgo can easily handle the following data types in the .json configuration file that it reads:</p><ul><li>bool</li><li>int</li><li>int64</li><li>string</li><li>[]string</li><li>[]int64</li></ul><p>You can also call the <strong>Validate</strong> function to validate attempts to read <strong>non-existent</strong> variables.</p><hr><h2>Golang Features</h2><p>This golang code sample demonstrates the following go language features:</p><ul><li>Simple printing using fmt package</li></ul><hr><h2>Code Example</h2><p>In this code example we demonstrate how to use basic jsoncfgo functions to read a simple json-based configuration file.</p><div class=highlight><pre><code class="go language-go" data-lang=go><span class=kn>package</span> <span class=nx>main</span>
+
+<span class=kn>import</span> <span class=p>(</span>
+    <span class=s>&quot;fmt&quot;</span>
+    <span class=s>&quot;time&quot;</span>
+    <span class=s>&quot;log&quot;</span>
+    <span class=s>&quot;github.com/l3x/jsoncfgo&quot;</span>
+<span class=p>)</span>
+
+
+<span class=kd>func</span> <span class=nx>main</span><span class=p>()</span> <span class=p>{</span>
+
+    <span class=nx>cfg</span> <span class=o>:=</span> <span class=nx>jsoncfgo</span><span class=p>.</span><span class=nx>Load</span><span class=p>(</span><span class=s>&quot;/Users/lex/dev/go/samples/src/bitbucket.org/l3x/config/testdata/simple-config2.json&quot;</span><span class=p>)</span>
+
+    <span class=nx>host</span> <span class=o>:=</span> <span class=nx>cfg</span><span class=p>.</span><span class=nx>String</span><span class=p>(</span><span class=s>&quot;host&quot;</span><span class=p>)</span>
+    <span class=nx>fmt</span><span class=p>.</span><span class=nx>Printf</span><span class=p>(</span><span class=s>&quot;host: %v\n&quot;</span><span class=p>,</span> <span class=nx>host</span><span class=p>)</span>
+    <span class=nx>bogusHost</span> <span class=o>:=</span> <span class=nx>cfg</span><span class=p>.</span><span class=nx>String</span><span class=p>(</span><span class=s>&quot;bogusHost&quot;</span><span class=p>,</span> <span class=s>&quot;default_host_name&quot;</span><span class=p>)</span>
+    <span class=nx>fmt</span><span class=p>.</span><span class=nx>Printf</span><span class=p>(</span><span class=s>&quot;host: %v\n\n&quot;</span><span class=p>,</span> <span class=nx>bogusHost</span><span class=p>)</span>
+
+    <span class=nx>port</span> <span class=o>:=</span> <span class=nx>cfg</span><span class=p>.</span><span class=nx>Int</span><span class=p>(</span><span class=s>&quot;port&quot;</span><span class=p>)</span>
+    <span class=nx>fmt</span><span class=p>.</span><span class=nx>Printf</span><span class=p>(</span><span class=s>&quot;port: %v\n&quot;</span><span class=p>,</span> <span class=nx>port</span><span class=p>)</span>
+    <span class=nx>bogusPort</span> <span class=o>:=</span> <span class=nx>cfg</span><span class=p>.</span><span class=nx>Int</span><span class=p>(</span><span class=s>&quot;bogusPort&quot;</span><span class=p>,</span> <span class=mi>9000</span><span class=p>)</span>
+    <span class=nx>fmt</span><span class=p>.</span><span class=nx>Printf</span><span class=p>(</span><span class=s>&quot;bogusPort: %v\n\n&quot;</span><span class=p>,</span> <span class=nx>bogusPort</span><span class=p>)</span>
+
+    <span class=nx>bigNumber</span> <span class=o>:=</span> <span class=nx>cfg</span><span class=p>.</span><span class=nx>Int64</span><span class=p>(</span><span class=s>&quot;bignNumber&quot;</span><span class=p>)</span>
+    <span class=nx>fmt</span><span class=p>.</span><span class=nx>Printf</span><span class=p>(</span><span class=s>&quot;bigNumber: %v\n&quot;</span><span class=p>,</span> <span class=nx>bigNumber</span><span class=p>)</span>
+    <span class=nx>bogusBigNumber</span> <span class=o>:=</span> <span class=nx>cfg</span><span class=p>.</span><span class=nx>Int64</span><span class=p>(</span><span class=s>&quot;bogusBigNumber&quot;</span><span class=p>,</span> <span class=mi>9000000000000000000</span><span class=p>)</span>
+    <span class=nx>fmt</span><span class=p>.</span><span class=nx>Printf</span><span class=p>(</span><span class=s>&quot;bogusBigNumber: %v\n\n&quot;</span><span class=p>,</span> <span class=nx>bogusBigNumber</span><span class=p>)</span>
+
+    <span class=nx>active</span> <span class=o>:=</span> <span class=nx>cfg</span><span class=p>.</span><span class=nx>Bool</span><span class=p>(</span><span class=s>&quot;active&quot;</span><span class=p>)</span>
+    <span class=nx>fmt</span><span class=p>.</span><span class=nx>Printf</span><span class=p>(</span><span class=s>&quot;active: %v\n&quot;</span><span class=p>,</span> <span class=nx>active</span><span class=p>)</span>
+    <span class=nx>bogusFalseActive</span> <span class=o>:=</span> <span class=nx>cfg</span><span class=p>.</span><span class=nx>Bool</span><span class=p>(</span><span class=s>&quot;bogusFalseActive&quot;</span><span class=p>,</span> <span class=kc>false</span><span class=p>)</span>
+    <span class=nx>fmt</span><span class=p>.</span><span class=nx>Printf</span><span class=p>(</span><span class=s>&quot;bogusFalseActive: %v\n&quot;</span><span class=p>,</span> <span class=nx>bogusFalseActive</span><span class=p>)</span>
+    <span class=nx>bogusTrueActive</span> <span class=o>:=</span> <span class=nx>cfg</span><span class=p>.</span><span class=nx>Bool</span><span class=p>(</span><span class=s>&quot;bogusTrueActive&quot;</span><span class=p>,</span> <span class=kc>true</span><span class=p>)</span>
+    <span class=nx>fmt</span><span class=p>.</span><span class=nx>Printf</span><span class=p>(</span><span class=s>&quot;bogusTrueActive: %v\n\n&quot;</span><span class=p>,</span> <span class=nx>bogusTrueActive</span><span class=p>)</span>
+
+    <span class=nx>appList</span> <span class=o>:=</span> <span class=nx>cfg</span><span class=p>.</span><span class=nx>List</span><span class=p>(</span><span class=s>&quot;appList&quot;</span><span class=p>)</span>
+    <span class=nx>fmt</span><span class=p>.</span><span class=nx>Printf</span><span class=p>(</span><span class=s>&quot;appList: %v\n&quot;</span><span class=p>,</span> <span class=nx>appList</span><span class=p>)</span>
+    <span class=nx>bogusAppList</span> <span class=o>:=</span> <span class=nx>cfg</span><span class=p>.</span><span class=nx>List</span><span class=p>(</span><span class=s>&quot;bogusAppList&quot;</span><span class=p>,</span> <span class=p>[]</span><span class=kt>string</span><span class=p>{</span><span class=s>&quot;app1&quot;</span><span class=p>,</span> <span class=s>&quot;app2&quot;</span><span class=p>,</span> <span class=s>&quot;app3&quot;</span><span class=p>})</span>
+    <span class=nx>fmt</span><span class=p>.</span><span class=nx>Printf</span><span class=p>(</span><span class=s>&quot;bogusAppList: %v\n\n&quot;</span><span class=p>,</span> <span class=nx>bogusAppList</span><span class=p>)</span>
+
+    <span class=k>if</span> <span class=nx>err</span> <span class=o>:=</span> <span class=nx>cfg</span><span class=p>.</span><span class=nx>Validate</span><span class=p>();</span> <span class=nx>err</span> <span class=o>!=</span> <span class=kc>nil</span> <span class=p>{</span>
+        <span class=nx>time</span><span class=p>.</span><span class=nx>Sleep</span><span class=p>(</span><span class=mi>100</span> <span class=o>*</span> <span class=nx>time</span><span class=p>.</span><span class=nx>Millisecond</span><span class=p>)</span>
+        <span class=k>defer</span> <span class=nx>log</span><span class=p>.</span><span class=nx>Fatalf</span><span class=p>(</span><span class=s>&quot;ERROR - Invalid config file...\n%v&quot;</span><span class=p>,</span> <span class=nx>err</span><span class=p>)</span>
+        <span class=k>return</span>
+    <span class=p>}</span>
+
+<span class=p>}</span>
+</code></pre></div><hr><h2>Notes</h2><p>You will need to change the <strong>configPath</strong> to point to a the configuration file on your computer.</p><p>Any read errors are handled for us; Errors are logged to standard out.</p><p>For a more detailed example of how to leverage the more advanced features of jsoncfgo, please see <a href=http://l3x.github.io/golang-code-examples/2014/07/25/jsoncfgo-config-file-reader-advanced.html>jsoncfgo - Advanced Usage</a></p><h3>Install jsconfgo</h3><p>Install the jsconfgo library as follows:</p><div class=highlight><pre><code class="bash language-bash" data-lang=bash><span class=nv>$ </span>go get github.com/l3x/jsoncfgo
+</code></pre></div><p><br></p><hr><h2>Input</h2><h3>example_simple.json</h3><div class=highlight><pre><code class="json language-json" data-lang=json><span class=p>{</span>
+   <span class=nt>&quot;host&quot;</span><span class=p>:</span> <span class=s2>&quot;localhost&quot;</span><span class=p>,</span>
+   <span class=nt>&quot;port&quot;</span><span class=p>:</span> <span class=mi>9000</span><span class=p>,</span>
+   <span class=nt>&quot;active&quot;</span><span class=p>:</span> <span class=kc>true</span><span class=p>,</span>
+   <span class=nt>&quot;appList&quot;</span><span class=p>:</span> <span class=p>[</span><span class=s2>&quot;myapp&quot;</span><span class=p>,</span> <span class=s2>&quot;sharedapp&quot;</span><span class=p>]</span>
+<span class=p>}</span>
+</code></pre></div><hr><h2>Output</h2><pre><code>
+host: localhost
+host: default_host_name
+
+port: 5432
+bogusPort: 9000
+
+bigNumber: 999999999999999
+bogusBigNumber: 9000000000000000000
+
+active: true
+bogusFalseActive: false
+bogusTrueActive: true
+
+appList: [myapp sharedapp]
+bogusAppList: [app1 app2 app3]
+<span style=color:red>
+2014/07/25 16:01:05 ERROR - Invalid config file...
+Missing required config key "bogusAppList" (list of strings)
+exit status 1
+</span>
+Process finished with exit code 1
+</code></pre><hr><h2>References</h2><ul><li><a href="http://golang.org/pkg/fmt/">Package fmt</a></li><li><a href=http://en.wikipedia.org/wiki/Configuration_file>Configuration file</a></li><li><a href=http://en.wikipedia.org/wiki/JSON>JSON</a></li><li><a href="http://tour.golang.org/">Golang Tour</a></li></ul></section></div></div><div class=footer><div class=contact><div id=name-gravatar class=float-left><span>By Lex Sheehan</span> <span class=l3x-gravatar></span></div><div class=float-right><strong>It's Go Time!</strong></div></div></div><div class=license-notice>This work is licensed under the <a href="http://creativecommons.org/licenses/by/3.0/">Creative Commons Attribution 3.0 Unported License</a>.</div></div><script src=/golang-code-examples/scripts/scripts.db44.js></script></body></html>
