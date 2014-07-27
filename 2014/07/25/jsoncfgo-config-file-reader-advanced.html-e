@@ -6,146 +6,69 @@
         })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
 
         ga('create', 'UA-53073815-1', 'auto');
-        ga('send', 'pageview');</script></head><body><div id=dialogoverlay class=dialogoverlay></div><div id=dialogbox class=dialogbox><div><div id=dialogboxhead class=dialogboxhead></div><div id=dialogboxbody class=dialogboxbody></div><div id=dialogboxfoot class=dialogboxfoot></div></div></div><div class=site><header><h1><a class=home-link href="/golang-code-examples">Golang Code Examples</a></h1></header><div id=banner><span id=logo></span> <a href=https://github.com/l3x/golang-code-examples class="button fork"><strong>View On GitHub</strong></a><div class=downloads><span>Downloads:</span><ul><li><a href=https://github.com/l3x/golang-code-examples/zipball/master class=button>ZIP</a></li><li><a href=https://github.com/l3x/golang-code-examples/tarball/master class=button>TAR</a></li></ul></div></div><!-- end banner --><div class=wrapper><nav><ul></ul></nav><div class=page-title><h2>jsoncfgo - Advanced Usage</h2><p class=meta>25 Jul 2014</p></div><div class=post><section><h2>Description</h2><p>This example demonstrates some advanced usages of the jsoncfgo config file reader to read non-trivial json-based configuration files.</p><p><br></p><h3>jsoncfgo Features</h3><p>jsoncfgo can handle the following data types in the .json configuration file that it reads:</p><ul><li>bool</li><li>int</li><li>int64</li><li>string</li><li>[]string</li><li>[]int64</li></ul><p><br></p><h3>jsconfgo Advanced Features</h3><ul><li>Read <strong>environment variables</strong></li><li>Handle <strong>included file</strong> objects that refer to other config files</li><li>Handle <strong>nested json objects</strong> within the config file</li><li><strong>Validation</strong>:<ul><li>Validate existence of <strong>required</strong> variables</li><li>Validate attempt to read <strong>non-existent</strong> variable</li></ul></li></ul><hr><h2>Golang Features</h2><p>This golang code sample demonstrates the following go language features:</p><ul><li>basic error handling</li><li>error logging</li><li>string package</li><li>helper functions: padLeft, padRight</li><li>formatted printing</li><li>assigning default value to optional parameter</li><li>reflection for inspecting data types</li><li>wait/sleep</li></ul><hr><h2>Code Example</h2><p>In this code example we demonstrate how to use simple jsoncfgo functions to read a json-based configuration file.</p><p>We load a section of the configuration file into the <strong>Environment</strong> struct that we defined.</p><p>Subsequently, we pass that struct to the printEnvironment function and output a nicely formatted using the padLeft andPadRight functions.</p><div class=highlight><pre><code class="go language-go" data-lang=go><span class=kn>package</span> <span class=nx>main</span>
+        ga('send', 'pageview');</script></head><body><div id=dialogoverlay class=dialogoverlay></div><div id=dialogbox class=dialogbox><div><div id=dialogboxhead class=dialogboxhead></div><div id=dialogboxbody class=dialogboxbody></div><div id=dialogboxfoot class=dialogboxfoot></div></div></div><div class=site><header><h1><a class=home-link href="/golang-code-examples">Golang Code Examples</a></h1></header><div id=banner><span id=logo></span> <a href=https://github.com/l3x/golang-code-examples class="button fork"><strong>View On GitHub</strong></a><div class=downloads><span>Downloads:</span><ul><li><a href=https://github.com/l3x/golang-code-examples/zipball/master class=button>ZIP</a></li><li><a href=https://github.com/l3x/golang-code-examples/tarball/master class=button>TAR</a></li></ul></div></div><!-- end banner --><div class=wrapper><nav><ul></ul></nav><div class=page-title><h2>jsoncfgo - Advanced Usage</h2><p class=meta>25 Jul 2014</p></div><div class=post><section><h2>Description</h2><p>This example demonstrates some advanced usages of the jsoncfgo config file reader to read non-trivial json-based configuration files.</p><p><br></p><h3>jsoncfgo Features</h3><p>jsoncfgo can handle the following data types in the .json configuration file that it reads:</p><ul><li>bool</li><li>int</li><li>int64</li><li>string</li><li>[]string</li><li>[]int64</li></ul><p><br></p><h3>jsconfgo Advanced Features</h3><ul><li>Read <strong>environment variables</strong></li><li>Handle <strong>included file</strong> objects that refer to other config files</li><li>Handle <strong>nested json objects</strong> within the config file</li><li><strong>Validation</strong>:<ul><li>Validate existence of <strong>required</strong> variables</li><li>Validate attempt to read <strong>non-existent</strong> variable</li></ul></li></ul><hr><h2>Golang Features</h2><p>This golang code sample demonstrates the following go language features:</p><ul><li>basic error handling</li><li>error logging</li><li>string package</li><li>helper functions: padLeft, padRight</li><li>formatted printing</li><li>assigning default value to optional parameter</li><li>reflection for inspecting data types</li><li>wait/sleep</li></ul><hr><h2>Code Example</h2><p>In this code example we demonstrate how to use simple jsoncfgo functions to read a json-based configuration file. ``` go package main</p><p>import ( &quot;fmt&quot; &quot;log&quot; &quot;reflect&quot; &quot;strings&quot; &quot;time&quot; &quot;github.com/l3x/jsoncfgo&quot; )</p><p>// Environment holds the values corresponding to JSON config file type Environment struct { Database string Host string Port int Adapter string Encoding string Active bool Pool int SchemaList []string ImagePaths map[string]interface{} }</p><p>// ---------------------- // Helper functions // ---------------------- func padRight(s string, padLen int, args ...interface{}) string{ padStr := &quot; &quot; for _, arg := range args { switch t := arg.(type) { case string: padStr = t default: panic(&quot;Unknown argument&quot;) } } return s + strings.Repeat(padStr, padLen); }</p><p>func padLeft(s string, padLen int, args ...interface{}) string{ padStr := &quot; &quot; for _, arg := range args { switch t := arg.(type) { case string: padStr = t default: panic(&quot;Unknown argument&quot;) } } return strings.Repeat(padStr, padLen) + s; }</p><p>func printEnvironment(envMap *Environment) { t := envMap s := reflect.ValueOf(t).Elem() fldName := &quot;&quot; fldType := s.Type() thisType := &quot;&quot; thisVal := &quot;&quot; for i := 0; i &lt; s.NumField(); i++ { f := s.Field(i) fldName = fldType.Field(i).Name thisType = fmt.Sprintf(&quot;%v&quot;, fldType.Field(i).Type) thisVal = fmt.Sprintf(&quot;%v&quot;, f.Interface()) fmt.Printf(&quot;%s (%s) %v %v\n&quot;, padRight(fldName, 10 - len(fldName)), thisType, padLeft(&quot;&quot;, 25 - len(thisType), &quot;.&quot;), thisVal) } }</p><p>func main() {</p><div class=highlight><pre><code class="text language-text" data-lang=text>configPath := &quot;/Users/lex/dev/go/samples/src/bitbucket.org/l3x/config/testdata/client-config2.json&quot;
+cfg, err := jsoncfgo.ReadFile(configPath)
+if err != nil {
+    log.Fatal(err.Error())  // Handle error here
+}
 
-<span class=kn>import</span> <span class=p>(</span>
-    <span class=s>&quot;fmt&quot;</span>
-    <span class=s>&quot;log&quot;</span>
-    <span class=s>&quot;reflect&quot;</span>
-    <span class=s>&quot;strings&quot;</span>
-    <span class=s>&quot;time&quot;</span>
-    <span class=s>&quot;github.com/l3x/jsoncfgo&quot;</span>
-<span class=p>)</span>
+identity := cfg.RequiredString(&quot;identity&quot;)
+fmt.Printf(&quot;identity: %v\n\n&quot;, identity)
 
-<span class=c1>// Environment holds the values corresponding to JSON config file</span>
-<span class=kd>type</span> <span class=nx>Environment</span> <span class=kd>struct</span> <span class=p>{</span>
-    <span class=nx>Database</span>    <span class=kt>string</span>
-    <span class=nx>Host</span>        <span class=kt>string</span>
-    <span class=nx>Port</span>        <span class=kt>int</span>
-    <span class=nx>Adapter</span>     <span class=kt>string</span>
-    <span class=nx>Encoding</span>    <span class=kt>string</span>
-    <span class=nx>Active</span>      <span class=kt>bool</span>
-    <span class=nx>Pool</span>        <span class=kt>int</span>
-    <span class=nx>SchemaList</span>  <span class=p>[]</span><span class=kt>string</span>
-    <span class=nx>ImagePaths</span>  <span class=kd>map</span><span class=p>[</span><span class=kt>string</span><span class=p>]</span><span class=kd>interface</span><span class=p>{}</span>
-<span class=p>}</span>
+path := cfg.RequiredString(&quot;path&quot;)
+fmt.Printf(&quot;path: %v\n\n&quot;, path)
 
-<span class=c1>// ----------------------</span>
-<span class=c1>//    Helper functions</span>
-<span class=c1>// ----------------------</span>
-<span class=kd>func</span> <span class=nx>padRight</span><span class=p>(</span><span class=nx>s</span> <span class=kt>string</span><span class=p>,</span> <span class=nx>padLen</span> <span class=kt>int</span><span class=p>,</span> <span class=nx>args</span> <span class=o>...</span><span class=kd>interface</span><span class=p>{})</span> <span class=kt>string</span><span class=p>{</span>
-    <span class=nx>padStr</span> <span class=o>:=</span> <span class=s>&quot; &quot;</span>
-    <span class=k>for</span> <span class=nx>_</span><span class=p>,</span> <span class=nx>arg</span> <span class=o>:=</span> <span class=k>range</span> <span class=nx>args</span> <span class=p>{</span>
-        <span class=k>switch</span> <span class=nx>t</span> <span class=o>:=</span> <span class=nx>arg</span><span class=p>.(</span><span class=kd>type</span><span class=p>)</span> <span class=p>{</span>
-        <span class=k>case</span> <span class=kt>string</span><span class=p>:</span>
-            <span class=nx>padStr</span> <span class=p>=</span> <span class=nx>t</span>
-        <span class=k>default</span><span class=p>:</span>
-            <span class=nb>panic</span><span class=p>(</span><span class=s>&quot;Unknown argument&quot;</span><span class=p>)</span>
-        <span class=p>}</span>
-    <span class=p>}</span>
-    <span class=k>return</span> <span class=nx>s</span> <span class=o>+</span> <span class=nx>strings</span><span class=p>.</span><span class=nx>Repeat</span><span class=p>(</span><span class=nx>padStr</span><span class=p>,</span> <span class=nx>padLen</span><span class=p>);</span>
-<span class=p>}</span>
+badkey := cfg.OptionalString(&quot;badkey&quot;, &quot;INVALID&quot;)
+fmt.Printf(&quot;badkey: %v\n&quot;, badkey)
 
-<span class=kd>func</span> <span class=nx>padLeft</span><span class=p>(</span><span class=nx>s</span> <span class=kt>string</span><span class=p>,</span> <span class=nx>padLen</span> <span class=kt>int</span><span class=p>,</span> <span class=nx>args</span> <span class=o>...</span><span class=kd>interface</span><span class=p>{})</span> <span class=kt>string</span><span class=p>{</span>
-    <span class=nx>padStr</span> <span class=o>:=</span> <span class=s>&quot; &quot;</span>
-    <span class=k>for</span> <span class=nx>_</span><span class=p>,</span> <span class=nx>arg</span> <span class=o>:=</span> <span class=k>range</span> <span class=nx>args</span> <span class=p>{</span>
-        <span class=k>switch</span> <span class=nx>t</span> <span class=o>:=</span> <span class=nx>arg</span><span class=p>.(</span><span class=kd>type</span><span class=p>)</span> <span class=p>{</span>
-        <span class=k>case</span> <span class=kt>string</span><span class=p>:</span>
-            <span class=nx>padStr</span> <span class=p>=</span> <span class=nx>t</span>
-        <span class=k>default</span><span class=p>:</span>
-            <span class=nb>panic</span><span class=p>(</span><span class=s>&quot;Unknown argument&quot;</span><span class=p>)</span>
-        <span class=p>}</span>
-    <span class=p>}</span>
-    <span class=k>return</span> <span class=nx>strings</span><span class=p>.</span><span class=nx>Repeat</span><span class=p>(</span><span class=nx>padStr</span><span class=p>,</span> <span class=nx>padLen</span><span class=p>)</span> <span class=o>+</span> <span class=nx>s</span><span class=p>;</span>
-<span class=p>}</span>
+badkey = cfg.RequiredString(&quot;badkey&quot;)
+fmt.Printf(&quot;badkey: %v\n\n&quot;, badkey)
 
-<span class=kd>func</span> <span class=nx>printEnvironment</span><span class=p>(</span><span class=nx>envMap</span> <span class=o>*</span><span class=nx>Environment</span><span class=p>)</span> <span class=p>{</span>
-    <span class=nx>t</span> <span class=o>:=</span> <span class=nx>envMap</span>
-    <span class=nx>s</span> <span class=o>:=</span> <span class=nx>reflect</span><span class=p>.</span><span class=nx>ValueOf</span><span class=p>(</span><span class=nx>t</span><span class=p>).</span><span class=nx>Elem</span><span class=p>()</span>
-    <span class=nx>fldName</span> <span class=o>:=</span> <span class=s>&quot;&quot;</span>
-    <span class=nx>fldType</span> <span class=o>:=</span> <span class=nx>s</span><span class=p>.</span><span class=nx>Type</span><span class=p>()</span>
-    <span class=nx>thisType</span> <span class=o>:=</span> <span class=s>&quot;&quot;</span>
-    <span class=nx>thisVal</span> <span class=o>:=</span> <span class=s>&quot;&quot;</span>
-    <span class=k>for</span> <span class=nx>i</span> <span class=o>:=</span> <span class=mi>0</span><span class=p>;</span> <span class=nx>i</span> <span class=p>&lt;</span> <span class=nx>s</span><span class=p>.</span><span class=nx>NumField</span><span class=p>();</span> <span class=nx>i</span><span class=o>++</span> <span class=p>{</span>
-        <span class=nx>f</span> <span class=o>:=</span> <span class=nx>s</span><span class=p>.</span><span class=nx>Field</span><span class=p>(</span><span class=nx>i</span><span class=p>)</span>
-        <span class=nx>fldName</span> <span class=p>=</span> <span class=nx>fldType</span><span class=p>.</span><span class=nx>Field</span><span class=p>(</span><span class=nx>i</span><span class=p>).</span><span class=nx>Name</span>
-        <span class=nx>thisType</span> <span class=p>=</span> <span class=nx>fmt</span><span class=p>.</span><span class=nx>Sprintf</span><span class=p>(</span><span class=s>&quot;%v&quot;</span><span class=p>,</span> <span class=nx>fldType</span><span class=p>.</span><span class=nx>Field</span><span class=p>(</span><span class=nx>i</span><span class=p>).</span><span class=nx>Type</span><span class=p>)</span>
-        <span class=nx>thisVal</span> <span class=p>=</span> <span class=nx>fmt</span><span class=p>.</span><span class=nx>Sprintf</span><span class=p>(</span><span class=s>&quot;%v&quot;</span><span class=p>,</span> <span class=nx>f</span><span class=p>.</span><span class=nx>Interface</span><span class=p>())</span>
-        <span class=nx>fmt</span><span class=p>.</span><span class=nx>Printf</span><span class=p>(</span><span class=s>&quot;%s (%s) %v %v\n&quot;</span><span class=p>,</span>
-            <span class=nx>padRight</span><span class=p>(</span><span class=nx>fldName</span><span class=p>,</span> <span class=mi>10</span> <span class=o>-</span> <span class=nb>len</span><span class=p>(</span><span class=nx>fldName</span><span class=p>)),</span>
-            <span class=nx>thisType</span><span class=p>,</span>
-            <span class=nx>padLeft</span><span class=p>(</span><span class=s>&quot;&quot;</span><span class=p>,</span> <span class=mi>25</span> <span class=o>-</span> <span class=nb>len</span><span class=p>(</span><span class=nx>thisType</span><span class=p>),</span> <span class=s>&quot;.&quot;</span><span class=p>),</span>
-            <span class=nx>thisVal</span><span class=p>)</span>
-    <span class=p>}</span>
-<span class=p>}</span>
+environmentsList := make(map[string]*Environment)
+environments := cfg.OptionalObject(&quot;environments&quot;)
 
+for alias, envMap := range environments {
 
-<span class=kd>func</span> <span class=nx>main</span><span class=p>()</span> <span class=p>{</span>
+    environmentMap, ok := envMap.(map[string]interface{})
+    if !ok {
+        log.Fatalf(&quot;entry %q in environments section is a %T, want an object&quot;, alias, envMap)
+    }
+    environmentConf := jsoncfgo.Obj(environmentMap)
+    environment := &amp;Environment{
+        Database:   environmentConf.OptionalString(&quot;database&quot;, &quot;&quot;),
+        Host:       environmentConf.OptionalString(&quot;host&quot;, &quot;&quot;),
+        Port:       environmentConf.OptionalInt(&quot;port&quot;, 5432),
+        Adapter:    environmentConf.OptionalString(&quot;adapter&quot;, &quot;&quot;),
+        Encoding:   environmentConf.OptionalString(&quot;encoding&quot;, &quot;unicode&quot;),
+        Active:     environmentConf.OptionalBool(&quot;active&quot;, true),
+        Pool:       environmentConf.OptionalInt(&quot;pool&quot;, 5),
+        SchemaList: environmentConf.OptionalList(&quot;schema_list&quot;),
+        ImagePaths: environmentConf.OptionalObject(&quot;image_paths&quot;),
+    }
+    if err := environmentConf.Validate(); err != nil {
+        log.Fatalf(&quot;Error in environments section of config file for environment %q: %v&quot;, alias, err)
+    }
+    environmentsList[alias] = environment
 
-    <span class=nx>configPath</span> <span class=o>:=</span> <span class=s>&quot;/Users/lex/dev/go/samples/src/bitbucket.org/l3x/config/testdata/client-config2.json&quot;</span>
-    <span class=nx>cfg</span><span class=p>,</span> <span class=nx>err</span> <span class=o>:=</span> <span class=nx>jsoncfgo</span><span class=p>.</span><span class=nx>ReadFile</span><span class=p>(</span><span class=nx>configPath</span><span class=p>)</span>
-    <span class=k>if</span> <span class=nx>err</span> <span class=o>!=</span> <span class=kc>nil</span> <span class=p>{</span>
-        <span class=nx>log</span><span class=p>.</span><span class=nx>Fatal</span><span class=p>(</span><span class=nx>err</span><span class=p>.</span><span class=nx>Error</span><span class=p>())</span>  <span class=c1>// Handle error here</span>
-    <span class=p>}</span>
+    productionEnvMap := cfg.RequiredObject(&quot;misc&quot;)
+    included_val1 := productionEnvMap.RequiredString(&quot;key&quot;)
+    included_val2 := productionEnvMap.RequiredString(&quot;key&quot;)
+    fmt.Println(&quot;included_val1&quot;, included_val1)
+    fmt.Println(&quot;included_val2\n&quot;, included_val2)
 
-    <span class=nx>identity</span> <span class=o>:=</span> <span class=nx>cfg</span><span class=p>.</span><span class=nx>RequiredString</span><span class=p>(</span><span class=s>&quot;identity&quot;</span><span class=p>)</span>
-    <span class=nx>fmt</span><span class=p>.</span><span class=nx>Printf</span><span class=p>(</span><span class=s>&quot;identity: %v\n\n&quot;</span><span class=p>,</span> <span class=nx>identity</span><span class=p>)</span>
-
-    <span class=nx>path</span> <span class=o>:=</span> <span class=nx>cfg</span><span class=p>.</span><span class=nx>RequiredString</span><span class=p>(</span><span class=s>&quot;path&quot;</span><span class=p>)</span>
-    <span class=nx>fmt</span><span class=p>.</span><span class=nx>Printf</span><span class=p>(</span><span class=s>&quot;path: %v\n\n&quot;</span><span class=p>,</span> <span class=nx>path</span><span class=p>)</span>
-
-    <span class=nx>badkey</span> <span class=o>:=</span> <span class=nx>cfg</span><span class=p>.</span><span class=nx>OptionalString</span><span class=p>(</span><span class=s>&quot;badkey&quot;</span><span class=p>,</span> <span class=s>&quot;INVALID&quot;</span><span class=p>)</span>
-    <span class=nx>fmt</span><span class=p>.</span><span class=nx>Printf</span><span class=p>(</span><span class=s>&quot;badkey: %v\n&quot;</span><span class=p>,</span> <span class=nx>badkey</span><span class=p>)</span>
-
-    <span class=nx>badkey</span> <span class=p>=</span> <span class=nx>cfg</span><span class=p>.</span><span class=nx>RequiredString</span><span class=p>(</span><span class=s>&quot;badkey&quot;</span><span class=p>)</span>
-    <span class=nx>fmt</span><span class=p>.</span><span class=nx>Printf</span><span class=p>(</span><span class=s>&quot;badkey: %v\n\n&quot;</span><span class=p>,</span> <span class=nx>badkey</span><span class=p>)</span>
-
-    <span class=nx>environmentsList</span> <span class=o>:=</span> <span class=nb>make</span><span class=p>(</span><span class=kd>map</span><span class=p>[</span><span class=kt>string</span><span class=p>]</span><span class=o>*</span><span class=nx>Environment</span><span class=p>)</span>
-    <span class=nx>environments</span> <span class=o>:=</span> <span class=nx>cfg</span><span class=p>.</span><span class=nx>OptionalObject</span><span class=p>(</span><span class=s>&quot;environments&quot;</span><span class=p>)</span>
-
-    <span class=k>for</span> <span class=nx>alias</span><span class=p>,</span> <span class=nx>envMap</span> <span class=o>:=</span> <span class=k>range</span> <span class=nx>environments</span> <span class=p>{</span>
-
-        <span class=nx>environmentMap</span><span class=p>,</span> <span class=nx>ok</span> <span class=o>:=</span> <span class=nx>envMap</span><span class=p>.(</span><span class=kd>map</span><span class=p>[</span><span class=kt>string</span><span class=p>]</span><span class=kd>interface</span><span class=p>{})</span>
-        <span class=k>if</span> <span class=p>!</span><span class=nx>ok</span> <span class=p>{</span>
-            <span class=nx>log</span><span class=p>.</span><span class=nx>Fatalf</span><span class=p>(</span><span class=s>&quot;entry %q in environments section is a %T, want an object&quot;</span><span class=p>,</span> <span class=nx>alias</span><span class=p>,</span> <span class=nx>envMap</span><span class=p>)</span>
-        <span class=p>}</span>
-        <span class=nx>environmentConf</span> <span class=o>:=</span> <span class=nx>jsoncfgo</span><span class=p>.</span><span class=nx>Obj</span><span class=p>(</span><span class=nx>environmentMap</span><span class=p>)</span>
-        <span class=nx>environment</span> <span class=o>:=</span> <span class=o>&amp;</span><span class=nx>Environment</span><span class=p>{</span>
-            <span class=nx>Database</span><span class=p>:</span>   <span class=nx>environmentConf</span><span class=p>.</span><span class=nx>OptionalString</span><span class=p>(</span><span class=s>&quot;database&quot;</span><span class=p>,</span> <span class=s>&quot;&quot;</span><span class=p>),</span>
-            <span class=nx>Host</span><span class=p>:</span>       <span class=nx>environmentConf</span><span class=p>.</span><span class=nx>OptionalString</span><span class=p>(</span><span class=s>&quot;host&quot;</span><span class=p>,</span> <span class=s>&quot;&quot;</span><span class=p>),</span>
-            <span class=nx>Port</span><span class=p>:</span>       <span class=nx>environmentConf</span><span class=p>.</span><span class=nx>OptionalInt</span><span class=p>(</span><span class=s>&quot;port&quot;</span><span class=p>,</span> <span class=mi>5432</span><span class=p>),</span>
-            <span class=nx>Adapter</span><span class=p>:</span>    <span class=nx>environmentConf</span><span class=p>.</span><span class=nx>OptionalString</span><span class=p>(</span><span class=s>&quot;adapter&quot;</span><span class=p>,</span> <span class=s>&quot;&quot;</span><span class=p>),</span>
-            <span class=nx>Encoding</span><span class=p>:</span>   <span class=nx>environmentConf</span><span class=p>.</span><span class=nx>OptionalString</span><span class=p>(</span><span class=s>&quot;encoding&quot;</span><span class=p>,</span> <span class=s>&quot;unicode&quot;</span><span class=p>),</span>
-            <span class=nx>Active</span><span class=p>:</span>     <span class=nx>environmentConf</span><span class=p>.</span><span class=nx>OptionalBool</span><span class=p>(</span><span class=s>&quot;active&quot;</span><span class=p>,</span> <span class=kc>true</span><span class=p>),</span>
-            <span class=nx>Pool</span><span class=p>:</span>       <span class=nx>environmentConf</span><span class=p>.</span><span class=nx>OptionalInt</span><span class=p>(</span><span class=s>&quot;pool&quot;</span><span class=p>,</span> <span class=mi>5</span><span class=p>),</span>
-            <span class=nx>SchemaList</span><span class=p>:</span> <span class=nx>environmentConf</span><span class=p>.</span><span class=nx>OptionalList</span><span class=p>(</span><span class=s>&quot;schema_list&quot;</span><span class=p>),</span>
-            <span class=nx>ImagePaths</span><span class=p>:</span> <span class=nx>environmentConf</span><span class=p>.</span><span class=nx>OptionalObject</span><span class=p>(</span><span class=s>&quot;image_paths&quot;</span><span class=p>),</span>
-        <span class=p>}</span>
-        <span class=k>if</span> <span class=nx>err</span> <span class=o>:=</span> <span class=nx>environmentConf</span><span class=p>.</span><span class=nx>Validate</span><span class=p>();</span> <span class=nx>err</span> <span class=o>!=</span> <span class=kc>nil</span> <span class=p>{</span>
-            <span class=nx>log</span><span class=p>.</span><span class=nx>Fatalf</span><span class=p>(</span><span class=s>&quot;Error in environments section of config file for environment %q: %v&quot;</span><span class=p>,</span> <span class=nx>alias</span><span class=p>,</span> <span class=nx>err</span><span class=p>)</span>
-        <span class=p>}</span>
-        <span class=nx>environmentsList</span><span class=p>[</span><span class=nx>alias</span><span class=p>]</span> <span class=p>=</span> <span class=nx>environment</span>
-
-        <span class=nx>productionEnvMap</span> <span class=o>:=</span> <span class=nx>cfg</span><span class=p>.</span><span class=nx>RequiredObject</span><span class=p>(</span><span class=s>&quot;misc&quot;</span><span class=p>)</span>
-        <span class=nx>included_val1</span> <span class=o>:=</span> <span class=nx>productionEnvMap</span><span class=p>.</span><span class=nx>RequiredString</span><span class=p>(</span><span class=s>&quot;key&quot;</span><span class=p>)</span>
-        <span class=nx>included_val2</span> <span class=o>:=</span> <span class=nx>productionEnvMap</span><span class=p>.</span><span class=nx>RequiredString</span><span class=p>(</span><span class=s>&quot;key&quot;</span><span class=p>)</span>
-        <span class=nx>fmt</span><span class=p>.</span><span class=nx>Println</span><span class=p>(</span><span class=s>&quot;included_val1&quot;</span><span class=p>,</span> <span class=nx>included_val1</span><span class=p>)</span>
-        <span class=nx>fmt</span><span class=p>.</span><span class=nx>Println</span><span class=p>(</span><span class=s>&quot;included_val2\n&quot;</span><span class=p>,</span> <span class=nx>included_val2</span><span class=p>)</span>
-
-        <span class=k>for</span> <span class=nx>alias</span><span class=p>,</span> <span class=nx>envMap</span> <span class=o>:=</span> <span class=k>range</span> <span class=nx>environmentsList</span> <span class=p>{</span>
-            <span class=nx>fmt</span><span class=p>.</span><span class=nx>Printf</span><span class=p>(</span><span class=s>&quot;alias: %v\n&quot;</span><span class=p>,</span> <span class=nx>alias</span><span class=p>)</span>
-            <span class=nx>fmt</span><span class=p>.</span><span class=nx>Printf</span><span class=p>(</span><span class=s>&quot;envMap: %v\n\n&quot;</span><span class=p>,</span> <span class=nx>envMap</span><span class=p>)</span>
-            <span class=nx>printEnvironment</span><span class=p>(</span><span class=nx>envMap</span><span class=p>)</span>
-            <span class=nx>fmt</span><span class=p>.</span><span class=nx>Println</span><span class=p>();</span>
-        <span class=p>}</span>
-    <span class=p>}</span>
-    <span class=k>if</span> <span class=nx>err</span> <span class=o>:=</span> <span class=nx>cfg</span><span class=p>.</span><span class=nx>Validate</span><span class=p>();</span> <span class=nx>err</span> <span class=o>!=</span> <span class=kc>nil</span> <span class=p>{</span>
-        <span class=nx>time</span><span class=p>.</span><span class=nx>Sleep</span><span class=p>(</span><span class=mi>100</span> <span class=o>*</span> <span class=nx>time</span><span class=p>.</span><span class=nx>Millisecond</span><span class=p>)</span>
-        <span class=k>defer</span> <span class=nx>log</span><span class=p>.</span><span class=nx>Fatalf</span><span class=p>(</span><span class=s>&quot;ERROR - Invalid config file...\n%v&quot;</span><span class=p>,</span> <span class=nx>err</span><span class=p>)</span>
-        <span class=k>return</span>
-    <span class=p>}</span>
-<span class=p>}</span>
-</code></pre></div><hr><h2>Notes</h2><p>We leverage the strings package to create two helper functions, padLeft and padRight.</p><p>We create a helper function, printEnvironment, that takes a pointer to the <strong>Environment</strong> struct.</p><p>You will need to change the <strong>configPath</strong> to point to a the configuration file on your computer.</p><p>We handle any read errors immediately after attempting to read the configuration file.</p><p>We sleep for a second to prevent the log.Fatal statement in order to ensure that the error messages are printed at the end of our output log.</p><p><br></p><hr><h2>Input Files</h2><h3>example.json</h3><div class=highlight><pre><code class="json language-json" data-lang=json><span class=p>{</span>
+    for alias, envMap := range environmentsList {
+        fmt.Printf(&quot;alias: %v\n&quot;, alias)
+        fmt.Printf(&quot;envMap: %v\n\n&quot;, envMap)
+        printEnvironment(envMap)
+        fmt.Println();
+    }
+}
+if err := cfg.Validate(); err != nil {
+    time.Sleep(100 * time.Millisecond)
+    defer log.Fatalf(&quot;ERROR - Invalid config file...\n%v&quot;, err)
+    return
+}
+</code></pre></div><p>} ```<hr></p><h2>Notes</h2><p>We load a section of the configuration file into the <strong>Environment</strong> struct that we defined.</p><p>We leverage the strings package to create two helper functions, padLeft and padRight.</p><p>We create a helper function, printEnvironment, that takes a pointer to the <strong>Environment</strong> struct.</p><p>You will need to change the <strong>configPath</strong> to point to a the configuration file on your computer.</p><p>We handle any read errors immediately after attempting to read the configuration file.</p><p>We sleep for a second to prevent the log.Fatal statement in order to ensure that the error messages are printed at the end of our output log.</p><p><br></p><hr><h2>Input Files</h2><h3>example.json</h3><div class=highlight><pre><code class="json language-json" data-lang=json><span class=p>{</span>
     <span class=nt>&quot;environments&quot;</span><span class=p>:</span> <span class=p>{</span>
         <span class=nt>&quot;development&quot;</span><span class=p>:</span> <span class=p>{</span>
            <span class=nt>&quot;database&quot;</span><span class=p>:</span> <span class=s2>&quot;example_development&quot;</span><span class=p>,</span>
