@@ -172,7 +172,7 @@
         <span class=k>return</span>
     <span class=p>}</span>
 <span class=p>}</span>
-</code></pre></div><hr><h2>Notes</h2><p>You will need to change the <strong>configPath</strong> to point to a the configuration file on your computer.</p><p>We load a section of the configuration file into the <strong>Environment</strong> struct that we defined.</p><p>We leverage the strings package to create two helper functions, padLeft and padRight.</p><p>We create a helper function, printEnvironment, that takes a pointer to the <strong>Environment</strong> struct.</p><p>We handle any read errors immediately after attempting to read the configuration file.</p><p>We sleep for a second to prevent the log.Fatal statement in order to ensure that the error messages are printed at the end of our output log.</p><p><br></p><hr><h2>Output</h2><pre><code>
+</code></pre></div><hr><h2>Notes</h2><p>You will need to change the <strong>configPath</strong> to point to a the configuration file on your computer.</p><p>We load a section of the configuration file into the <strong>Environment</strong> struct that we defined.</p><p>We create a helper function, printEnvironment, that takes a pointer to the <strong>Environment</strong> struct.</p><p>We leverage the strings package to create two helper functions, padLeft and padRight.</p><p>We handle any read errors immediately after attempting to read the configuration file.</p><p>We sleep for a second to prevent the log.Fatal statement in order to ensure that the error messages are printed at the end of our output log.</p><p><br></p><hr><h2>Output</h2><pre><code>
 identity: 26F5ABDA
 
 path: /usr/bin:/bin:/usr/sbin:/sbin:/usr/local/Cellar/go/1.2.2/libexec/bin:$GOPATH/bin:/Users/lex/dev/go/samples/bin

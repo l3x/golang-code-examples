@@ -50,12 +50,6 @@
     <span class=nx>fmt</span><span class=p>.</span><span class=nx>Printf</span><span class=p>(</span><span class=s>&quot;numbers: %v\n&quot;</span><span class=p>,</span> <span class=nx>numbers</span><span class=p>)</span>
     <span class=nx>bogusSettings</span> <span class=o>:=</span> <span class=nx>cfg</span><span class=p>.</span><span class=nx>IntList</span><span class=p>(</span><span class=s>&quot;bogusSettings&quot;</span><span class=p>,</span> <span class=p>[]</span><span class=kt>int64</span><span class=p>{</span><span class=mi>1</span><span class=p>,</span> <span class=mi>2</span><span class=p>,</span> <span class=mi>3</span><span class=p>})</span>
     <span class=nx>fmt</span><span class=p>.</span><span class=nx>Printf</span><span class=p>(</span><span class=s>&quot;bogusAppList: %v\n\n&quot;</span><span class=p>,</span> <span class=nx>bogusSettings</span><span class=p>)</span>
-
-    <span class=k>if</span> <span class=nx>err</span> <span class=o>:=</span> <span class=nx>cfg</span><span class=p>.</span><span class=nx>Validate</span><span class=p>();</span> <span class=nx>err</span> <span class=o>!=</span> <span class=kc>nil</span> <span class=p>{</span>
-        <span class=nx>time</span><span class=p>.</span><span class=nx>Sleep</span><span class=p>(</span><span class=mi>100</span> <span class=o>*</span> <span class=nx>time</span><span class=p>.</span><span class=nx>Millisecond</span><span class=p>)</span>
-        <span class=k>defer</span> <span class=nx>log</span><span class=p>.</span><span class=nx>Fatalf</span><span class=p>(</span><span class=s>&quot;ERROR - Invalid config file...\n%v&quot;</span><span class=p>,</span> <span class=nx>err</span><span class=p>)</span>
-        <span class=k>return</span>
-    <span class=p>}</span>
 <span class=p>}</span>
 </code></pre></div><hr><h2>Notes</h2><p>You will need to change the <strong>configPath</strong> to point to a the configuration file on your computer.</p><p>Any read errors are handled for us; Errors are logged to standard out.</p><p>For a more detailed example of how to leverage the more advanced features of jsoncfgo, please see <a href=http://l3x.github.io/golang-code-examples/2014/07/25/jsoncfgo-config-file-reader-advanced.html>jsoncfgo - Advanced Usage</a></p><h3>Install jsconfgo</h3><p>Install the jsconfgo library as follows:</p><div class=highlight><pre><code class="bash language-bash" data-lang=bash><span class=nv>$ </span>go get github.com/l3x/jsoncfgo
 </code></pre></div><p><br></p><hr><h2>Input</h2><h3>example_simple.json</h3><div class=highlight><pre><code class="json language-json" data-lang=json><span class=p>{</span>
@@ -80,10 +74,6 @@ bogusTrueActive: true
 
 appList: [myapp sharedapp]
 bogusAppList: [app1 app2 app3]
-<span style=color:red>
-2014/07/25 16:01:05 ERROR - Invalid config file...
-Missing required config key "bogusAppList" (list of strings)
-exit status 1
-</span>
+
 Process finished with exit code 1
 </code></pre><hr><h2>References</h2><ul><li><a href=https://github.com/l3x/golang-code-examples>Golang Code Examples</a></li><li><a href="http://golang.org/pkg/fmt/">Package fmt</a></li><li><a href=http://en.wikipedia.org/wiki/Configuration_file>Configuration file</a></li><li><a href=http://en.wikipedia.org/wiki/JSON>JSON</a></li><li><a href="http://tour.golang.org/">Golang Tour</a></li></ul></section></div></div><div class=footer><div class=contact><div id=name-gravatar class=float-left><span>By Lex Sheehan</span> <span class=l3x-gravatar></span></div><div class=float-right><strong>It's Go Time!</strong></div></div></div><div class=license-notice>This work is licensed under the <a href="http://creativecommons.org/licenses/by/3.0/">Creative Commons Attribution 3.0 Unported License</a>.</div></div><script src=/golang-code-examples/scripts/scripts.db44.js></script></body></html>
