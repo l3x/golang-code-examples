@@ -106,9 +106,10 @@
     <span class=p>}</span>
 <span class=p>}</span>
 
+
 <span class=kd>func</span> <span class=nx>main</span><span class=p>()</span> <span class=p>{</span>
 
-    <span class=nx>configPath</span> <span class=o>:=</span> <span class=s>&quot;/Users/lex/dev/go/samples/src/bitbucket.org/l3x/config/testdata/client-config2.json&quot;</span>
+    <span class=nx>configPath</span> <span class=o>:=</span> <span class=s>&quot;/Users/lex/dev/go/data/jsoncfgo/advanced-config.json&quot;</span>
     <span class=nx>cfg</span><span class=p>,</span> <span class=nx>err</span> <span class=o>:=</span> <span class=nx>jsoncfgo</span><span class=p>.</span><span class=nx>ReadFile</span><span class=p>(</span><span class=nx>configPath</span><span class=p>)</span>
     <span class=k>if</span> <span class=nx>err</span> <span class=o>!=</span> <span class=kc>nil</span> <span class=p>{</span>
         <span class=nx>log</span><span class=p>.</span><span class=nx>Fatal</span><span class=p>(</span><span class=nx>err</span><span class=p>.</span><span class=nx>Error</span><span class=p>())</span>  <span class=c1>// Handle error here</span>
