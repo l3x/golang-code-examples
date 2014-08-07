@@ -1,0 +1,304 @@
+<!DOCTYPE html><html><head><meta charset=utf-8><meta http-equiv=X-UA-Compatible content="IE=edge,chrome=1"><title>Web Server</title><meta name=description content="Go Golang Code Examples programming"><meta name=viewport content="width=device-width"><link rel="shortcut icon" href=/golang-code-examples/favicon.ico type=image/x-icon><link rel=icon href=/golang-code-examples/favicon.ico type=image/x-icon><link rel=stylesheet href=/golang-code-examples/styles/main.d9bf.css><script src=https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js></script><!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]--><meta name=viewport content="width=device-width, initial-scale=1, user-scalable=no"><script>(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+            (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+                m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+        })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+        ga('create', 'UA-53073815-1', 'auto');
+        ga('send', 'pageview');</script></head><body><div id=dialogoverlay class=dialogoverlay></div><div id=dialogbox class=dialogbox><div><div id=dialogboxhead class=dialogboxhead></div><div id=dialogboxbody class=dialogboxbody></div><div id=dialogboxfoot class=dialogboxfoot></div></div></div><div class=site><header><h1><a class=home-link href="/golang-code-examples">Golang Code Examples</a></h1></header><div id=banner><span id=logo></span> <a href=https://github.com/l3x/golang-code-examples class="button fork"><strong>View On GitHub</strong></a><div class=downloads><span>Downloads:</span><ul><li><a href=https://github.com/l3x/golang-code-examples/zipball/master class=button>ZIP</a></li><li><a href=https://github.com/l3x/golang-code-examples/tarball/master class=button>TAR</a></li></ul></div></div><!-- end banner --><div class=wrapper><nav><ul></ul></nav><div class=page-title><h2>Web Server</h2><p class=meta>05 Aug 2014</p></div><div class=post><section><h2>Description</h2><p>This example demonstrates how to create a web server.</p><p>We read static html files from the local file system as well as use go templates to display html pages.</p><p>Our test harness demonstrates the following:</p><ul><li>Help (this page)</li><li>File Server (dir value from config file)</li><li>Redirect (to example.com)</li><li>Debug Info (POST form)</li><li>Debug Info (GET request)</li><li>Ajax Callback</li></ul><p><br></p><h2>Golang Features</h2><p>This golang code sample demonstrates the following go language features:</p><ul><li>url routing via http.NewServeMux</li><li>go templates</li><li>read local .html files via ioutil.ReadFile</li><li>error handling<ul><li>return 500 errors via http.Error</li><li>quick and dirty error handling via panic</li></ul></li><li>response header manipulation via http.ResponseWriter</li><li>cookie manipulation via http.Cookie</li><li>set MIME type via response.Header</li><li>regex used to extract URL path target</li><li>error logging</li></ul><h2>Golang 3rd Party Features</h2><h3>github.com/l3x/jsoncfgo</h3><ul><li>to read application config settings</li><li>to load global users hash</li></ul><h3>github.com/go-goodies/go_oops</h3><ul><li>to store global users hash in singleton object</li></ul><hr><h2>Input Files</h2><h3>webserver-config.json</h3><div class=highlight><pre><code class="json language-json" data-lang=json><span class=p>{</span>
+   <span class=nt>&quot;host&quot;</span><span class=p>:</span> <span class=s2>&quot;localhost&quot;</span><span class=p>,</span>
+   <span class=nt>&quot;port&quot;</span><span class=p>:</span> <span class=mi>8080</span><span class=p>,</span>
+   <span class=nt>&quot;dir&quot;</span><span class=p>:</span> <span class=s2>&quot;www/&quot;</span><span class=p>,</span>
+   <span class=nt>&quot;redirect_code&quot;</span><span class=p>:</span> <span class=mi>307</span>
+<span class=p>}</span>
+</code></pre></div><p><br></p><h3>users.json</h3><div class=highlight><pre><code class="json language-json" data-lang=json><span class=p>{</span>
+   <span class=nt>&quot;joesample&quot;</span><span class=p>:</span> <span class=p>{</span>
+      <span class=nt>&quot;firstname&quot;</span><span class=p>:</span> <span class=s2>&quot;joe&quot;</span><span class=p>,</span>
+      <span class=nt>&quot;lastname&quot;</span><span class=p>:</span> <span class=s2>&quot;sample&quot;</span>
+   <span class=p>},</span>
+   <span class=nt>&quot;alicesmith&quot;</span><span class=p>:</span> <span class=p>{</span>
+      <span class=nt>&quot;firstname&quot;</span><span class=p>:</span> <span class=s2>&quot;alice&quot;</span><span class=p>,</span>
+      <span class=nt>&quot;lastname&quot;</span><span class=p>:</span> <span class=s2>&quot;smith&quot;</span>
+   <span class=p>},</span>
+   <span class=nt>&quot;bobbrown&quot;</span><span class=p>:</span> <span class=p>{</span>
+      <span class=nt>&quot;firstname&quot;</span><span class=p>:</span> <span class=s2>&quot;bob&quot;</span><span class=p>,</span>
+      <span class=nt>&quot;lastname&quot;</span><span class=p>:</span> <span class=s2>&quot;brown&quot;</span>
+   <span class=p>}</span>
+<span class=p>}</span>
+</code></pre></div><hr><h2>Code Example</h2><p>In this code example we demonstrate how to use simple jsoncfgo functions to read a json-based configuration file.</p><div class=highlight><pre><code class="go language-go" data-lang=go><span class=kn>package</span> <span class=nx>main</span>
+
+<span class=kn>import</span> <span class=p>(</span>
+    <span class=s>&quot;fmt&quot;</span>
+    <span class=s>&quot;log&quot;</span>
+    <span class=s>&quot;errors&quot;</span>
+    <span class=s>&quot;net/http&quot;</span>
+    <span class=s>&quot;io/ioutil&quot;</span>
+    <span class=s>&quot;html/template&quot;</span>
+    <span class=s>&quot;regexp&quot;</span>
+    <span class=s>&quot;encoding/json&quot;</span>
+    <span class=s>&quot;github.com/l3x/jsoncfgo&quot;</span>
+    <span class=s>&quot;github.com/go-goodies/go_oops&quot;</span>
+<span class=p>)</span>
+
+<span class=kd>var</span> <span class=nx>Dir</span> <span class=kt>string</span>
+<span class=kd>var</span> <span class=nx>Users</span> <span class=nx>jsoncfgo</span><span class=p>.</span><span class=nx>Obj</span>
+<span class=kd>var</span> <span class=nx>AppContext</span> <span class=o>*</span><span class=nx>go_oops</span><span class=p>.</span><span class=nx>Singleton</span>
+
+<span class=kd>func</span> <span class=nx>HtmlFileHandler</span><span class=p>(</span><span class=nx>response</span> <span class=nx>http</span><span class=p>.</span><span class=nx>ResponseWriter</span><span class=p>,</span> <span class=nx>request</span> <span class=o>*</span><span class=nx>http</span><span class=p>.</span><span class=nx>Request</span><span class=p>,</span> <span class=nx>filename</span> <span class=kt>string</span><span class=p>){</span>
+    <span class=nx>response</span><span class=p>.</span><span class=nx>Header</span><span class=p>().</span><span class=nx>Set</span><span class=p>(</span><span class=s>&quot;Content-type&quot;</span><span class=p>,</span> <span class=s>&quot;text/html&quot;</span><span class=p>)</span>
+    <span class=nx>webpage</span><span class=p>,</span> <span class=nx>err</span> <span class=o>:=</span> <span class=nx>ioutil</span><span class=p>.</span><span class=nx>ReadFile</span><span class=p>(</span><span class=nx>Dir</span> <span class=o>+</span> <span class=nx>filename</span><span class=p>)</span>  <span class=c1>// read whole the file</span>
+    <span class=k>if</span> <span class=nx>err</span> <span class=o>!=</span> <span class=kc>nil</span> <span class=p>{</span>
+        <span class=nx>http</span><span class=p>.</span><span class=nx>Error</span><span class=p>(</span><span class=nx>response</span><span class=p>,</span> <span class=nx>fmt</span><span class=p>.</span><span class=nx>Sprintf</span><span class=p>(</span><span class=s>&quot;%s file error %v&quot;</span><span class=p>,</span> <span class=nx>filename</span><span class=p>,</span> <span class=nx>err</span><span class=p>),</span> <span class=mi>500</span><span class=p>)</span>
+    <span class=p>}</span>
+    <span class=nx>fmt</span><span class=p>.</span><span class=nx>Fprint</span><span class=p>(</span><span class=nx>response</span><span class=p>,</span> <span class=nb>string</span><span class=p>(</span><span class=nx>webpage</span><span class=p>));</span>
+<span class=p>}</span>
+
+<span class=kd>func</span> <span class=nx>HelpHandler</span><span class=p>(</span><span class=nx>response</span> <span class=nx>http</span><span class=p>.</span><span class=nx>ResponseWriter</span><span class=p>,</span> <span class=nx>request</span> <span class=o>*</span><span class=nx>http</span><span class=p>.</span><span class=nx>Request</span><span class=p>){</span>
+    <span class=nx>HtmlFileHandler</span><span class=p>(</span><span class=nx>response</span><span class=p>,</span> <span class=nx>request</span><span class=p>,</span> <span class=s>&quot;/help.html&quot;</span><span class=p>)</span>
+<span class=p>}</span>
+
+<span class=kd>func</span> <span class=nx>AjaxHandler</span><span class=p>(</span><span class=nx>response</span> <span class=nx>http</span><span class=p>.</span><span class=nx>ResponseWriter</span><span class=p>,</span> <span class=nx>request</span> <span class=o>*</span><span class=nx>http</span><span class=p>.</span><span class=nx>Request</span><span class=p>){</span>
+    <span class=nx>HtmlFileHandler</span><span class=p>(</span><span class=nx>response</span><span class=p>,</span> <span class=nx>request</span><span class=p>,</span> <span class=s>&quot;/ajax.html&quot;</span><span class=p>)</span>
+<span class=p>}</span>
+
+<span class=kd>func</span> <span class=nx>printCookies</span><span class=p>(</span><span class=nx>response</span> <span class=nx>http</span><span class=p>.</span><span class=nx>ResponseWriter</span><span class=p>,</span> <span class=nx>request</span> <span class=o>*</span><span class=nx>http</span><span class=p>.</span><span class=nx>Request</span><span class=p>)</span> <span class=p>{</span>
+    <span class=nx>cookieNameForUsername</span> <span class=o>:=</span> <span class=nx>AppContext</span><span class=p>.</span><span class=nx>Data</span><span class=p>[</span><span class=s>&quot;CookieNameForUsername&quot;</span><span class=p>].(</span><span class=kt>string</span><span class=p>)</span>
+    <span class=nx>fmt</span><span class=p>.</span><span class=nx>Println</span><span class=p>(</span><span class=s>&quot;COOKIES:&quot;</span><span class=p>)</span>
+    <span class=k>for</span> <span class=nx>_</span><span class=p>,</span> <span class=nx>cookie</span> <span class=o>:=</span> <span class=k>range</span> <span class=nx>request</span><span class=p>.</span><span class=nx>Cookies</span><span class=p>()</span> <span class=p>{</span>
+        <span class=nx>fmt</span><span class=p>.</span><span class=nx>Printf</span><span class=p>(</span><span class=s>&quot;%v: %v\n&quot;</span><span class=p>,</span> <span class=nx>cookie</span><span class=p>.</span><span class=nx>Name</span><span class=p>,</span> <span class=nx>cookie</span><span class=p>.</span><span class=nx>Value</span><span class=p>)</span>
+        <span class=k>if</span> <span class=nx>cookie</span><span class=p>.</span><span class=nx>Name</span> <span class=o>==</span> <span class=nx>cookieNameForUsername</span> <span class=p>{</span>
+            <span class=nx>SetUsernameCookie</span><span class=p>(</span><span class=nx>response</span><span class=p>,</span> <span class=nx>cookie</span><span class=p>.</span><span class=nx>Value</span><span class=p>)</span>
+        <span class=p>}</span>
+    <span class=p>};</span> <span class=nx>fmt</span><span class=p>.</span><span class=nx>Println</span><span class=p>(</span><span class=s>&quot;&quot;</span><span class=p>)</span>
+<span class=p>}</span>
+
+<span class=kd>func</span> <span class=nx>UserHandler</span><span class=p>(</span><span class=nx>response</span> <span class=nx>http</span><span class=p>.</span><span class=nx>ResponseWriter</span><span class=p>,</span> <span class=nx>request</span> <span class=o>*</span><span class=nx>http</span><span class=p>.</span><span class=nx>Request</span><span class=p>){</span>
+    <span class=nx>response</span><span class=p>.</span><span class=nx>Header</span><span class=p>().</span><span class=nx>Set</span><span class=p>(</span><span class=s>&quot;Content-type&quot;</span><span class=p>,</span> <span class=s>&quot;application/json&quot;</span><span class=p>)</span>
+    <span class=c1>// json data to send to client</span>
+    <span class=nx>data</span> <span class=o>:=</span> <span class=kd>map</span><span class=p>[</span><span class=kt>string</span><span class=p>]</span><span class=kt>string</span> <span class=p>{</span> <span class=s>&quot;api&quot;</span> <span class=p>:</span> <span class=s>&quot;user&quot;</span><span class=p>,</span> <span class=s>&quot;name&quot;</span> <span class=p>:</span> <span class=s>&quot;&quot;</span> <span class=p>}</span>
+    <span class=nx>userApiURL</span> <span class=o>:=</span> <span class=nx>regexp</span><span class=p>.</span><span class=nx>MustCompile</span><span class=p>(</span><span class=s>`^/user/(\w+)$`</span><span class=p>)</span>
+    <span class=nx>usernameMatches</span> <span class=o>:=</span> <span class=nx>userApiURL</span><span class=p>.</span><span class=nx>FindStringSubmatch</span><span class=p>(</span><span class=nx>request</span><span class=p>.</span><span class=nx>URL</span><span class=p>.</span><span class=nx>Path</span><span class=p>)</span>
+    <span class=c1>// regex matches example: [&quot;/user/joesample&quot;, &quot;joesample&quot;]</span>
+    <span class=k>if</span> <span class=nb>len</span><span class=p>(</span><span class=nx>usernameMatches</span><span class=p>)</span> <span class=p>&gt;</span> <span class=mi>0</span> <span class=p>{</span>
+        <span class=nx>printCookies</span><span class=p>(</span><span class=nx>response</span><span class=p>,</span> <span class=nx>request</span><span class=p>)</span>
+        <span class=kd>var</span> <span class=nx>userName</span> <span class=kt>string</span>
+        <span class=nx>userName</span> <span class=p>=</span> <span class=nx>usernameMatches</span><span class=p>[</span><span class=mi>1</span><span class=p>]</span>  <span class=c1>// ex: joesample</span>
+        <span class=nx>userObj</span> <span class=o>:=</span> <span class=nx>AppContext</span><span class=p>.</span><span class=nx>Data</span><span class=p>[</span><span class=nx>userName</span><span class=p>]</span>
+        <span class=nx>fmt</span><span class=p>.</span><span class=nx>Printf</span><span class=p>(</span><span class=s>&quot;userObj: %v\n&quot;</span><span class=p>,</span> <span class=nx>userObj</span><span class=p>)</span>
+        <span class=k>if</span> <span class=nx>userObj</span> <span class=o>==</span> <span class=kc>nil</span> <span class=p>{</span>
+            <span class=nx>msg</span> <span class=o>:=</span> <span class=nx>fmt</span><span class=p>.</span><span class=nx>Sprintf</span><span class=p>(</span><span class=s>&quot;Invalid username (%s)&quot;</span><span class=p>,</span> <span class=nx>userName</span><span class=p>)</span>
+            <span class=nb>panic</span><span class=p>(</span><span class=nx>errors</span><span class=p>.</span><span class=nx>New</span><span class=p>(</span><span class=nx>msg</span><span class=p>))</span>
+        <span class=p>}</span> <span class=k>else</span> <span class=p>{</span>
+            <span class=c1>// Send JSON to the client</span>
+            <span class=nx>thisUser</span> <span class=o>:=</span> <span class=nx>userObj</span><span class=p>.(</span><span class=nx>jsoncfgo</span><span class=p>.</span><span class=nx>Obj</span><span class=p>)</span>
+            <span class=nx>fmt</span><span class=p>.</span><span class=nx>Printf</span><span class=p>(</span><span class=s>&quot;thisUser: %v\n&quot;</span><span class=p>,</span> <span class=nx>thisUser</span><span class=p>)</span>
+            <span class=nx>data</span><span class=p>[</span><span class=s>&quot;name&quot;</span><span class=p>]</span> <span class=p>=</span> <span class=nx>thisUser</span><span class=p>[</span><span class=s>&quot;firstname&quot;</span><span class=p>].(</span><span class=kt>string</span><span class=p>)</span> <span class=o>+</span> <span class=s>&quot; &quot;</span> <span class=o>+</span> <span class=nx>thisUser</span><span class=p>[</span><span class=s>&quot;lastname&quot;</span><span class=p>].(</span><span class=kt>string</span><span class=p>)</span>
+        <span class=p>}</span>
+        <span class=nx>json_bytes</span><span class=p>,</span> <span class=nx>_</span> <span class=o>:=</span> <span class=nx>json</span><span class=p>.</span><span class=nx>Marshal</span><span class=p>(</span><span class=nx>data</span><span class=p>)</span>
+        <span class=nx>fmt</span><span class=p>.</span><span class=nx>Printf</span><span class=p>(</span><span class=s>&quot;json_bytes: %s\n&quot;</span><span class=p>,</span> <span class=nb>string</span><span class=p>(</span><span class=nx>json_bytes</span><span class=p>[:]))</span>
+        <span class=nx>fmt</span><span class=p>.</span><span class=nx>Fprintf</span><span class=p>(</span><span class=nx>response</span><span class=p>,</span> <span class=s>&quot;%s\n&quot;</span><span class=p>,</span> <span class=nx>json_bytes</span><span class=p>)</span>
+
+    <span class=p>}</span> <span class=k>else</span> <span class=p>{</span>
+        <span class=nx>http</span><span class=p>.</span><span class=nx>Error</span><span class=p>(</span><span class=nx>response</span><span class=p>,</span> <span class=s>&quot;404 page not found&quot;</span><span class=p>,</span> <span class=mi>404</span><span class=p>)</span>
+    <span class=p>}</span>
+<span class=p>}</span>
+
+<span class=kd>func</span> <span class=nx>SetUsernameCookie</span><span class=p>(</span><span class=nx>response</span> <span class=nx>http</span><span class=p>.</span><span class=nx>ResponseWriter</span><span class=p>,</span> <span class=nx>userName</span> <span class=kt>string</span><span class=p>){</span>
+    <span class=c1>// Add cookie to response</span>
+    <span class=nx>cookieName</span> <span class=o>:=</span> <span class=nx>AppContext</span><span class=p>.</span><span class=nx>Data</span><span class=p>[</span><span class=s>&quot;CookieNameForUsername&quot;</span><span class=p>].(</span><span class=kt>string</span><span class=p>)</span>
+    <span class=nx>cookie</span> <span class=o>:=</span> <span class=nx>http</span><span class=p>.</span><span class=nx>Cookie</span><span class=p>{</span><span class=nx>Name</span><span class=p>:</span> <span class=nx>cookieName</span><span class=p>,</span> <span class=nx>Value</span><span class=p>:</span> <span class=nx>userName</span><span class=p>}</span>
+    <span class=nx>http</span><span class=p>.</span><span class=nx>SetCookie</span><span class=p>(</span><span class=nx>response</span><span class=p>,</span> <span class=o>&amp;</span><span class=nx>cookie</span><span class=p>)</span>
+<span class=p>}</span>
+
+<span class=kd>func</span> <span class=nx>DebugFormHandler</span><span class=p>(</span><span class=nx>response</span> <span class=nx>http</span><span class=p>.</span><span class=nx>ResponseWriter</span><span class=p>,</span> <span class=nx>request</span> <span class=o>*</span><span class=nx>http</span><span class=p>.</span><span class=nx>Request</span><span class=p>){</span>
+
+    <span class=nx>printCookies</span><span class=p>(</span><span class=nx>response</span><span class=p>,</span> <span class=nx>request</span><span class=p>)</span>
+
+    <span class=nx>err</span> <span class=o>:=</span> <span class=nx>request</span><span class=p>.</span><span class=nx>ParseForm</span><span class=p>()</span>  <span class=c1>// Parse URL and POST data into request.Form</span>
+    <span class=k>if</span> <span class=nx>err</span> <span class=o>!=</span> <span class=kc>nil</span> <span class=p>{</span>
+        <span class=nx>http</span><span class=p>.</span><span class=nx>Error</span><span class=p>(</span><span class=nx>response</span><span class=p>,</span> <span class=nx>fmt</span><span class=p>.</span><span class=nx>Sprintf</span><span class=p>(</span><span class=s>&quot;error parsing url %v&quot;</span><span class=p>,</span> <span class=nx>err</span><span class=p>),</span> <span class=mi>500</span><span class=p>)</span>
+    <span class=p>}</span>
+
+    <span class=c1>// Set cookie and MIME type in the HTTP headers.</span>
+    <span class=nx>fmt</span><span class=p>.</span><span class=nx>Printf</span><span class=p>(</span><span class=s>&quot;request.Form: %v\n&quot;</span><span class=p>,</span> <span class=nx>request</span><span class=p>.</span><span class=nx>Form</span><span class=p>)</span>
+    <span class=k>if</span> <span class=nx>request</span><span class=p>.</span><span class=nx>Form</span><span class=p>[</span><span class=s>&quot;username&quot;</span><span class=p>]</span> <span class=o>!=</span> <span class=kc>nil</span> <span class=p>{</span>
+        <span class=nx>cookieVal</span> <span class=o>:=</span> <span class=nx>request</span><span class=p>.</span><span class=nx>Form</span><span class=p>[</span><span class=s>&quot;username&quot;</span><span class=p>][</span><span class=mi>0</span><span class=p>]</span>
+        <span class=nx>fmt</span><span class=p>.</span><span class=nx>Printf</span><span class=p>(</span><span class=s>&quot;cookieVal: %s\n&quot;</span><span class=p>,</span> <span class=nx>cookieVal</span><span class=p>)</span>
+        <span class=nx>SetUsernameCookie</span><span class=p>(</span><span class=nx>response</span><span class=p>,</span> <span class=nx>cookieVal</span><span class=p>)</span>
+    <span class=p>};</span> <span class=nx>fmt</span><span class=p>.</span><span class=nx>Println</span><span class=p>(</span><span class=s>&quot;&quot;</span><span class=p>)</span>
+
+    <span class=nx>templateHandler</span><span class=p>(</span><span class=nx>response</span><span class=p>,</span> <span class=nx>request</span><span class=p>)</span>
+    <span class=nx>response</span><span class=p>.</span><span class=nx>Header</span><span class=p>().</span><span class=nx>Set</span><span class=p>(</span><span class=s>&quot;Content-type&quot;</span><span class=p>,</span> <span class=s>&quot;text/plain&quot;</span><span class=p>)</span>
+
+    <span class=c1>// Send debug diagnostics to client</span>
+    <span class=nx>fmt</span><span class=p>.</span><span class=nx>Fprintf</span><span class=p>(</span><span class=nx>response</span><span class=p>,</span> <span class=s>&quot;&lt;table&gt;&quot;</span><span class=p>)</span>
+    <span class=nx>fmt</span><span class=p>.</span><span class=nx>Fprintf</span><span class=p>(</span><span class=nx>response</span><span class=p>,</span> <span class=s>&quot;&lt;tr&gt;&lt;td&gt;&lt;strong&gt;request.Method    &lt;/strong&gt;&lt;/td&gt;&lt;td&gt;&#39;%v&#39;&lt;/td&gt;&lt;/tr&gt;&quot;</span><span class=p>,</span> <span class=nx>request</span><span class=p>.</span><span class=nx>Method</span><span class=p>)</span>
+    <span class=nx>fmt</span><span class=p>.</span><span class=nx>Fprintf</span><span class=p>(</span><span class=nx>response</span><span class=p>,</span> <span class=s>&quot;&lt;tr&gt;&lt;td&gt;&lt;strong&gt;request.RequestURI&lt;/strong&gt;&lt;/td&gt;&lt;td&gt;&#39;%v&#39;&lt;/td&gt;&lt;/tr&gt;&quot;</span><span class=p>,</span> <span class=nx>request</span><span class=p>.</span><span class=nx>RequestURI</span><span class=p>)</span>
+    <span class=nx>fmt</span><span class=p>.</span><span class=nx>Fprintf</span><span class=p>(</span><span class=nx>response</span><span class=p>,</span> <span class=s>&quot;&lt;tr&gt;&lt;td&gt;&lt;strong&gt;request.URL.Path  &lt;/strong&gt;&lt;/td&gt;&lt;td&gt;&#39;%v&#39;&lt;/td&gt;&lt;/tr&gt;&quot;</span><span class=p>,</span> <span class=nx>request</span><span class=p>.</span><span class=nx>URL</span><span class=p>.</span><span class=nx>Path</span><span class=p>)</span>
+    <span class=nx>fmt</span><span class=p>.</span><span class=nx>Fprintf</span><span class=p>(</span><span class=nx>response</span><span class=p>,</span> <span class=s>&quot;&lt;tr&gt;&lt;td&gt;&lt;strong&gt;request.Form      &lt;/strong&gt;&lt;/td&gt;&lt;td&gt;&#39;%v&#39;&lt;/td&gt;&lt;/tr&gt;&quot;</span><span class=p>,</span> <span class=nx>request</span><span class=p>.</span><span class=nx>Form</span><span class=p>)</span>
+    <span class=nx>fmt</span><span class=p>.</span><span class=nx>Fprintf</span><span class=p>(</span><span class=nx>response</span><span class=p>,</span> <span class=s>&quot;&lt;tr&gt;&lt;td&gt;&lt;strong&gt;request.Cookies() &lt;/strong&gt;&lt;/td&gt;&lt;td&gt;&#39;%v&#39;&lt;/td&gt;&lt;/tr&gt;&quot;</span><span class=p>,</span> <span class=nx>request</span><span class=p>.</span><span class=nx>Cookies</span><span class=p>())</span>
+    <span class=nx>fmt</span><span class=p>.</span><span class=nx>Fprintf</span><span class=p>(</span><span class=nx>response</span><span class=p>,</span> <span class=s>&quot;&lt;/table&gt;&quot;</span><span class=p>)</span>
+
+<span class=p>}</span>
+
+<span class=kd>func</span> <span class=nx>DebugQueryHandler</span><span class=p>(</span><span class=nx>response</span> <span class=nx>http</span><span class=p>.</span><span class=nx>ResponseWriter</span><span class=p>,</span> <span class=nx>request</span> <span class=o>*</span><span class=nx>http</span><span class=p>.</span><span class=nx>Request</span><span class=p>){</span>
+
+    <span class=c1>// Set cookie and MIME type in the HTTP headers.</span>
+    <span class=nx>response</span><span class=p>.</span><span class=nx>Header</span><span class=p>().</span><span class=nx>Set</span><span class=p>(</span><span class=s>&quot;Content-type&quot;</span><span class=p>,</span> <span class=s>&quot;text/plain&quot;</span><span class=p>)</span>
+
+    <span class=c1>// Parse URL and POST data into the request.Form</span>
+    <span class=nx>err</span> <span class=o>:=</span> <span class=nx>request</span><span class=p>.</span><span class=nx>ParseForm</span><span class=p>()</span>
+    <span class=k>if</span> <span class=nx>err</span> <span class=o>!=</span> <span class=kc>nil</span> <span class=p>{</span>
+        <span class=nx>http</span><span class=p>.</span><span class=nx>Error</span><span class=p>(</span><span class=nx>response</span><span class=p>,</span> <span class=nx>fmt</span><span class=p>.</span><span class=nx>Sprintf</span><span class=p>(</span><span class=s>&quot;error parsing url %v&quot;</span><span class=p>,</span> <span class=nx>err</span><span class=p>),</span> <span class=mi>500</span><span class=p>)</span>
+    <span class=p>}</span>
+
+    <span class=c1>// Send debug diagnostics to client</span>
+    <span class=nx>fmt</span><span class=p>.</span><span class=nx>Fprintf</span><span class=p>(</span><span class=nx>response</span><span class=p>,</span> <span class=s>&quot; request.Method     &#39;%v&#39;\n&quot;</span><span class=p>,</span> <span class=nx>request</span><span class=p>.</span><span class=nx>Method</span><span class=p>)</span>
+    <span class=nx>fmt</span><span class=p>.</span><span class=nx>Fprintf</span><span class=p>(</span><span class=nx>response</span><span class=p>,</span> <span class=s>&quot; request.RequestURI &#39;%v&#39;\n&quot;</span><span class=p>,</span> <span class=nx>request</span><span class=p>.</span><span class=nx>RequestURI</span><span class=p>)</span>
+    <span class=nx>fmt</span><span class=p>.</span><span class=nx>Fprintf</span><span class=p>(</span><span class=nx>response</span><span class=p>,</span> <span class=s>&quot; request.URL.Path   &#39;%v&#39;\n&quot;</span><span class=p>,</span> <span class=nx>request</span><span class=p>.</span><span class=nx>URL</span><span class=p>.</span><span class=nx>Path</span><span class=p>)</span>
+    <span class=nx>fmt</span><span class=p>.</span><span class=nx>Fprintf</span><span class=p>(</span><span class=nx>response</span><span class=p>,</span> <span class=s>&quot; request.Form       &#39;%v&#39;\n&quot;</span><span class=p>,</span> <span class=nx>request</span><span class=p>.</span><span class=nx>Form</span><span class=p>)</span>
+    <span class=nx>fmt</span><span class=p>.</span><span class=nx>Fprintf</span><span class=p>(</span><span class=nx>response</span><span class=p>,</span> <span class=s>&quot; request.Cookies()  &#39;%v&#39;\n&quot;</span><span class=p>,</span> <span class=nx>request</span><span class=p>.</span><span class=nx>Cookies</span><span class=p>())</span>
+<span class=p>}</span>
+
+<span class=kd>func</span> <span class=nx>templateHandler</span><span class=p>(</span><span class=nx>w</span> <span class=nx>http</span><span class=p>.</span><span class=nx>ResponseWriter</span><span class=p>,</span> <span class=nx>r</span> <span class=o>*</span><span class=nx>http</span><span class=p>.</span><span class=nx>Request</span><span class=p>)</span> <span class=p>{</span>
+    <span class=nx>t</span><span class=p>,</span> <span class=nx>_</span> <span class=o>:=</span> <span class=nx>template</span><span class=p>.</span><span class=nx>New</span><span class=p>(</span><span class=s>&quot;form.html&quot;</span><span class=p>).</span><span class=nx>Parse</span><span class=p>(</span><span class=nx>form</span><span class=p>)</span>
+    <span class=nx>t</span><span class=p>.</span><span class=nx>Execute</span><span class=p>(</span><span class=nx>w</span><span class=p>,</span> <span class=s>&quot;&quot;</span><span class=p>)</span>
+<span class=p>}</span>
+
+<span class=kd>func</span> <span class=nx>formHandler</span><span class=p>(</span><span class=nx>w</span> <span class=nx>http</span><span class=p>.</span><span class=nx>ResponseWriter</span><span class=p>,</span> <span class=nx>r</span> <span class=o>*</span><span class=nx>http</span><span class=p>.</span><span class=nx>Request</span><span class=p>)</span> <span class=p>{</span>
+    <span class=nx>log</span><span class=p>.</span><span class=nx>Println</span><span class=p>(</span><span class=nx>r</span><span class=p>.</span><span class=nx>Form</span><span class=p>)</span>
+    <span class=nx>templateHandler</span><span class=p>(</span><span class=nx>w</span><span class=p>,</span> <span class=nx>r</span><span class=p>)</span>
+<span class=p>}</span>
+
+<span class=kd>var</span> <span class=nx>form</span> <span class=p>=</span> <span class=s>`</span>
+<span class=s>&lt;h1&gt;Debug Info (POST form)&lt;/h1&gt;</span>
+<span class=s>&lt;form method=&quot;POST&quot; action=&quot;&quot; name=&quot;frmTest&quot;&gt;</span>
+<span class=s>&lt;div&gt;</span>
+<span class=s>    &lt;label for=&quot;username&quot;&gt;User Name&lt;/label&gt;</span>
+<span class=s>    &lt;input id=&quot;username&quot; name=&quot;username&quot; placeholder=&quot;joesample, alicesmith, or bobbrown&quot; required=&quot;&quot; type=&quot;text&quot;</span>
+<span class=s>size=&quot;50&quot;&gt;</span>
+<span class=s>&lt;/div&gt;</span>
+<span class=s>&lt;div&gt;&lt;input type=&quot;submit&quot; value=&quot;Submit&quot;&gt;&lt;/div&gt;</span>
+<span class=s>&lt;/form&gt;</span>
+
+<span class=s>&lt;/form&gt;</span>
+<span class=s>`</span>
+
+
+<span class=kd>func</span> <span class=nx>main</span><span class=p>()</span> <span class=p>{</span>
+    <span class=nx>cfg</span> <span class=o>:=</span> <span class=nx>jsoncfgo</span><span class=p>.</span><span class=nx>Load</span><span class=p>(</span><span class=s>&quot;/Users/lex/dev/go/data/webserver/webserver-config.json&quot;</span><span class=p>)</span>
+
+    <span class=nx>host</span> <span class=o>:=</span> <span class=nx>cfg</span><span class=p>.</span><span class=nx>OptionalString</span><span class=p>(</span><span class=s>&quot;host&quot;</span><span class=p>,</span> <span class=s>&quot;localhost&quot;</span><span class=p>)</span>
+    <span class=nx>fmt</span><span class=p>.</span><span class=nx>Printf</span><span class=p>(</span><span class=s>&quot;host: %v\n&quot;</span><span class=p>,</span> <span class=nx>host</span><span class=p>)</span>
+
+    <span class=nx>port</span> <span class=o>:=</span> <span class=nx>cfg</span><span class=p>.</span><span class=nx>OptionalInt</span><span class=p>(</span><span class=s>&quot;port&quot;</span><span class=p>,</span> <span class=mi>8080</span><span class=p>)</span>
+    <span class=nx>fmt</span><span class=p>.</span><span class=nx>Printf</span><span class=p>(</span><span class=s>&quot;port: %v\n&quot;</span><span class=p>,</span> <span class=nx>port</span><span class=p>)</span>
+
+    <span class=nx>Dir</span> <span class=p>=</span> <span class=nx>cfg</span><span class=p>.</span><span class=nx>OptionalString</span><span class=p>(</span><span class=s>&quot;dir&quot;</span><span class=p>,</span> <span class=s>&quot;www/&quot;</span><span class=p>)</span>
+    <span class=nx>fmt</span><span class=p>.</span><span class=nx>Printf</span><span class=p>(</span><span class=s>&quot;web_dir: %v\n&quot;</span><span class=p>,</span> <span class=nx>Dir</span><span class=p>)</span>
+
+    <span class=nx>redirect_code</span> <span class=o>:=</span> <span class=nx>cfg</span><span class=p>.</span><span class=nx>OptionalInt</span><span class=p>(</span><span class=s>&quot;redirect_code&quot;</span><span class=p>,</span> <span class=mi>307</span><span class=p>)</span>
+    <span class=nx>fmt</span><span class=p>.</span><span class=nx>Printf</span><span class=p>(</span><span class=s>&quot;redirect_code: %v\n\n&quot;</span><span class=p>,</span> <span class=nx>redirect_code</span><span class=p>)</span>
+
+    <span class=nx>mux</span> <span class=o>:=</span> <span class=nx>http</span><span class=p>.</span><span class=nx>NewServeMux</span><span class=p>()</span>
+
+    <span class=nx>fileServer</span> <span class=o>:=</span> <span class=nx>http</span><span class=p>.</span><span class=nx>Dir</span><span class=p>(</span><span class=nx>Dir</span><span class=p>)</span>
+    <span class=nx>fileHandler</span> <span class=o>:=</span> <span class=nx>http</span><span class=p>.</span><span class=nx>FileServer</span><span class=p>(</span><span class=nx>fileServer</span><span class=p>)</span>
+    <span class=nx>mux</span><span class=p>.</span><span class=nx>Handle</span><span class=p>(</span><span class=s>&quot;/&quot;</span><span class=p>,</span> <span class=nx>fileHandler</span><span class=p>)</span>
+
+    <span class=nx>rdh</span> <span class=o>:=</span> <span class=nx>http</span><span class=p>.</span><span class=nx>RedirectHandler</span><span class=p>(</span><span class=s>&quot;http://example.org&quot;</span><span class=p>,</span> <span class=nx>redirect_code</span><span class=p>)</span>
+    <span class=nx>mux</span><span class=p>.</span><span class=nx>Handle</span><span class=p>(</span><span class=s>&quot;/redirect&quot;</span><span class=p>,</span> <span class=nx>rdh</span><span class=p>)</span>
+
+    <span class=nx>mux</span><span class=p>.</span><span class=nx>Handle</span><span class=p>(</span><span class=s>&quot;/help&quot;</span><span class=p>,</span> <span class=nx>http</span><span class=p>.</span><span class=nx>HandlerFunc</span><span class=p>(</span> <span class=nx>HelpHandler</span> <span class=p>))</span>
+
+    <span class=nx>mux</span><span class=p>.</span><span class=nx>Handle</span><span class=p>(</span><span class=s>&quot;/debugForm&quot;</span><span class=p>,</span> <span class=nx>http</span><span class=p>.</span><span class=nx>HandlerFunc</span><span class=p>(</span> <span class=nx>DebugFormHandler</span> <span class=p>))</span>
+    <span class=nx>mux</span><span class=p>.</span><span class=nx>Handle</span><span class=p>(</span><span class=s>&quot;/debugQuery&quot;</span><span class=p>,</span> <span class=nx>http</span><span class=p>.</span><span class=nx>HandlerFunc</span><span class=p>(</span> <span class=nx>DebugQueryHandler</span> <span class=p>))</span>
+
+    <span class=nx>mux</span><span class=p>.</span><span class=nx>Handle</span><span class=p>(</span><span class=s>&quot;/user/&quot;</span><span class=p>,</span> <span class=nx>http</span><span class=p>.</span><span class=nx>HandlerFunc</span><span class=p>(</span> <span class=nx>UserHandler</span> <span class=p>))</span>
+    <span class=nx>mux</span><span class=p>.</span><span class=nx>Handle</span><span class=p>(</span><span class=s>&quot;/ajax&quot;</span><span class=p>,</span> <span class=nx>http</span><span class=p>.</span><span class=nx>HandlerFunc</span><span class=p>(</span> <span class=nx>AjaxHandler</span> <span class=p>))</span>
+
+    <span class=nx>log</span><span class=p>.</span><span class=nx>Printf</span><span class=p>(</span><span class=s>&quot;Running on port %d\n&quot;</span><span class=p>,</span> <span class=nx>port</span><span class=p>)</span>
+
+    <span class=nx>addr</span> <span class=o>:=</span> <span class=nx>fmt</span><span class=p>.</span><span class=nx>Sprintf</span><span class=p>(</span><span class=s>&quot;%s:%d&quot;</span><span class=p>,</span> <span class=nx>host</span><span class=p>,</span> <span class=nx>port</span><span class=p>)</span>
+
+    <span class=nx>Users</span> <span class=o>:=</span> <span class=nx>jsoncfgo</span><span class=p>.</span><span class=nx>Load</span><span class=p>(</span><span class=s>&quot;/Users/lex/dev/go/data/webserver/users.json&quot;</span><span class=p>)</span>
+
+    <span class=nx>joesample</span> <span class=o>:=</span> <span class=nx>Users</span><span class=p>.</span><span class=nx>OptionalObject</span><span class=p>(</span><span class=s>&quot;joesample&quot;</span><span class=p>)</span>
+    <span class=nx>fmt</span><span class=p>.</span><span class=nx>Printf</span><span class=p>(</span><span class=s>&quot;joesample: %v\n&quot;</span><span class=p>,</span> <span class=nx>joesample</span><span class=p>)</span>
+    <span class=nx>fmt</span><span class=p>.</span><span class=nx>Printf</span><span class=p>(</span><span class=s>&quot;joesample[&#39;firstname&#39;]: %v\n&quot;</span><span class=p>,</span> <span class=nx>joesample</span><span class=p>[</span><span class=s>&quot;firstname&quot;</span><span class=p>])</span>
+    <span class=nx>fmt</span><span class=p>.</span><span class=nx>Printf</span><span class=p>(</span><span class=s>&quot;joesample[&#39;lastname&#39;]: %v\n\n&quot;</span><span class=p>,</span> <span class=nx>joesample</span><span class=p>[</span><span class=s>&quot;lastname&quot;</span><span class=p>])</span>
+
+    <span class=nx>alicesmith</span> <span class=o>:=</span> <span class=nx>Users</span><span class=p>.</span><span class=nx>OptionalObject</span><span class=p>(</span><span class=s>&quot;alicesmith&quot;</span><span class=p>)</span>
+    <span class=nx>fmt</span><span class=p>.</span><span class=nx>Printf</span><span class=p>(</span><span class=s>&quot;alicesmith: %v\n&quot;</span><span class=p>,</span> <span class=nx>alicesmith</span><span class=p>)</span>
+    <span class=nx>fmt</span><span class=p>.</span><span class=nx>Printf</span><span class=p>(</span><span class=s>&quot;alicesmith[&#39;firstname&#39;]: %v\n&quot;</span><span class=p>,</span> <span class=nx>alicesmith</span><span class=p>[</span><span class=s>&quot;firstname&quot;</span><span class=p>])</span>
+    <span class=nx>fmt</span><span class=p>.</span><span class=nx>Printf</span><span class=p>(</span><span class=s>&quot;alicesmith[&#39;lastname&#39;]: %v\n\n&quot;</span><span class=p>,</span> <span class=nx>alicesmith</span><span class=p>[</span><span class=s>&quot;lastname&quot;</span><span class=p>])</span>
+
+    <span class=nx>bobbrown</span> <span class=o>:=</span> <span class=nx>Users</span><span class=p>.</span><span class=nx>OptionalObject</span><span class=p>(</span><span class=s>&quot;bobbrown&quot;</span><span class=p>)</span>
+    <span class=nx>fmt</span><span class=p>.</span><span class=nx>Printf</span><span class=p>(</span><span class=s>&quot;bobbrown: %v\n&quot;</span><span class=p>,</span> <span class=nx>bobbrown</span><span class=p>)</span>
+    <span class=nx>fmt</span><span class=p>.</span><span class=nx>Printf</span><span class=p>(</span><span class=s>&quot;bobbrown[&#39;firstname&#39;]: %v\n&quot;</span><span class=p>,</span> <span class=nx>bobbrown</span><span class=p>[</span><span class=s>&quot;firstname&quot;</span><span class=p>])</span>
+    <span class=nx>fmt</span><span class=p>.</span><span class=nx>Printf</span><span class=p>(</span><span class=s>&quot;bobbrown[&#39;lastname&#39;]: %v\n\n&quot;</span><span class=p>,</span> <span class=nx>bobbrown</span><span class=p>[</span><span class=s>&quot;lastname&quot;</span><span class=p>])</span>
+
+    <span class=nx>AppContext</span> <span class=p>=</span> <span class=nx>go_oops</span><span class=p>.</span><span class=nx>NewSingleton</span><span class=p>()</span>
+    <span class=nx>AppContext</span><span class=p>.</span><span class=nx>Data</span><span class=p>[</span><span class=s>&quot;CookieNameForUsername&quot;</span><span class=p>]</span> <span class=p>=</span> <span class=s>&quot;testapp-username&quot;</span>
+    <span class=nx>AppContext</span><span class=p>.</span><span class=nx>Data</span><span class=p>[</span><span class=s>&quot;joesample&quot;</span><span class=p>]</span> <span class=p>=</span> <span class=nx>joesample</span>
+    <span class=nx>AppContext</span><span class=p>.</span><span class=nx>Data</span><span class=p>[</span><span class=s>&quot;alicesmith&quot;</span><span class=p>]</span> <span class=p>=</span> <span class=nx>alicesmith</span>
+    <span class=nx>AppContext</span><span class=p>.</span><span class=nx>Data</span><span class=p>[</span><span class=s>&quot;bobbrown&quot;</span><span class=p>]</span> <span class=p>=</span> <span class=nx>bobbrown</span>
+    <span class=nx>fmt</span><span class=p>.</span><span class=nx>Printf</span><span class=p>(</span><span class=s>&quot;AppContext: %v\n&quot;</span><span class=p>,</span> <span class=nx>AppContext</span><span class=p>)</span>
+    <span class=nx>fmt</span><span class=p>.</span><span class=nx>Printf</span><span class=p>(</span><span class=s>&quot;AppContext.Data[\&quot;joesample\&quot;]: %v\n&quot;</span><span class=p>,</span> <span class=nx>AppContext</span><span class=p>.</span><span class=nx>Data</span><span class=p>[</span><span class=s>&quot;joesample&quot;</span><span class=p>])</span>
+    <span class=nx>fmt</span><span class=p>.</span><span class=nx>Printf</span><span class=p>(</span><span class=s>&quot;AppContext.Data[\&quot;alicesmith\&quot;]: %v\n&quot;</span><span class=p>,</span> <span class=nx>AppContext</span><span class=p>.</span><span class=nx>Data</span><span class=p>[</span><span class=s>&quot;alicesmith&quot;</span><span class=p>])</span>
+    <span class=nx>fmt</span><span class=p>.</span><span class=nx>Printf</span><span class=p>(</span><span class=s>&quot;AppContext.Data[\&quot;bobbrown\&quot;]: %v\n\n&quot;</span><span class=p>,</span> <span class=nx>AppContext</span><span class=p>.</span><span class=nx>Data</span><span class=p>[</span><span class=s>&quot;bobbrown&quot;</span><span class=p>])</span>
+
+    <span class=nx>err</span> <span class=o>:=</span> <span class=nx>http</span><span class=p>.</span><span class=nx>ListenAndServe</span><span class=p>(</span><span class=nx>addr</span><span class=p>,</span> <span class=nx>mux</span><span class=p>)</span>
+    <span class=nx>fmt</span><span class=p>.</span><span class=nx>Println</span><span class=p>(</span><span class=nx>err</span><span class=p>.</span><span class=nx>Error</span><span class=p>())</span>
+<span class=p>}</span>
+</code></pre></div><hr><h2>Notes</h2><p>You will need to change the <strong>configPath</strong> to point to a the configuration files on your computer.</p><p>Cookies are available after a page refresh.</p><p><br></p><hr><h2>Output</h2><pre><code>
+<span style=color:red>
+2014/08/07 19:05:13 Running on port 8080
+</span>
+host: localhost
+port: 8080
+web_dir: www/
+redirect_code: 307
+
+joesample: map[firstname:joe lastname:sample]
+joesample['firstname']: joe
+joesample['lastname']: sample
+
+alicesmith: map[firstname:alice lastname:smith]
+alicesmith['firstname']: alice
+alicesmith['lastname']: smith
+
+bobbrown: map[firstname:bob lastname:brown]
+bobbrown['firstname']: bob
+bobbrown['lastname']: brown
+
+AppContext: &{map[CookieNameForUsername:testapp-username joesample:map[firstname:joe lastname:sample] alicesmith:map[firstname:alice lastname:smith] bobbrown:map[firstname:bob lastname:brown]]}
+AppContext.Data["joesample"]: map[firstname:joe lastname:sample]
+AppContext.Data["alicesmith"]: map[firstname:alice lastname:smith]
+AppContext.Data["bobbrown"]: map[firstname:bob lastname:brown]
+
+COOKIES:
+_ga: GA1.1.199573528.1406055892
+testapp-username: joesample
+
+request.Form: map[]
+
+COOKIES:
+_ga: GA1.1.199573528.1406055892
+testapp-username: joesample
+
+request.Form: map[username:[joesample]]
+cookieVal: joesample
+
+COOKIES:
+testapp-username: joesample
+_ga: GA1.1.199573528.1406055892
+testapp-username: joesample
+
+userObj: map[firstname:joe lastname:sample]
+thisUser: map[lastname:sample firstname:joe]
+json_bytes: {"api":"user","name":"joe sample"}
+
+Process finished with exit code 1
+</code></pre><hr><h2>References</h2><ul><li><a href=https://github.com/go-goodies/go_oops>Golang Object Oriented Programming Goodies</a></li><li><a href=https://github.com/l3x/jsoncfgo>jsoncfgo - A Go library for reading configuration settings from JSON files</a></li><li><a href=http://golang.org/pkg/net/http/#example_FileServer>HTTP FileServer</a></li><li><a href=https://api.jquery.com/jQuery.get>JQuery get</a></li><li><a href="http://golang.org/pkg/log/">Package log</a></li><li><a href="http://tour.golang.org/">Golang Tour</a></li><li><a href=https://github.com/l3x/golang-code-examples>Golang Code Examples</a></li></ul></section></div></div><div class=footer><div class=contact><div id=name-gravatar class=float-left><span>By Lex Sheehan</span> <span class=l3x-gravatar></span></div><div class=float-right><strong>It's Go Time!</strong></div></div></div><div class=license-notice>This work is licensed under the <a href="http://creativecommons.org/licenses/by/3.0/">Creative Commons Attribution 3.0 Unported License</a>.</div></div><script src=/golang-code-examples/scripts/scripts.db44.js></script></body></html>
