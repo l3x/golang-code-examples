@@ -342,7 +342,7 @@ port: 8080
 web_dir: www/
 redirect_code: 307
 
-joesample: map[lastname:sample firstname:joe]
+joesample: map[firstname:joe lastname:sample]
 joesample['firstname']: joe
 joesample['lastname']: sample
 
@@ -354,7 +354,7 @@ bobbrown: map[firstname:bob lastname:brown]
 bobbrown['firstname']: bob
 bobbrown['lastname']: brown
 
-AppContext: &{map[CookieNameForUsername:testapp-username joesample:map[firstname:joe lastname:sample] alicesmith:map[firstname:alice lastname:smith] bobbrown:map[firstname:bob lastname:brown]]}
+AppContext: &{map[alicesmith:map[firstname:alice lastname:smith] bobbrown:map[firstname:bob lastname:brown] CookieNameForUsername:testapp-username joesample:map[firstname:joe lastname:sample]]}
 AppContext.Data["joesample"]: map[firstname:joe lastname:sample]
 AppContext.Data["alicesmith"]: map[firstname:alice lastname:smith]
 AppContext.Data["bobbrown"]: map[firstname:bob lastname:brown]
@@ -374,7 +374,7 @@ COOKIES:
 _ga: GA1.1.199573528.1406055892
 testapp-username: joesample
 
-userObj: map[firstname:joe lastname:sample]
+userObj: map[lastname:sample firstname:joe]
 thisUser: map[firstname:joe lastname:sample]
 json_bytes: {"api":"user","name":"joe sample"}
 </code></pre><hr><h2>References</h2><ul><li><a href=https://github.com/go-goodies/go_oops>Golang Object Oriented Programming Goodies</a></li><li><a href=https://github.com/l3x/jsoncfgo>jsoncfgo - A Go library for reading configuration settings from JSON files</a></li><li><a href=http://golang.org/pkg/net/http/#example_FileServer>HTTP FileServer</a></li><li><a href=https://api.jquery.com/jQuery.get>JQuery get</a></li><li><a href="http://golang.org/pkg/log/">Package log</a></li><li><a href="http://tour.golang.org/">Golang Tour</a></li><li><a href=https://github.com/l3x/golang-code-examples>Golang Code Examples</a></li></ul></section></div></div><div class=footer><div class=contact><div id=name-gravatar class=float-left><span>By Lex Sheehan</span> <span class=l3x-gravatar></span></div><div class=float-right><strong>It's Go Time!</strong></div></div></div><div class=license-notice>This work is licensed under the <a href="http://creativecommons.org/licenses/by/3.0/">Creative Commons Attribution 3.0 Unported License</a>.</div></div><script src=/golang-code-examples/scripts/scripts.db44.js></script></body></html>
