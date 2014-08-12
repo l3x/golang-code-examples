@@ -178,12 +178,12 @@
 </code></pre></div><h5>testdata/include2.json</h5><div class=highlight><pre><code class="bash language-bash" data-lang=bash><span class=o>{</span>
   <span class=s2>&quot;key&quot;</span>: <span class=s2>&quot;value&quot;</span>
 <span class=o>}</span>
-</code></pre></div><h4>_env</h4><p>The value should be tan environment variable name.</p><p>In the following example, the result is <strong>key</strong> = &quot;one&quot; and <strong>value</strong> = &quot;true&quot;</p><div class=highlight><pre><code class="bash language-bash" data-lang=bash>os.Setenv<span class=o>(</span><span class=s2>&quot;TEST_TRUE&quot;</span>, <span class=s2>&quot;true&quot;</span><span class=o>)</span>
+</code></pre></div><h4>_env</h4><p>The value should be an environment variable name.</p><p>In the following example, the result is <strong>key</strong> = &quot;one&quot; and <strong>value</strong> = &quot;true&quot;</p><div class=highlight><pre><code class="bash language-bash" data-lang=bash>os.Setenv<span class=o>(</span><span class=s2>&quot;TEST_TRUE&quot;</span>, <span class=s2>&quot;true&quot;</span><span class=o>)</span>
 
 <span class=o>{</span>
   <span class=s2>&quot;one&quot;</span>: <span class=o>[</span><span class=s2>&quot;_env&quot;</span>, <span class=s2>&quot;${TEST_ONE}&quot;</span><span class=o>]</span>
 <span class=o>}</span>
-</code></pre></div><p>The <em>__env</em>_ key indicates to jsoncfgo that it should read the environment variable like so:</p><div class=highlight><pre><code class="go language-go" data-lang=go><span class=nx>val</span> <span class=o>:=</span> <span class=nx>os</span><span class=p>.</span><span class=nx>Getenv</span><span class=p>(</span><span class=nx>envVar</span><span class=p>)</span>
+</code></pre></div><p>The <strong>_env</strong> key indicates to jsoncfgo that it should read the environment variable like so:</p><div class=highlight><pre><code class="go language-go" data-lang=go><span class=nx>val</span> <span class=o>:=</span> <span class=nx>os</span><span class=p>.</span><span class=nx>Getenv</span><span class=p>(</span><span class=nx>envVar</span><span class=p>)</span>
 </code></pre></div><p><br></p><hr><h2>Output</h2><pre><code>
 identity: 26F5ABDA
 
