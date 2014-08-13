@@ -1,0 +1,179 @@
+<!DOCTYPE html><html><head><meta charset=utf-8><meta http-equiv=X-UA-Compatible content="IE=edge,chrome=1"><title>Embedded Adapter and Testify</title><meta name=description content="Go Golang Code Examples programming"><meta name=viewport content="width=device-width"><link rel="shortcut icon" href=/favicon.ico type=image/x-icon><link rel=icon href=/favicon.ico type=image/x-icon><link rel=stylesheet href=/golang-code-examples/styles/main.d9bf.css><script src=https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js></script><!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]--><meta name=viewport content="width=device-width, initial-scale=1, user-scalable=no"><script>(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+            (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+                m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+        })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+        ga('create', 'UA-53073815-1', 'auto');
+        ga('send', 'pageview');</script></head><body><div id=dialogoverlay class=dialogoverlay></div><div id=dialogbox class=dialogbox><div><div id=dialogboxhead class=dialogboxhead></div><div id=dialogboxbody class=dialogboxbody></div><div id=dialogboxfoot class=dialogboxfoot></div></div></div><div class=site><header><h1><a class=home-link href="/golang-code-examples">Golang Code Examples</a></h1></header><div id=banner><span id=logo></span> <a href=https://github.com/l3x/golang-code-examples class="button fork"><strong>View On GitHub</strong></a><div class=downloads><span>Downloads:</span><ul><li><a href=https://github.com/l3x/golang-code-examples/zipball/master class=button>ZIP</a></li><li><a href=https://github.com/l3x/golang-code-examples/tarball/master class=button>TAR</a></li></ul></div></div><!-- end banner --><div class=wrapper><nav><ul></ul></nav><div class=page-title><h2>Embedded Adapter and Testify</h2><p class=meta>12 Aug 2014</p></div><div class=post><section><h2>Description</h2><p>This example demonstrates how to use the <strong>testify</strong> golang testing package to test an embedded adapter pattern.</p><p>We import testify/assert as well as testify/suite.</p><p>We use the AnimalAdapterTestSuite to define some &quot;global&quot; variables that are used in each our our tests.</p><p>SetupTest assigns values to the AnimalAdapterTestSuite struct.</p><p>TestAnimals uses assert.Equal to verify that our Animal objects are working properly.</p><p>TestMultiAnimals tests the embedded adapter pattern and use of polymorphism.</p><p>adapter_common.go defines: * Animal interface, which includes the Move() function * MultiAnimal object, which includes the animals field which is a slice of interfaces * Various Animal adapters are defined that adapts the interface of each object into the Animal interface ***</p><p>*** This is the Adapter design pattern in practice, which makes otherwise incompatible objects able to work together.</p><hr><h2>Golang Features</h2><p>This golang code sample demonstrates the following go language features:</p><ul><li>iterating ranges</li><li>pointers</li><li>structs</li><li>methods</li><li>slice of interfaces</li></ul><h2>3rd Party Libraries</h2><p>This golang code sample demonstrates the following go language features:</p><ul><li>testify</li></ul><hr><h2>Code Example</h2><h3>animals_test.go</h3><div class=highlight><pre><code class="go language-go" data-lang=go><span class=kn>package</span> <span class=nx>animals</span>
+
+<span class=kn>import</span> <span class=p>(</span>
+    <span class=s>&quot;testing&quot;</span>
+    <span class=s>&quot;github.com/stretchr/testify/assert&quot;</span>
+    <span class=s>&quot;github.com/stretchr/testify/suite&quot;</span>
+<span class=p>)</span>
+
+<span class=c1>// Define the suite, and absorb the built-in basic suite functionality from testify</span>
+<span class=c1>// - including a T() method which returns the current testing context</span>
+<span class=kd>type</span> <span class=nx>AnimalAdapterTestSuite</span> <span class=kd>struct</span> <span class=p>{</span>
+    <span class=nx>suite</span><span class=p>.</span><span class=nx>Suite</span>
+    <span class=nx>VariableThatShouldStartAtFive</span> <span class=kt>int</span>
+    <span class=nx>HumanObj</span> <span class=o>*</span><span class=nx>Human</span>
+    <span class=nx>ClownfishObj</span> <span class=o>*</span><span class=nx>ClownFish</span>
+    <span class=nx>SharkObj</span> <span class=o>*</span><span class=nx>Shark</span>
+    <span class=nx>BirdObj</span> <span class=o>*</span><span class=nx>Bird</span>
+<span class=p>}</span>
+
+<span class=c1>// Make sure that VariableThatShouldStartAtFive is set to five before each test</span>
+<span class=kd>func</span> <span class=p>(</span><span class=nx>suite</span> <span class=o>*</span><span class=nx>AnimalAdapterTestSuite</span><span class=p>)</span> <span class=nx>SetupTest</span><span class=p>()</span> <span class=p>{</span>
+    <span class=nx>suite</span><span class=p>.</span><span class=nx>HumanObj</span> <span class=p>=</span> <span class=nb>new</span><span class=p>(</span><span class=nx>Human</span><span class=p>)</span>
+    <span class=nx>suite</span><span class=p>.</span><span class=nx>HumanObj</span><span class=p>.</span><span class=nx>Name</span> <span class=p>=</span> <span class=s>&quot;Dr. Philip Sherman&quot;</span>
+    <span class=nx>suite</span><span class=p>.</span><span class=nx>ClownfishObj</span> <span class=p>=</span> <span class=nb>new</span><span class=p>(</span><span class=nx>ClownFish</span><span class=p>)</span>
+    <span class=nx>suite</span><span class=p>.</span><span class=nx>ClownfishObj</span><span class=p>.</span><span class=nx>Name</span> <span class=p>=</span> <span class=s>&quot;Nemo&quot;</span>
+    <span class=nx>suite</span><span class=p>.</span><span class=nx>SharkObj</span> <span class=p>=</span> <span class=nb>new</span><span class=p>(</span><span class=nx>Shark</span><span class=p>)</span>
+    <span class=nx>suite</span><span class=p>.</span><span class=nx>SharkObj</span><span class=p>.</span><span class=nx>Name</span> <span class=p>=</span> <span class=s>&quot;Bruce&quot;</span>
+    <span class=nx>suite</span><span class=p>.</span><span class=nx>BirdObj</span> <span class=p>=</span> <span class=nb>new</span><span class=p>(</span><span class=nx>Bird</span><span class=p>)</span>
+    <span class=nx>suite</span><span class=p>.</span><span class=nx>BirdObj</span><span class=p>.</span><span class=nx>Name</span> <span class=p>=</span> <span class=s>&quot;Nigel&quot;</span>
+<span class=p>}</span>
+
+<span class=c1>// In order for &#39;go test&#39; to run this suite, we need to create a normal test function and pass our suite to suite.Run</span>
+<span class=kd>func</span> <span class=nx>TestAnimalAdapterTestSuite</span><span class=p>(</span><span class=nx>t</span> <span class=o>*</span><span class=nx>testing</span><span class=p>.</span><span class=nx>T</span><span class=p>)</span> <span class=p>{</span>
+    <span class=nx>suite</span><span class=p>.</span><span class=nx>Run</span><span class=p>(</span><span class=nx>t</span><span class=p>,</span> <span class=nb>new</span><span class=p>(</span><span class=nx>AnimalAdapterTestSuite</span><span class=p>))</span>
+<span class=p>}</span>
+
+<span class=c1>// All methods that begin with &quot;Test&quot; are run as tests within a suite.</span>
+<span class=kd>func</span> <span class=p>(</span><span class=nx>suite</span> <span class=o>*</span><span class=nx>AnimalAdapterTestSuite</span><span class=p>)</span> <span class=nx>TestAnimals</span><span class=p>()</span> <span class=p>{</span>
+
+    <span class=nx>assert</span><span class=p>.</span><span class=nx>Equal</span><span class=p>(</span><span class=nx>suite</span><span class=p>.</span><span class=nx>T</span><span class=p>(),</span> <span class=nx>suite</span><span class=p>.</span><span class=nx>HumanObj</span><span class=p>.</span><span class=nx>Name</span><span class=p>,</span> <span class=s>&quot;Dr. Philip Sherman&quot;</span><span class=p>)</span>
+    <span class=nx>suite</span><span class=p>.</span><span class=nx>HumanObj</span><span class=p>.</span><span class=nx>Move</span><span class=p>()</span>
+
+    <span class=nx>assert</span><span class=p>.</span><span class=nx>Equal</span><span class=p>(</span><span class=nx>suite</span><span class=p>.</span><span class=nx>T</span><span class=p>(),</span> <span class=nx>suite</span><span class=p>.</span><span class=nx>ClownfishObj</span><span class=p>.</span><span class=nx>Name</span><span class=p>,</span> <span class=s>&quot;Nemo&quot;</span><span class=p>)</span>
+    <span class=nx>suite</span><span class=p>.</span><span class=nx>ClownfishObj</span><span class=p>.</span><span class=nx>Swim</span><span class=p>()</span>
+
+    <span class=nx>assert</span><span class=p>.</span><span class=nx>Equal</span><span class=p>(</span><span class=nx>suite</span><span class=p>.</span><span class=nx>T</span><span class=p>(),</span> <span class=nx>suite</span><span class=p>.</span><span class=nx>SharkObj</span><span class=p>.</span><span class=nx>Name</span><span class=p>,</span> <span class=s>&quot;Bruce&quot;</span><span class=p>)</span>
+    <span class=nx>suite</span><span class=p>.</span><span class=nx>SharkObj</span><span class=p>.</span><span class=nx>Swim</span><span class=p>()</span>
+
+    <span class=nx>assert</span><span class=p>.</span><span class=nx>Equal</span><span class=p>(</span><span class=nx>suite</span><span class=p>.</span><span class=nx>T</span><span class=p>(),</span> <span class=nx>suite</span><span class=p>.</span><span class=nx>BirdObj</span><span class=p>.</span><span class=nx>Name</span><span class=p>,</span> <span class=s>&quot;Nigel&quot;</span><span class=p>)</span>
+    <span class=nx>suite</span><span class=p>.</span><span class=nx>BirdObj</span><span class=p>.</span><span class=nx>Fly</span><span class=p>()</span>
+<span class=p>}</span>
+
+<span class=c1>// Test the embedded adapter pattern and use of polymorphism</span>
+<span class=kd>func</span> <span class=p>(</span><span class=nx>suite</span> <span class=o>*</span><span class=nx>AnimalAdapterTestSuite</span><span class=p>)</span> <span class=nx>TestMultiAnimals</span><span class=p>()</span> <span class=p>{</span>
+    <span class=nx>clownFishAdapter</span> <span class=o>:=</span> <span class=nx>ClownFishAdapter</span><span class=p>{</span><span class=nx>suite</span><span class=p>.</span><span class=nx>ClownfishObj</span><span class=p>}</span>
+    <span class=nx>sharkAdapter</span> <span class=o>:=</span> <span class=nx>SharkAdapter</span><span class=p>{</span><span class=nx>suite</span><span class=p>.</span><span class=nx>SharkObj</span><span class=p>}</span>
+
+    <span class=nx>birdAdapter</span> <span class=o>:=</span> <span class=nx>BirdAdapter</span><span class=p>{</span><span class=nx>suite</span><span class=p>.</span><span class=nx>BirdObj</span><span class=p>}</span>
+    <span class=nx>assert</span><span class=p>.</span><span class=nx>Equal</span><span class=p>(</span><span class=nx>suite</span><span class=p>.</span><span class=nx>T</span><span class=p>(),</span> <span class=nx>suite</span><span class=p>.</span><span class=nx>BirdObj</span><span class=p>.</span><span class=nx>Name</span><span class=p>,</span> <span class=s>&quot;Nigel&quot;</span><span class=p>)</span>
+
+    <span class=nx>birdAdapter</span><span class=p>.</span><span class=nx>Move</span><span class=p>()</span>
+
+    <span class=nx>m</span> <span class=o>:=</span> <span class=nx>MultiAnimal</span><span class=p>{[]</span><span class=nx>Animal</span><span class=p>{</span><span class=nx>suite</span><span class=p>.</span><span class=nx>HumanObj</span><span class=p>,</span> <span class=o>&amp;</span><span class=nx>clownFishAdapter</span><span class=p>,</span> <span class=o>&amp;</span><span class=nx>sharkAdapter</span><span class=p>,</span> <span class=o>&amp;</span><span class=nx>birdAdapter</span><span class=p>}}</span>
+    <span class=nx>m</span><span class=p>.</span><span class=nx>Move</span><span class=p>()</span>
+<span class=p>}</span>
+</code></pre></div><h3>adapter_common.go</h3><div class=highlight><pre><code class="go language-go" data-lang=go><span class=kn>package</span> <span class=nx>animals</span>
+
+<span class=kd>type</span> <span class=nx>Animal</span> <span class=kd>interface</span> <span class=p>{</span>
+    <span class=nx>Move</span><span class=p>()</span>           <span class=c1>// any type that implements an area method is considered an Animal</span>
+<span class=p>}</span>
+
+<span class=kd>type</span> <span class=nx>MultiAnimal</span> <span class=kd>struct</span> <span class=p>{</span>
+    <span class=nx>animals</span> <span class=p>[]</span><span class=nx>Animal</span>  <span class=c1>// animals field is a slice of interfaces</span>
+<span class=p>}</span>
+
+<span class=kd>func</span> <span class=p>(</span><span class=nx>m</span> <span class=o>*</span><span class=nx>MultiAnimal</span><span class=p>)</span> <span class=nx>Move</span><span class=p>()</span> <span class=p>{</span>
+    <span class=k>for</span> <span class=nx>_</span><span class=p>,</span> <span class=nx>animal</span> <span class=o>:=</span> <span class=k>range</span> <span class=nx>m</span><span class=p>.</span><span class=nx>animals</span> <span class=p>{</span>  <span class=c1>// iterate through animals (&quot;_&quot; indicates that index is not used)</span>
+        <span class=nx>animal</span><span class=p>.</span><span class=nx>Move</span><span class=p>()</span>                   <span class=c1>// execute polymorphic MOve method for this Animal</span>
+    <span class=p>}</span>
+<span class=p>}</span>
+
+
+<span class=kd>type</span> <span class=nx>ClownFishAdapter</span> <span class=kd>struct</span> <span class=p>{</span>
+    <span class=o>*</span><span class=nx>ClownFish</span>
+<span class=p>}</span>
+<span class=kd>func</span> <span class=p>(</span><span class=nx>this</span> <span class=o>*</span><span class=nx>ClownFishAdapter</span><span class=p>)</span> <span class=nx>Move</span><span class=p>()</span> <span class=p>{</span>
+    <span class=nx>this</span><span class=p>.</span><span class=nx>Swim</span><span class=p>()</span>
+<span class=p>}</span>
+
+<span class=kd>type</span> <span class=nx>SharkAdapter</span> <span class=kd>struct</span> <span class=p>{</span>
+    <span class=o>*</span><span class=nx>Shark</span>
+<span class=p>}</span>
+<span class=kd>func</span> <span class=p>(</span><span class=nx>this</span> <span class=o>*</span><span class=nx>SharkAdapter</span><span class=p>)</span> <span class=nx>Move</span><span class=p>()</span> <span class=p>{</span>
+    <span class=nx>this</span><span class=p>.</span><span class=nx>Swim</span><span class=p>()</span>
+<span class=p>}</span>
+
+<span class=kd>type</span> <span class=nx>BirdAdapter</span> <span class=kd>struct</span> <span class=p>{</span>
+    <span class=o>*</span><span class=nx>Bird</span>
+<span class=p>}</span>
+<span class=kd>func</span> <span class=p>(</span><span class=nx>this</span> <span class=o>*</span><span class=nx>BirdAdapter</span><span class=p>)</span> <span class=nx>Move</span><span class=p>()</span> <span class=p>{</span>
+    <span class=nx>this</span><span class=p>.</span><span class=nx>Fly</span><span class=p>()</span>
+<span class=p>}</span>
+</code></pre></div><h3>mammal.go</h3><div class=highlight><pre><code class="go language-go" data-lang=go><span class=kn>package</span> <span class=nx>animals</span>
+
+<span class=kn>import</span> <span class=p>(</span>
+    <span class=s>&quot;fmt&quot;</span>
+<span class=p>)</span>
+
+<span class=kd>type</span> <span class=nx>Mammal</span> <span class=kd>interface</span> <span class=p>{</span> <span class=nx>Move</span> <span class=p>()</span> <span class=p>}</span>
+<span class=kd>type</span> <span class=nx>Human</span> <span class=kd>struct</span> <span class=p>{</span>
+    <span class=nx>Name</span> <span class=kt>string</span>
+<span class=p>}</span>
+<span class=kd>func</span> <span class=p>(</span><span class=nx>this</span> <span class=o>*</span><span class=nx>Human</span><span class=p>)</span> <span class=nx>Move</span><span class=p>()</span> <span class=p>{</span>
+    <span class=nx>fmt</span><span class=p>.</span><span class=nx>Println</span><span class=p>(</span><span class=nx>this</span><span class=p>.</span><span class=nx>Name</span> <span class=o>+</span> <span class=s>&quot; is walking...&quot;</span><span class=p>)</span>
+<span class=p>}</span>
+</code></pre></div><h3>fish.go</h3><div class=highlight><pre><code class="go language-go" data-lang=go><span class=kn>package</span> <span class=nx>animals</span>
+
+<span class=kn>import</span> <span class=p>(</span>
+    <span class=s>&quot;fmt&quot;</span>
+<span class=p>)</span>
+
+<span class=kd>type</span> <span class=nx>ClownFish</span> <span class=kd>struct</span> <span class=p>{</span>
+    <span class=nx>Name</span> <span class=kt>string</span>
+<span class=p>}</span>
+<span class=kd>func</span> <span class=p>(</span><span class=nx>this</span> <span class=o>*</span><span class=nx>ClownFish</span><span class=p>)</span> <span class=nx>Swim</span><span class=p>()</span> <span class=p>{</span>
+    <span class=nx>fmt</span><span class=p>.</span><span class=nx>Println</span><span class=p>(</span><span class=nx>this</span><span class=p>.</span><span class=nx>Name</span> <span class=o>+</span> <span class=s>&quot; is swimming...&quot;</span><span class=p>)</span>
+<span class=p>}</span>
+
+<span class=kd>type</span> <span class=nx>Shark</span> <span class=kd>struct</span> <span class=p>{</span>
+    <span class=nx>Name</span> <span class=kt>string</span>
+<span class=p>}</span>
+<span class=kd>func</span> <span class=p>(</span><span class=nx>this</span> <span class=o>*</span><span class=nx>Shark</span><span class=p>)</span> <span class=nx>Swim</span><span class=p>()</span> <span class=p>{</span>
+    <span class=nx>fmt</span><span class=p>.</span><span class=nx>Println</span><span class=p>(</span><span class=nx>this</span><span class=p>.</span><span class=nx>Name</span> <span class=o>+</span> <span class=s>&quot; is swimming...&quot;</span><span class=p>)</span>
+<span class=p>}</span>
+</code></pre></div><h3>bird.go</h3><div class=highlight><pre><code class="go language-go" data-lang=go><span class=kn>package</span> <span class=nx>animals</span>
+
+<span class=kn>import</span> <span class=p>(</span>
+    <span class=s>&quot;fmt&quot;</span>
+<span class=p>)</span>
+
+<span class=kd>type</span> <span class=nx>Bird</span> <span class=kd>struct</span> <span class=p>{</span>
+    <span class=nx>Name</span> <span class=kt>string</span>
+<span class=p>}</span>
+
+<span class=kd>func</span> <span class=p>(</span><span class=nx>this</span> <span class=o>*</span><span class=nx>Bird</span><span class=p>)</span> <span class=nx>Fly</span><span class=p>()</span> <span class=p>{</span>
+    <span class=nx>fmt</span><span class=p>.</span><span class=nx>Println</span><span class=p>(</span><span class=nx>this</span><span class=p>.</span><span class=nx>Name</span> <span class=o>+</span> <span class=s>&quot; is flying...&quot;</span><span class=p>)</span>
+<span class=p>}</span>
+</code></pre></div><hr><h2>Notes</h2><h2>Testify</h2><p>We use <strong>testify</strong> to help test the embedded adapter pattern.</p><p>Features include:</p><ul><li>Easy assertions</li><li>Mocking</li><li>HTTP response trapping</li><li>Testing suite interfaces and functions</li></ul><hr><h2>Output</h2><pre><code>
+<span style=color:blue>
+Testing started at 9:22 PM ...
+</span>
+=== RUN TestExampleTestSuite=== RUN TestAnimals
+Dr. Philip Sherman is walking...
+Nemo is swimming...
+Bruce is swimming...
+Nigel is flying...
+--- PASS: TestAnimals (0.00 seconds)=== RUN TestExample
+--- PASS: TestExample (0.00 seconds)=== RUN TestMultiAnimals
+Nigel is flying...
+Dr. Philip Sherman is walking...
+Nemo is swimming...
+Bruce is swimming...
+Nigel is flying...
+--- PASS: TestMultiAnimals (0.00 seconds)
+--- PASS: TestExampleTestSuite (0.00 seconds)
+PASS
+ok      github.com/go_design_pattern/adapter/animals    0.010s
+<span style=color:blue>
+Process finished with exit code 0
+</span>
+</code></pre><hr><h2>References</h2><ul><li><a href="https://github.com/stretchr/testify/">testify</a></li><li><a href=http://godoc.org/github.com/stretchr/testify>API Documentation for testify</a></li><li><a href=https://github.com/l3x/golang-code-examples>Golang Code Examples</a></li><li><a href=https://github.com/mindreframer/golang-testing-stuff>Golang Testing Stuff</a></li><li><a href=http://en.wikipedia.org/wiki/Test-driven_development>Test-Driven Development (TDD)</a></li><li><a href=https://s3.amazonaws.com/cmdrkeene-talks/test-patterns-in-go.html>Test-Patterns in Go, 2013.10</a></li><li><a href="http://tour.golang.org/">Golang Tour</a></li></ul></section></div></div><div class=footer><div class=contact><div id=name-gravatar class=float-left><span>By Lex Sheehan</span> <span class=l3x-gravatar></span></div><div class=float-right><strong>It's Go Time!</strong></div></div></div><div class=license-notice>This work is licensed under the <a href="http://creativecommons.org/licenses/by/3.0/">Creative Commons Attribution 3.0 Unported License</a>.</div></div><script src=/golang-code-examples/scripts/scripts.db44.js></script></body></html>
