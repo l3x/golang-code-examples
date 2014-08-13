@@ -153,7 +153,13 @@
 <span class=kd>func</span> <span class=p>(</span><span class=nx>this</span> <span class=o>*</span><span class=nx>Bird</span><span class=p>)</span> <span class=nx>Fly</span><span class=p>()</span> <span class=p>{</span>
     <span class=nx>fmt</span><span class=p>.</span><span class=nx>Println</span><span class=p>(</span><span class=nx>this</span><span class=p>.</span><span class=nx>Name</span> <span class=o>+</span> <span class=s>&quot; is flying...&quot;</span><span class=p>)</span>
 <span class=p>}</span>
-</code></pre></div><hr><h2>Notes</h2><h3>Testify</h3><p>We use <strong>testify</strong> to help test the embedded adapter pattern.</p><p>testify features include:</p><ul><li>Easy assertions</li><li>Mocking</li><li>HTTP response trapping</li><li>Testing suite interfaces and functions</li></ul><p>We could have used composition rather than embedding in our adapter objects, where we&#39;d use an animal field rather than embedding the animal object in our structs.</p><hr><h2>Output</h2><pre><code>
+</code></pre></div><hr><h2>Notes</h2><h3>Testify</h3><p>We use <strong>testify</strong> to help test the embedded adapter pattern.</p><p>testify features include:</p><ul><li>Easy assertions</li><li>Mocking</li><li>HTTP response trapping</li><li>Testing suite interfaces and functions</li></ul><p>We could have used composition rather than embedding in our adapter objects, where we&#39;d use an animal field rather than embedding the animal object in our structs.</p><p>So, this ...</p><div class=highlight><pre><code class="go language-go" data-lang=go><span class=kd>type</span> <span class=nx>ClownFishAdapter</span> <span class=kd>struct</span> <span class=p>{</span>
+    <span class=nx>ClownFishObj</span> <span class=o>*</span><span class=nx>ClownFish</span>
+<span class=p>}</span>
+</code></pre></div><p>... instead of this:</p><div class=highlight><pre><code class="go language-go" data-lang=go><span class=kd>type</span> <span class=nx>ClownFishAdapter</span> <span class=kd>struct</span> <span class=p>{</span>
+    <span class=o>*</span><span class=nx>ClownFish</span>
+<span class=p>}</span>
+</code></pre></div><hr><h2>Output</h2><pre><code>
 <span style=color:blue>
 Testing started at 9:22 PM ...
 </span>
