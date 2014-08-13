@@ -159,7 +159,7 @@
 </code></pre></div><p>... instead of this:</p><div class=highlight><pre><code class="go language-go" data-lang=go><span class=kd>type</span> <span class=nx>ClownFishAdapter</span> <span class=kd>struct</span> <span class=p>{</span>
     <span class=o>*</span><span class=nx>ClownFish</span>
 <span class=p>}</span>
-</code></pre></div><hr><h2>Output</h2><pre><code>
+</code></pre></div><h3>Favour object composition over class inheritance</h3><p>Go has no inheritance. However, reuse can be achieved through either embedding or composition.</p><p>Embedding is an automated form of composition.</p><p>However, embedding has some disadvantages:</p><ul><li>does not allow for method-level control over embedding</li><li>affects the public interface of objects</li><li>methods of embedded objects cannot be hidden</li></ul><p>None of those issues affect our example, so we went with the embedded form rather than with composition.</p><hr><h2>Output</h2><pre><code>
 <span style=color:blue>
 Testing started at 9:22 PM ...
 </span>
