@@ -1,0 +1,231 @@
+<!DOCTYPE html><html><head><meta charset=utf-8><meta http-equiv=X-UA-Compatible content="IE=edge,chrome=1"><title>Functional Programming</title><meta name=description content="Go Golang Code Examples programming"><meta name=viewport content="width=device-width"><link rel="shortcut icon" href=/golang-code-examples/favicon.ico type=image/x-icon><link rel=icon href=/golang-code-examples/favicon.ico type=image/x-icon><link rel=stylesheet href=/golang-code-examples/styles/main.d9bf.css><script src=https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js></script><!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]--><meta name=viewport content="width=device-width, initial-scale=1, user-scalable=no"><script>(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+            (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+                m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+        })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+        ga('create', 'UA-53073815-1', 'auto');
+        ga('send', 'pageview');</script></head><body><div id=dialogoverlay class=dialogoverlay></div><div id=dialogbox class=dialogbox><div><div id=dialogboxhead class=dialogboxhead></div><div id=dialogboxbody class=dialogboxbody></div><div id=dialogboxfoot class=dialogboxfoot></div></div></div><div class=site><header><h1><a class=home-link href="/golang-code-examples">Golang Code Examples</a></h1></header><div id=banner><span id=logo></span> <a href=https://github.com/l3x/golang-code-examples class="button fork"><strong>View On GitHub</strong></a><div class=downloads><span>Downloads:</span><ul><li><a href=https://github.com/l3x/golang-code-examples/zipball/master class=button>ZIP</a></li><li><a href=https://github.com/l3x/golang-code-examples/tarball/master class=button>TAR</a></li></ul></div></div><!-- end banner --><div class=wrapper><nav><ul></ul></nav><div class=page-title><h2>Functional Programming</h2><p class=meta>14 Aug 2014</p></div><div class=post><section><h2>Description</h2><p>This example demonstrates the use of a few standard functional idioms, map and filter.</p><p>It demonstrates how to chain/compose them in a syntactically pleasing manner.</p><p>Enums are also covered, as well as the use of the Join function from the go-goodies/go_utils package.</p><hr><h2>Golang Features</h2><p>This golang code sample demonstrates the following go language features:</p><ul><li>enum with iota</li><li>heredoc with interpolation</li><li>methods</li><li>range iteration</li><li>string slice literal initialization</li><li>first-class function</li></ul><p><br></p><h2>3rd Party Libraries</h2><p>This golang code sample uses the following third party libraries:</p><ul><li><a href=github.com/go-goodies/go_utils>go_utils</a></li></ul><hr><h2>Code Example</h2><div class=highlight><pre><code class="go language-go" data-lang=go><span class=kn>package</span> <span class=nx>main</span>
+
+<span class=kn>import</span> <span class=p>(</span>
+    <span class=s>&quot;fmt&quot;</span>
+    <span class=s>&quot;log&quot;</span>
+    <span class=s>&quot;strings&quot;</span>
+    <span class=s>&quot;errors&quot;</span>
+    <span class=nx>u</span> <span class=s>&quot;github.com/go-goodies/go_utils&quot;</span>
+<span class=p>)</span>
+<span class=c1>// enums indicating number of characters for that type of word</span>
+<span class=c1>// ex: a TINY word has 4 or fewer characters</span>
+<span class=kd>const</span> <span class=p>(</span>
+    <span class=nx>TEENINY</span> <span class=nx>WordSize</span> <span class=p>=</span> <span class=mi>1</span>
+    <span class=nx>SMALL</span>   <span class=nx>WordSize</span> <span class=p>=</span> <span class=mi>4</span> <span class=o>&lt;&lt;</span> <span class=kc>iota</span>
+    <span class=nx>MEDIUM</span>                      <span class=c1>// assigned 8 from iota</span>
+    <span class=nx>LARGE</span>                       <span class=c1>// assigned 16 from iota</span>
+    <span class=nx>XLARGE</span>  <span class=nx>WordSize</span> <span class=p>=</span> <span class=mi>32000</span>
+<span class=p>)</span>
+
+<span class=kd>type</span> <span class=nx>WordSize</span> <span class=kt>int</span>
+
+<span class=kd>func</span> <span class=p>(</span><span class=nx>ws</span> <span class=nx>WordSize</span><span class=p>)</span> <span class=nx>String</span><span class=p>()</span> <span class=kt>string</span> <span class=p>{</span>
+    <span class=kd>var</span> <span class=nx>s</span> <span class=kt>string</span>
+    <span class=k>if</span> <span class=nx>ws</span><span class=o>&amp;</span><span class=nx>TEENINY</span> <span class=o>==</span> <span class=nx>TEENINY</span> <span class=p>{</span>
+        <span class=nx>s</span> <span class=p>=</span> <span class=s>&quot;TEENINY&quot;</span>
+    <span class=p>}</span>
+    <span class=k>return</span> <span class=nx>s</span>
+<span class=p>}</span>
+
+<span class=c1>// ChainLink allows us to chain function/method calls.  It also keeps  </span>
+<span class=c1>// data internal to ChainLink, avoiding the side effect of mutated data.</span>
+<span class=kd>type</span> <span class=nx>ChainLink</span> <span class=kd>struct</span> <span class=p>{</span>
+    <span class=nx>Data</span> <span class=p>[]</span><span class=kt>string</span>
+<span class=p>}</span>
+
+<span class=kd>func</span> <span class=p>(</span><span class=nx>v</span> <span class=o>*</span><span class=nx>ChainLink</span><span class=p>)</span><span class=nx>Value</span><span class=p>()</span> <span class=p>[]</span><span class=kt>string</span> <span class=p>{</span>
+    <span class=k>return</span> <span class=nx>v</span><span class=p>.</span><span class=nx>Data</span>
+<span class=p>}</span>
+
+<span class=c1>// stringFunc is a first-class method, used as a parameter to _map</span>
+<span class=kd>type</span> <span class=nx>stringFunc</span> <span class=kd>func</span><span class=p>(</span><span class=nx>s</span> <span class=kt>string</span><span class=p>)</span> <span class=p>(</span><span class=nx>result</span> <span class=kt>string</span><span class=p>)</span>
+
+<span class=c1>// _map uses stringFunc to modify (up-case) each string in the slice</span>
+<span class=kd>func</span> <span class=p>(</span><span class=nx>v</span> <span class=o>*</span><span class=nx>ChainLink</span><span class=p>)</span><span class=nx>_map</span><span class=p>(</span><span class=nx>fn</span> <span class=nx>stringFunc</span><span class=p>)</span> <span class=o>*</span><span class=nx>ChainLink</span> <span class=p>{</span>
+    <span class=kd>var</span> <span class=nx>mapped</span> <span class=p>[]</span><span class=kt>string</span>
+    <span class=nx>orig</span> <span class=o>:=</span> <span class=o>*</span><span class=nx>v</span>
+    <span class=k>for</span> <span class=nx>_</span><span class=p>,</span> <span class=nx>s</span> <span class=o>:=</span> <span class=k>range</span> <span class=nx>orig</span><span class=p>.</span><span class=nx>Data</span> <span class=p>{</span>
+        <span class=nx>mapped</span> <span class=p>=</span> <span class=nb>append</span><span class=p>(</span><span class=nx>mapped</span><span class=p>,</span> <span class=nx>fn</span><span class=p>(</span><span class=nx>s</span><span class=p>))</span>  <span class=c1>// first-class function</span>
+    <span class=p>}</span>
+    <span class=nx>v</span><span class=p>.</span><span class=nx>Data</span> <span class=p>=</span> <span class=nx>mapped</span>
+    <span class=k>return</span> <span class=nx>v</span>
+<span class=p>}</span>
+
+<span class=c1>// _filter uses embedded logic to filter the slice of strings</span>
+<span class=c1>// Note: We could have chosen to use a first-class function</span>
+<span class=kd>func</span> <span class=p>(</span><span class=nx>v</span> <span class=o>*</span><span class=nx>ChainLink</span><span class=p>)</span><span class=nx>_filter</span><span class=p>(</span><span class=nx>max</span> <span class=nx>WordSize</span><span class=p>)</span> <span class=o>*</span><span class=nx>ChainLink</span> <span class=p>{</span>
+    <span class=nx>filtered</span> <span class=o>:=</span> <span class=p>[]</span><span class=kt>string</span><span class=p>{}</span>
+    <span class=nx>orig</span> <span class=o>:=</span> <span class=o>*</span><span class=nx>v</span>
+    <span class=k>for</span> <span class=nx>_</span><span class=p>,</span> <span class=nx>s</span> <span class=o>:=</span> <span class=k>range</span> <span class=nx>orig</span><span class=p>.</span><span class=nx>Data</span> <span class=p>{</span>
+        <span class=k>if</span> <span class=nb>len</span><span class=p>(</span><span class=nx>s</span><span class=p>)</span> <span class=o>&lt;=</span> <span class=nb>int</span><span class=p>(</span><span class=nx>max</span><span class=p>)</span> <span class=p>{</span>             <span class=c1>// embedded logic</span>
+            <span class=nx>filtered</span> <span class=p>=</span> <span class=nb>append</span><span class=p>(</span><span class=nx>filtered</span><span class=p>,</span> <span class=nx>s</span><span class=p>)</span>
+        <span class=p>}</span>
+    <span class=p>}</span>
+    <span class=nx>v</span><span class=p>.</span><span class=nx>Data</span> <span class=p>=</span> <span class=nx>filtered</span>
+    <span class=k>return</span> <span class=nx>v</span>
+<span class=p>}</span>
+
+
+<span class=kd>func</span> <span class=nx>main</span><span class=p>()</span> <span class=p>{</span>
+    <span class=nx>nums</span> <span class=o>:=</span> <span class=p>[]</span><span class=kt>string</span><span class=p>{</span>
+        <span class=s>&quot;tiny&quot;</span><span class=p>,</span>
+        <span class=s>&quot;marathon&quot;</span><span class=p>,</span>
+        <span class=s>&quot;philanthropinist&quot;</span><span class=p>,</span>
+        <span class=s>&quot;supercalifragilisticexpialidocious&quot;</span><span class=p>}</span>
+
+    <span class=nx>data</span> <span class=o>:=</span> <span class=nx>ChainLink</span><span class=p>{</span><span class=nx>nums</span><span class=p>};</span>
+    <span class=nx>orig_data</span> <span class=o>:=</span> <span class=nx>data</span><span class=p>.</span><span class=nx>Value</span><span class=p>()</span>
+    <span class=nx>fmt</span><span class=p>.</span><span class=nx>Printf</span><span class=p>(</span><span class=s>&quot;unfiltered: %#v\n&quot;</span><span class=p>,</span> <span class=nx>data</span><span class=p>.</span><span class=nx>Value</span><span class=p>())</span>
+
+    <span class=nx>filtered</span> <span class=o>:=</span> <span class=nx>data</span><span class=p>.</span><span class=nx>_filter</span><span class=p>(</span><span class=nx>MEDIUM</span><span class=p>)</span>
+    <span class=nx>fmt</span><span class=p>.</span><span class=nx>Printf</span><span class=p>(</span><span class=s>&quot;filtered: %#v\n&quot;</span><span class=p>,</span> <span class=nx>filtered</span><span class=p>)</span>
+
+    <span class=nx>fmt</span><span class=p>.</span><span class=nx>Printf</span><span class=p>(</span><span class=s>&quot;filtered and mapped (MEDIUM sized words): %#v\n&quot;</span><span class=p>,</span>
+        <span class=nx>filtered</span><span class=p>.</span><span class=nx>_map</span><span class=p>(</span><span class=nx>strings</span><span class=p>.</span><span class=nx>ToUpper</span><span class=p>).</span><span class=nx>Value</span><span class=p>())</span>
+
+    <span class=nx>data</span> <span class=p>=</span> <span class=nx>ChainLink</span><span class=p>{</span><span class=nx>nums</span><span class=p>}</span>
+    <span class=nx>fmt</span><span class=p>.</span><span class=nx>Printf</span><span class=p>(</span><span class=s>&quot;filtered and mapped (MEDIUM sized words): %#v\n&quot;</span><span class=p>,</span>
+        <span class=nx>data</span><span class=p>.</span><span class=nx>_filter</span><span class=p>(</span><span class=nx>MEDIUM</span><span class=p>).</span><span class=nx>_map</span><span class=p>(</span><span class=nx>strings</span><span class=p>.</span><span class=nx>ToUpper</span><span class=p>).</span><span class=nx>Value</span><span class=p>())</span>
+
+    <span class=nx>data</span> <span class=p>=</span> <span class=nx>ChainLink</span><span class=p>{</span><span class=nx>nums</span><span class=p>}</span>
+    <span class=nx>fmt</span><span class=p>.</span><span class=nx>Printf</span><span class=p>(</span><span class=s>&quot;filtered twice and mapped (SMALL sized words): %#v\n&quot;</span><span class=p>,</span>
+        <span class=nx>data</span><span class=p>.</span><span class=nx>_filter</span><span class=p>(</span><span class=nx>MEDIUM</span><span class=p>).</span><span class=nx>_map</span><span class=p>(</span><span class=nx>strings</span><span class=p>.</span><span class=nx>ToUpper</span><span class=p>).</span><span class=nx>_filter</span><span class=p>(</span><span class=nx>SMALL</span><span class=p>).</span><span class=nx>Value</span><span class=p>())</span>
+
+    <span class=nx>data</span> <span class=p>=</span> <span class=nx>ChainLink</span><span class=p>{</span><span class=nx>nums</span><span class=p>}</span>
+    <span class=nx>val</span> <span class=o>:=</span> <span class=nx>data</span><span class=p>.</span><span class=nx>_map</span><span class=p>(</span><span class=nx>strings</span><span class=p>.</span><span class=nx>ToUpper</span><span class=p>).</span><span class=nx>_filter</span><span class=p>(</span><span class=nx>XLARGE</span><span class=p>).</span><span class=nx>Value</span><span class=p>()</span>
+    <span class=nx>fmt</span><span class=p>.</span><span class=nx>Printf</span><span class=p>(</span><span class=s>&quot;mapped and filtered (XLARGE sized words): %#v\n&quot;</span><span class=p>,</span> <span class=nx>val</span><span class=p>)</span>
+
+    <span class=c1>// heredoc with interpoloation</span>
+    <span class=nx>constants</span> <span class=o>:=</span> <span class=s>`</span>
+<span class=s>** Constants ***</span>
+<span class=s>SMALL: %d</span>
+<span class=s>MEDIUM: %d</span>
+<span class=s>LARGE: %d</span>
+<span class=s>XLARGE: %d</span>
+<span class=s>`</span>
+    <span class=nx>fmt</span><span class=p>.</span><span class=nx>Printf</span><span class=p>(</span><span class=nx>constants</span><span class=p>,</span> <span class=nx>SMALL</span><span class=p>,</span> <span class=nx>MEDIUM</span><span class=p>,</span> <span class=nx>LARGE</span><span class=p>,</span> <span class=nx>XLARGE</span><span class=p>)</span>
+    <span class=nx>fmt</span><span class=p>.</span><span class=nx>Printf</span><span class=p>(</span><span class=s>&quot;TEENINY: %s\n\n&quot;</span><span class=p>,</span> <span class=nx>TEENINY</span><span class=p>)</span>
+
+    <span class=nx>fmt</span><span class=p>.</span><span class=nx>Printf</span><span class=p>(</span><span class=s>&quot;Join(nums, \&quot;|\&quot;)     : %v\n&quot;</span><span class=p>,</span> <span class=nx>u</span><span class=p>.</span><span class=nx>Join</span><span class=p>(</span><span class=nx>nums</span><span class=p>,</span> <span class=s>&quot;|&quot;</span><span class=p>))</span>
+    <span class=nx>fmt</span><span class=p>.</span><span class=nx>Printf</span><span class=p>(</span><span class=s>&quot;Join(orig_data, \&quot;|\&quot;): %v\n&quot;</span><span class=p>,</span> <span class=nx>u</span><span class=p>.</span><span class=nx>Join</span><span class=p>(</span><span class=nx>orig_data</span><span class=p>,</span> <span class=s>&quot;|&quot;</span><span class=p>))</span>
+    <span class=nx>fmt</span><span class=p>.</span><span class=nx>Printf</span><span class=p>(</span><span class=s>&quot;Join(data, \&quot;|\&quot;)     : %v\n\n&quot;</span><span class=p>,</span> <span class=nx>u</span><span class=p>.</span><span class=nx>Join</span><span class=p>(</span><span class=nx>data</span><span class=p>.</span><span class=nx>Value</span><span class=p>(),</span> <span class=s>&quot;|&quot;</span><span class=p>))</span>
+
+    <span class=k>if</span> <span class=nx>u</span><span class=p>.</span><span class=nx>Join</span><span class=p>(</span><span class=nx>nums</span><span class=p>,</span> <span class=s>&quot;|&quot;</span><span class=p>)</span> <span class=o>==</span> <span class=nx>u</span><span class=p>.</span><span class=nx>Join</span><span class=p>(</span><span class=nx>orig_data</span><span class=p>,</span> <span class=s>&quot;|&quot;</span><span class=p>)</span> <span class=p>{</span>
+        <span class=nx>fmt</span><span class=p>.</span><span class=nx>Println</span><span class=p>(</span><span class=s>&quot;No Side Effects!&quot;</span><span class=p>)</span>
+    <span class=p>}</span> <span class=k>else</span> <span class=p>{</span>
+        <span class=nx>log</span><span class=p>.</span><span class=nx>Print</span><span class=p>(</span><span class=nx>errors</span><span class=p>.</span><span class=nx>New</span><span class=p>(</span><span class=s>&quot;WARNING - Side Effects!&quot;</span><span class=p>))</span>
+
+    <span class=p>}</span>
+<span class=p>}</span>
+</code></pre></div><hr><h2>Notes - FP</h2><h3>Functional Programming Defined</h3><p><strong>Functional programming</strong> (FP) is a programming paradigm, a style of building the structure and elements of computer programs, that treats computation as the evaluation of mathematical functions and avoids state and mutable data. It is a declarative programming paradigm, which means programming is done with expressions. In functional code, the output value of a function depends only on the arguments that are input to the function, so calling a function f twice with the same value for an argument x will produce the same result f(x) both times. Eliminating side effects, i.e. changes in state that do not depend on the function inputs, can make it much easier to understand and predict the behavior of a program, which is one of the key motivations for the development of functional programming.</p><p>In contrast, <strong>imperative programming</strong> changes state with commands in the source language, the most simple example is the assignment. Functions do exist, not in the mathematical sense, but in the sense of subroutine. They can have side effects that may change the value of program state. Functions without return value therefore make sense. Because of this, they lack referential transparency, i.e. the same language expression can result in different values at different times depending on the state of the executing program.</p><p><br></p><h3>Functional Programming Features</h3><h4>Separation of Concerns</h4><p>FP provides for separation-of-concerns by emphasizing function composition, where smaller, simpler functions are combined to build more complicated ones.</p><p>In the code snippet below from this example, we combine the <strong>_filter</strong> and <strong>_map</strong> functions to perform both actions on the data, that is kept safe in the running function call stack.</p><p>When we want the result of all the actions performed by all the chained functions we call the <strong>Value</strong> method.</p><div class=highlight><pre><code class="go language-go" data-lang=go><span class=nx>data</span><span class=p>.</span><span class=nx>_filter</span><span class=p>(</span><span class=nx>MEDIUM</span><span class=p>).</span><span class=nx>_map</span><span class=p>(</span><span class=nx>strings</span><span class=p>.</span><span class=nx>ToUpper</span><span class=p>).</span><span class=nx>Value</span><span class=p>()</span>
+</code></pre></div><p>The ability to easily compose functions encourages factoring (breaking apart) functions for maintainability and code reuse.</p><h4>No State</h4><p>FP brings you to the holy grail of modularity: no side effects at all. You just have your f(x) = y.</p><p>Put x in, get y out. No changes to x or anything else.</p><p>FP makes you stop thinking about state, and start thinking in terms of values.</p><p>All of your functions simply receive values and produce new values.</p><p>FP does not need to protect the shared state of a variable, because the value is fixed.</p><p>This in turn avoids the majority of the hoop jumping that imperative languages go through to implement an algorithm across processors or machines to protect state.</p><p>Having no state means that your application is modular.</p><h4>Modularity</h4><p>There are no dependencies where one part/object of your app mutates a piece of data that is used by another part/object of your app, which then creates an inconsistent state (and bugs).</p><p>In FP, rather than mutating the state of objects, we simply return a new object with the changes we want.</p><p>FP makes heavy use of stacks and recursion.</p><h4>Lazy Evaluation</h4><p>Lazy evaluation improves application performance.</p><p>It allows you to define a variable and only load it in memory and only use it when needed.</p><p>Golang provides <strong>closures</strong> when and be leveraged to perform lazy evaluation, but we don&#39;t cover that in this example.</p><p><strong>Sync&#39;s</strong> can be included to avoid re-evalution.</p><p><strong>Futures</strong> can be used to compute a value before you need to actually use the value.</p><p><strong>Lazy evaluation</strong> of function parameters can be emulated using Go <strong>channels</strong> and <strong>goroutines</strong> to implement high-level <strong>thunks</strong>, but again we don&#39;t cover that in this example.</p><h4>Closures</h4><p>Go supports closures via anonymous functions.</p><p><strong>Anonymous functions</strong> are useful when you want to define a function inline without having to name it.</p><p>A closure is associated with the environment when they are defined.</p><p>Full closures can ensure <strong>referential transparency</strong>.</p><p>The following example comes from <a href=https://gobyexample.com/closures>Go by Example: Closures</a></p><div class=highlight><pre><code class="go language-go" data-lang=go><span class=kn>package</span> <span class=nx>main</span>
+<span class=kn>import</span> <span class=s>&quot;fmt&quot;</span>
+
+<span class=c1>// intSeq returns another function, which we define anonymously in the body of intSeq. </span>
+<span class=c1>// The returned function closes over the variable i to form a closure.</span>
+<span class=kd>func</span> <span class=nx>intSeq</span><span class=p>()</span> <span class=kd>func</span><span class=p>()</span> <span class=kt>int</span> <span class=p>{</span>
+    <span class=nx>i</span> <span class=o>:=</span> <span class=mi>0</span>
+    <span class=k>return</span> <span class=kd>func</span><span class=p>()</span> <span class=kt>int</span> <span class=p>{</span>  <span class=c1>// anonymous function</span>
+        <span class=nx>i</span> <span class=o>+=</span> <span class=mi>1</span>
+        <span class=k>return</span> <span class=nx>i</span>
+    <span class=p>}</span>
+<span class=p>}</span>
+<span class=kd>func</span> <span class=nx>main</span><span class=p>()</span> <span class=p>{</span>
+    <span class=c1>// We call intSeq, assigning the result (a function) to nextInt. </span>
+    <span class=c1>// This function value captures its own i value, </span>
+    <span class=c1>/// which will be updated each time we call nextInt.</span>
+    <span class=nx>nextInt</span> <span class=o>:=</span> <span class=nx>intSeq</span><span class=p>()</span>
+    <span class=nx>fmt</span><span class=p>.</span><span class=nx>Println</span><span class=p>(</span><span class=nx>nextInt</span><span class=p>())</span>  <span class=c1>// 1</span>
+    <span class=nx>fmt</span><span class=p>.</span><span class=nx>Println</span><span class=p>(</span><span class=nx>nextInt</span><span class=p>())</span>  <span class=c1>// 2</span>
+    <span class=nx>fmt</span><span class=p>.</span><span class=nx>Println</span><span class=p>(</span><span class=nx>nextInt</span><span class=p>())</span>  <span class=c1>// 3</span>
+
+    <span class=c1>// Create a new closure to prove that state is unique to that particular function.</span>
+    <span class=nx>newInts</span> <span class=o>:=</span> <span class=nx>intSeq</span><span class=p>()</span>
+    <span class=nx>fmt</span><span class=p>.</span><span class=nx>Println</span><span class=p>(</span><span class=nx>newInts</span><span class=p>())</span>  <span class=c1>// 1</span>
+<span class=p>}</span>
+</code></pre></div><div class=highlight><pre><code class="text language-text" data-lang=text>$ go run closures.go
+1
+2
+3
+1
+</code></pre></div><h4>Recursion</h4><p>Go supports recursive functions. Here’s a classic factorial example.</p><p>The following example comes from <a href=https://gobyexample.com/recursion>Go by Example: Recursion</a></p><div class=highlight><pre><code class="go language-go" data-lang=go><span class=kn>package</span> <span class=nx>main</span>
+<span class=kn>import</span> <span class=s>&quot;fmt&quot;</span>
+
+<span class=c1>//This fact function calls itself until it reaches the base case of fact(0).</span>
+<span class=kd>func</span> <span class=nx>fact</span><span class=p>(</span><span class=nx>n</span> <span class=kt>int</span><span class=p>)</span> <span class=kt>int</span> <span class=p>{</span>
+    <span class=k>if</span> <span class=nx>n</span> <span class=o>==</span> <span class=mi>0</span> <span class=p>{</span>
+        <span class=k>return</span> <span class=mi>1</span>
+    <span class=p>}</span>
+    <span class=k>return</span> <span class=nx>n</span> <span class=o>*</span> <span class=nx>fact</span><span class=p>(</span><span class=nx>n</span><span class=o>-</span><span class=mi>1</span><span class=p>)</span>
+<span class=p>}</span>
+<span class=kd>func</span> <span class=nx>main</span><span class=p>()</span> <span class=p>{</span>
+    <span class=nx>fmt</span><span class=p>.</span><span class=nx>Println</span><span class=p>(</span><span class=nx>fact</span><span class=p>(</span><span class=mi>7</span><span class=p>))</span>
+<span class=p>}</span>
+</code></pre></div><div class=highlight><pre><code class="text language-text" data-lang=text>$ go run recursion.go 
+5040
+</code></pre></div><h4>No ReAssignment Statements</h4><p>When a variable X is created, it is given an initial value Y; Variable X is never subsequently modified.</p><p>So, in FP, we can be sure that each occurence of X denotes the same value of Y.</p><h4>Execution Order</h4><p>Implicit programming is procedural and uses state for synchronization.</p><div class=highlight><pre><code class="go language-go" data-lang=go><span class=nx>_filter</span><span class=p>(</span><span class=nx>MEDIUM</span><span class=p>);</span> <span class=nx>_map</span><span class=p>(</span><span class=nx>strings</span><span class=p>.</span><span class=nx>ToUpper</span><span class=p>)</span>
+</code></pre></div><p>In this example, _filter runs before _map; Possibly because _filter sets up some data that _map needs.</p><p>FP uses chaining of function calls:</p><div class=highlight><pre><code class="go language-go" data-lang=go><span class=nx>data</span><span class=p>.</span><span class=nx>_filter</span><span class=p>(</span><span class=nx>MEDIUM</span><span class=p>).</span><span class=nx>_map</span><span class=p>(</span><span class=nx>strings</span><span class=p>.</span><span class=nx>ToUpper</span><span class=p>)</span>
+</code></pre></div><p>In stateless programming, the order of execution matters only if the output of the first function called is needed as an input for the subsequent function.</p><p>In our example, the order does not matter, other than in CPU cycles required.</p><div class=highlight><pre><code class="go language-go" data-lang=go>    <span class=nx>data</span> <span class=p>=</span> <span class=nx>ChainLink</span><span class=p>{</span><span class=nx>nums</span><span class=p>}</span>
+    <span class=nx>fmt</span><span class=p>.</span><span class=nx>Printf</span><span class=p>(</span><span class=s>&quot;filtered and mapped (MEDIUM sized words): %#v\n&quot;</span><span class=p>,</span>
+        <span class=nx>data</span><span class=p>.</span><span class=nx>_filter</span><span class=p>(</span><span class=nx>MEDIUM</span><span class=p>).</span><span class=nx>_map</span><span class=p>(</span><span class=nx>strings</span><span class=p>.</span><span class=nx>ToUpper</span><span class=p>).</span><span class=nx>Value</span><span class=p>())</span>
+
+    <span class=nx>data</span> <span class=p>=</span> <span class=nx>ChainLink</span><span class=p>{</span><span class=nx>nums</span><span class=p>}</span>
+    <span class=nx>fmt</span><span class=p>.</span><span class=nx>Printf</span><span class=p>(</span><span class=s>&quot;mapped and filtered (MEDIUM sized words): %#v\n&quot;</span><span class=p>,</span>
+        <span class=nx>data</span><span class=p>.</span><span class=nx>_map</span><span class=p>(</span><span class=nx>strings</span><span class=p>.</span><span class=nx>ToUpper</span><span class=p>).</span><span class=nx>_filter</span><span class=p>(</span><span class=nx>MEDIUM</span><span class=p>).</span><span class=nx>Value</span><span class=p>())</span>
+
+  <span class=c1>// OUTPUT (same for both)</span>
+  <span class=c1>// filtered and mapped (MEDIUM sized words): []string{&quot;TINY&quot;, &quot;MARATHON&quot;, &quot;PHILANTHROPINIST&quot;}     </span>
+</code></pre></div><h4>Referential Transparency</h4><p>In FP, referential transparency means that given a function and an input value, you will always receive the same output.</p><p>There is no external state used in the function.</p><p><strong>_filter</strong> is an example of a referentially transparent function:</p><div class=highlight><pre><code class="go language-go" data-lang=go>    <span class=nx>filtered</span> <span class=o>:=</span> <span class=nx>data</span><span class=p>.</span><span class=nx>_filter</span><span class=p>(</span><span class=nx>MEDIUM</span><span class=p>)</span>
+    <span class=nx>fmt</span><span class=p>.</span><span class=nx>Printf</span><span class=p>(</span><span class=s>&quot;filtered (MEDIUM sized words): %#v\n&quot;</span><span class=p>,</span> <span class=nx>filtered</span><span class=p>)</span>
+
+    <span class=nx>fmt</span><span class=p>.</span><span class=nx>Printf</span><span class=p>(</span><span class=s>&quot;filtered and mapped (MEDIUM sized words): %#v\n&quot;</span><span class=p>,</span>
+        <span class=nx>filtered</span><span class=p>.</span><span class=nx>_map</span><span class=p>(</span><span class=nx>strings</span><span class=p>.</span><span class=nx>ToUpper</span><span class=p>).</span><span class=nx>Value</span><span class=p>())</span>
+
+    <span class=nx>data</span> <span class=p>=</span> <span class=nx>ChainLink</span><span class=p>{</span><span class=nx>nums</span><span class=p>}</span>
+    <span class=nx>fmt</span><span class=p>.</span><span class=nx>Printf</span><span class=p>(</span><span class=s>&quot;filtered and mapped (MEDIUM sized words): %#v\n&quot;</span><span class=p>,</span>
+        <span class=nx>data</span><span class=p>.</span><span class=nx>_filter</span><span class=p>(</span><span class=nx>MEDIUM</span><span class=p>).</span><span class=nx>_map</span><span class=p>(</span><span class=nx>strings</span><span class=p>.</span><span class=nx>ToUpper</span><span class=p>).</span><span class=nx>Value</span><span class=p>())</span>
+
+  <span class=c1>// OUTPUT (same for both)</span>
+  <span class=c1>// filtered and mapped (MEDIUM sized words): []string{&quot;TINY&quot;, &quot;MARATHON&quot;, &quot;PHILANTHROPINIST&quot;}</span>
+</code></pre></div><p>Given referential transparency, we can manipulate FP function calls like components in an algebraic expression.</p><p>So, we can assign <code>data._filter(MEDIUM)</code> to the variable <strong>filtered</strong> and either use that variable or explicitly execute <code>data._filter(MEDIUM)</code> and get the same results each time.</p><h4>Higher Order Functions</h4><p>First-class functions are first-class citizens that can be:</p><ul><li>named by a variable</li><li>used as parameter</li><li>returned as a result</li><li>stored in any kind of data structure</li></ul><p><strong>Currying</strong> allows functions to yield new functions as their return value.</p><h3>Functional Programming in Go</h3><p>Go supports first class functions, higher-order functions, user-defined function types, function literals, closures, and multiple return values.</p><p>Go allows you to choose to implement your solutions using functional programming techniques.</p><p>Go does not go out if its way to encourage you to do so, but as you can see in this example, it&#39;s not difficult.</p><h3>High Order Functions and Chaining in this Example</h3><p>A Golang first-class function, <strong>stringFunc</strong>, is used as input to the <strong>_filter</strong> method, which uses that function&#39;s logic to perform it&#39;s filtering of data.</p><p>Each method (<strong>_map</strong>, <strong>_filter</strong>) is linked to a ChainLink struct.</p><p>The <strong>ChainLink</strong> struct has a single field, <strong>Data</strong>, whose value can be modified as the chain of calls progress.</p><p>The ChainLink struct has one method, <strong>Value</strong>, that is used to extract the current value of it&#39;s Data field.</p><p><br></p><h2>Notes - Enum</h2><p>This example also demonstrates the following usage of Go enums:</p><div class=highlight><pre><code class="go language-go" data-lang=go><span class=kd>const</span> <span class=p>(</span>
+    <span class=nx>TEENINY</span> <span class=nx>WordSize</span> <span class=p>=</span> <span class=mi>1</span>
+    <span class=nx>SMALL</span>   <span class=nx>WordSize</span> <span class=p>=</span> <span class=mi>4</span> <span class=o>&lt;&lt;</span> <span class=kc>iota</span>
+    <span class=nx>MEDIUM</span>                      <span class=c1>// assigned 8 from iota</span>
+    <span class=nx>LARGE</span>                       <span class=c1>// assigned 16 from iota</span>
+    <span class=nx>XLARGE</span>  <span class=nx>WordSize</span> <span class=p>=</span> <span class=mi>32000</span>
+<span class=p>)</span>
+</code></pre></div><p>An enum consisting of constants (<strong>TEENINY, SMALL, MEDIUM, LARGE, XLARGE</strong>) is created to indicate the number of chararacters for that type of word, e.g., a SMALL word has 4 or fewer characters.</p><p>The <strong>WordSize</strong> type is used in the definition of the constants.</p><p>Go&#39;s <strong>iota</strong> identifier is used in const declarations to very concisely define the related WordSize constants, simplifying the definitions of those incrementing numbers; It is given an initial value of 4. So, each subsequent constant in the enum is incremented by 4.</p><p>The ability to attach a method such as <strong>String</strong> to any user-defined type makes it possible for arbitrary values to format themselves automatically for printing. Although you&#39;ll see it most often applied to structs, this technique is also useful for scalar types such as floating-point types like ByteSize.</p><p>The <strong>String</strong> method linked to the <strong>WordSize</strong> struct causes the text &quot;TEENINY&quot; to be printed instead of the integer 0.</p><p><br></p><h2>Notes - go-goodies</h2><p>We use the Join function from go-goodies/go_utils to verify that the</p><div class=highlight><pre><code class="go language-go" data-lang=go>    <span class=k>if</span> <span class=nx>u</span><span class=p>.</span><span class=nx>Join</span><span class=p>(</span><span class=nx>nums</span><span class=p>,</span> <span class=s>&quot;|&quot;</span><span class=p>)</span> <span class=o>==</span> <span class=nx>u</span><span class=p>.</span><span class=nx>Join</span><span class=p>(</span><span class=nx>nums_orig_state</span><span class=p>,</span> <span class=s>&quot;|&quot;</span><span class=p>)</span> <span class=p>{</span>
+        <span class=nx>fmt</span><span class=p>.</span><span class=nx>Println</span><span class=p>(</span><span class=s>&quot;No Side Effects!&quot;</span><span class=p>)</span>
+    <span class=p>.</span> <span class=p>.</span> <span class=p>.</span>
+</code></pre></div><hr><h2>Output</h2><pre><code>
+unfiltered: []string{"tiny", "marathon", "philanthropinist", "supercalifragilisticexpialidocious"}
+filtered: &main.ChainLink{Data:[]string{"tiny", "marathon", "philanthropinist"}}
+filtered and mapped (MEDIUM sized words): []string{"TINY", "MARATHON", "PHILANTHROPINIST"}
+filtered and mapped (MEDIUM sized words): []string{"TINY", "MARATHON", "PHILANTHROPINIST"}
+filtered twice and mapped (SMALL sized words): []string{"TINY", "MARATHON"}
+mapped and filtered (XLARGE sized words): []string{"TINY", "MARATHON", "PHILANTHROPINIST", "SUPERCALIFRAGILISTICEXPIALIDOCIOUS"}
+
+** Constants ***
+SMALL: 8
+MEDIUM: 16
+LARGE: 32
+XLARGE: 32000
+TEENINY: TEENINY
+
+Join(nums, "|")     : tiny|marathon|philanthropinist|supercalifragilisticexpialidocious
+Join(orig_data, "|"): tiny|marathon|philanthropinist|supercalifragilisticexpialidocious
+Join(data, "|")     : TINY|MARATHON|PHILANTHROPINIST|SUPERCALIFRAGILISTICEXPIALIDOCIOUS
+
+No Side Effects!
+<span style=color:blue>
+Process finished with exit code 0
+</span>
+</code></pre><hr><h2>Conclusion</h2><p>Go is expressive, concise, clean, and efficient. Its concurrency mechanisms make it easy to write programs that get the most out of multicore and networked machines, while its novel type system enables flexible and modular program construction. Go compiles quickly to machine code yet has the convenience of garbage collection and the power of run-time reflection. It&#39;s a fast, statically typed, compiled language that feels like a dynamically typed, interpreted language.</p><p>So, every time that I think, &quot;There is are no &#39;objects&#39; in Golang. Where are the objects?&quot; ... or &quot;Where are the &#39;generics&#39;?&quot; ... or &quot;Where are the built-in functional programming idioms?&quot;, Go provides a better way of doing what I want to do.</p><hr><h2>References</h2><ul><li><a href="http://golang.org/doc/codewalk/functions/">First-Class Functions in Go</a></li><li><a href=http://golang.org/doc/go_spec.html#Iota>iota identifier</a></li><li><a href="http://golang.org/pkg/errors/">errors</a></li><li><a href=https://github.com/l3x/golang-code-examples>Golang Code Examples</a></li><li><a href=http://en.wikipedia.org/wiki/Function_composition_(computer_science>Function composition</a>)</li><li><a href="https://golang.org/doc/">The Go Programming Language</a></li><li><a href=http://en.wikipedia.org/wiki/Test-driven_development>Test-Driven Development (TDD)</a></li><li><a href=https://s3.amazonaws.com/cmdrkeene-talks/test-patterns-in-go.html>Test-Patterns in Go, 2013.10</a></li><li><a href="http://tour.golang.org/">Golang Tour</a></li></ul></section></div></div><div class=footer><div class=contact><div id=name-gravatar class=float-left><span>By Lex Sheehan</span> <span class=l3x-gravatar></span></div><div class=float-right><strong>It's Go Time!</strong></div></div></div><div class=license-notice>This work is licensed under the <a href="http://creativecommons.org/licenses/by/3.0/">Creative Commons Attribution 3.0 Unported License</a>.</div></div><script src=/golang-code-examples/scripts/scripts.db44.js></script></body></html>
