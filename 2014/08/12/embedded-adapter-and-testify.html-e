@@ -18,14 +18,13 @@
 <span class=c1>// - including a T() method which returns the current testing context</span>
 <span class=kd>type</span> <span class=nx>AnimalAdapterTestSuite</span> <span class=kd>struct</span> <span class=p>{</span>
     <span class=nx>suite</span><span class=p>.</span><span class=nx>Suite</span>
-    <span class=nx>VariableThatShouldStartAtFive</span> <span class=kt>int</span>
     <span class=nx>HumanObj</span> <span class=o>*</span><span class=nx>Human</span>
     <span class=nx>ClownfishObj</span> <span class=o>*</span><span class=nx>ClownFish</span>
     <span class=nx>SharkObj</span> <span class=o>*</span><span class=nx>Shark</span>
     <span class=nx>BirdObj</span> <span class=o>*</span><span class=nx>Bird</span>
 <span class=p>}</span>
 
-<span class=c1>// Make sure that VariableThatShouldStartAtFive is set to five before each test</span>
+<span class=c1>// Make sure that AnimalAdapterTestSuite struct data is set before each test</span>
 <span class=kd>func</span> <span class=p>(</span><span class=nx>suite</span> <span class=o>*</span><span class=nx>AnimalAdapterTestSuite</span><span class=p>)</span> <span class=nx>SetupTest</span><span class=p>()</span> <span class=p>{</span>
     <span class=nx>suite</span><span class=p>.</span><span class=nx>HumanObj</span> <span class=p>=</span> <span class=nb>new</span><span class=p>(</span><span class=nx>Human</span><span class=p>)</span>
     <span class=nx>suite</span><span class=p>.</span><span class=nx>HumanObj</span><span class=p>.</span><span class=nx>Name</span> <span class=p>=</span> <span class=s>&quot;Dr. Philip Sherman&quot;</span>
