@@ -6,7 +6,7 @@
         })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
 
         ga('create', 'UA-53073815-1', 'auto');
-        ga('send', 'pageview');</script></head><body><div id=dialogoverlay class=dialogoverlay></div><div id=dialogbox class=dialogbox><div><div id=dialogboxhead class=dialogboxhead></div><div id=dialogboxbody class=dialogboxbody></div><div id=dialogboxfoot class=dialogboxfoot></div></div></div><div class=site><header><h1><a class=home-link href="/golang-code-examples">Golang Code Examples</a></h1></header><div id=banner><span id=logo></span> <a href=https://github.com/l3x/golang-code-examples class="button fork"><strong>View On GitHub</strong></a><div class=downloads><span>Downloads:</span><ul><li><a href=https://github.com/l3x/golang-code-examples/zipball/master class=button>ZIP</a></li><li><a href=https://github.com/l3x/golang-code-examples/tarball/master class=button>TAR</a></li></ul></div></div><!-- end banner --><div class=wrapper><nav><ul></ul></nav><div class=page-title><h2>Invoicing USD and PrettyTest</h2><p class=meta>21 Aug 2014</p></div><div class=post><section><h2>Description</h2><p>This example demonstrates how to use the <strong>prettytest</strong> golang testing package to test an invoice object that uses the go_currency package.</p><hr><h2>Golang Features</h2><p>This golang code sample demonstrates the following go language features:</p><ul><li>fmt</li><li>log</li><li>structs</li><li>methods</li><li>custom errors</li></ul><p><br></p><h2>3rd Party Libraries</h2><ul><li>prettytest</li><li>go_currency</li></ul><p>We use <strong>prettytest</strong> to test that our code.</p><p>With <strong>pta</strong>, it automatically produces color-coded output each time we make code changes.</p><h3>PrettyAutoTest</h3><p>PrettyAutoTest (pta) is a command that continuously watches for changes in your source directory and subdirectories. When a file is modified it re-executes the tests. PrettyAutoTest promotes an agile development approach: write tests, write the implementation, have an immediate visual feedback about your progress.</p><h3>go_currency</h3><p>go_currency is the part of the Golang Goodies tools that provides Golang Money and Curreny Helpers.</p><hr><h2>Code Example</h2><h3>invoice.go</h3><div class=highlight><pre><code class="go language-go" data-lang=go><span class=kn>package</span> <span class=nx>invoice</span>
+        ga('send', 'pageview');</script></head><body><div id=dialogoverlay class=dialogoverlay></div><div id=dialogbox class=dialogbox><div><div id=dialogboxhead class=dialogboxhead></div><div id=dialogboxbody class=dialogboxbody></div><div id=dialogboxfoot class=dialogboxfoot></div></div></div><div class=site><header><h1><a class=home-link href="/golang-code-examples">Golang Code Examples</a></h1></header><div id=banner><span id=logo></span> <a href=https://github.com/l3x/golang-code-examples class="button fork"><strong>View On GitHub</strong></a><div class=downloads><span>Downloads:</span><ul><li><a href=https://github.com/l3x/golang-code-examples/zipball/master class=button>ZIP</a></li><li><a href=https://github.com/l3x/golang-code-examples/tarball/master class=button>TAR</a></li></ul></div></div><!-- end banner --><div class=wrapper><nav><ul></ul></nav><div class=page-title><h2>Invoicing USD and PrettyTest</h2><p class=meta>21 Aug 2014</p></div><div class=post><section><h2>Description</h2><p>This example demonstrates how to use the <strong>prettytest</strong> golang testing package to test an invoice object that uses the go_currency package.</p><hr><h2>Golang Features</h2><p>This golang code sample demonstrates the following go language features:</p><ul><li>fmt</li><li>log</li><li>structs</li><li>methods</li><li>custom errors</li></ul><p><br></p><h2>3rd Party Libraries</h2><ul><li>prettytest</li><li>go_currency</li></ul><p>We use <strong>prettytest</strong> to test that our code.</p><p>With pta, it automatically produces color-coded output each time we make code changes.</p><h3>PrettyAutoTest</h3><p>PrettyAutoTest (pta) is a command that continuously watches for changes in your source directory and subdirectories. When a file is modified it re-executes the tests. PrettyAutoTest promotes an agile development approach: write tests, write the implementation, have an immediate visual feedback about your progress.</p><h3>go_currency</h3><p>go_currency is the part of the Golang Goodies tools that provides Golang Money and Curreny Helpers.</p><hr><h2>Code Example</h2><h3>invoice.go</h3><div class=highlight><pre><code class="go language-go" data-lang=go><span class=kn>package</span> <span class=nx>invoice</span>
 
 <span class=kn>import</span> <span class=p>(</span>
     <span class=s>&quot;fmt&quot;</span>
@@ -166,7 +166,128 @@
 <span class=kd>func</span> <span class=p>(</span><span class=nx>s</span> <span class=o>*</span><span class=nx>mySuite</span><span class=p>)</span> <span class=nx>TestRemoveItemsFromInvoice</span><span class=p>()</span> <span class=p>{</span>
     <span class=nx>s</span><span class=p>.</span><span class=nx>Pending</span><span class=p>()</span>
 <span class=p>}</span>
-</code></pre></div><hr><h2>Notes</h2><h3>PrettyTest</h3><p>We use <strong>prettytest</strong> to test our code.</p><p>PrettyTest main features are:</p><ul><li>A simple assertion vocabulary for better readability</li><li>Customizable formatters through interfaces</li><li>It&#39;s integrated with the go test command</li><li>It can use gocheck checkers (experimental)</li><li>It has pretty and colorful output with reports</li></ul><hr><h2>Input</h2><h3>testdata/invoice.json</h3><div class=highlight><pre><code class="json language-json" data-lang=json><span class=p>{</span>
+</code></pre></div><hr><h2>Notes</h2><h3>PrettyTest</h3><p>We use <strong>prettytest</strong> to test our code.</p><p>PrettyTest main features are:</p><ul><li>A simple assertion vocabulary for better readability</li><li>Customizable formatters through interfaces</li><li>It&#39;s integrated with the go test command</li><li>It can use gocheck checkers (experimental)</li><li>It has pretty and colorful output with reports</li></ul><hr><hr><h2>Input</h2><h3>invoice_test.go</h3><div class=highlight><pre><code class="go language-go" data-lang=go><span class=kn>package</span> <span class=nx>invoice</span>
+
+<span class=kn>import</span> <span class=p>(</span>
+    <span class=s>&quot;testing&quot;</span>
+    <span class=s>&quot;log&quot;</span>
+    <span class=s>&quot;github.com/remogatto/prettytest&quot;</span>
+    <span class=nx>jc</span> <span class=s>&quot;github.com/l3x/jsoncfgo&quot;</span>
+    <span class=nx>c</span> <span class=s>&quot;github.com/go-goodies/go_currency&quot;</span>
+    <span class=nx>u</span> <span class=s>&quot;github.com/go-goodies/go_utils&quot;</span>
+<span class=p>)</span>
+
+<span class=kd>type</span> <span class=nx>mySuite</span> <span class=kd>struct</span> <span class=p>{</span>
+    <span class=nx>prettytest</span><span class=p>.</span><span class=nx>Suite</span>
+<span class=p>}</span>
+
+<span class=kd>func</span> <span class=nx>TestRunner</span><span class=p>(</span><span class=nx>t</span> <span class=o>*</span><span class=nx>testing</span><span class=p>.</span><span class=nx>T</span><span class=p>)</span> <span class=p>{</span>
+    <span class=nx>prettytest</span><span class=p>.</span><span class=nx>Run</span><span class=p>(</span><span class=nx>t</span><span class=p>,</span> <span class=nb>new</span><span class=p>(</span><span class=nx>mySuite</span><span class=p>))</span>
+<span class=p>}</span>
+
+<span class=kd>func</span> <span class=p>(</span><span class=nx>s</span> <span class=o>*</span><span class=nx>mySuite</span><span class=p>)</span> <span class=nx>TestReadConfigFile</span><span class=p>()</span> <span class=p>{</span>
+
+    <span class=c1>//------------------------------------------------</span>
+    <span class=c1>//               Read JSON file</span>
+    <span class=c1>//------------------------------------------------</span>
+    <span class=cm>/*</span>
+<span class=cm>    {</span>
+<span class=cm>      &quot;lineitem1&quot;: {</span>
+<span class=cm>          &quot;description&quot;: &quot;SSD Drive&quot;,</span>
+<span class=cm>          &quot;count&quot;: 2,</span>
+<span class=cm>          &quot;priceUSD&quot;: &quot;250.00&quot;</span>
+<span class=cm>      },</span>
+<span class=cm>      &quot;lineitem2&quot;: {</span>
+<span class=cm>          &quot;description&quot;: &quot;RAM Chip&quot;,</span>
+<span class=cm>          &quot;count&quot;: 4,</span>
+<span class=cm>          &quot;priceUSD&quot;: &quot;125.50&quot;</span>
+<span class=cm>      }</span>
+<span class=cm>    }</span>
+<span class=cm>     */</span>
+    <span class=nx>obj</span><span class=p>,</span> <span class=nx>err</span> <span class=o>:=</span> <span class=nx>jc</span><span class=p>.</span><span class=nx>ReadFile</span><span class=p>(</span><span class=s>&quot;testdata/invoice.json&quot;</span><span class=p>)</span>
+    <span class=k>if</span> <span class=nx>err</span> <span class=o>!=</span> <span class=kc>nil</span> <span class=p>{</span>
+        <span class=nx>log</span><span class=p>.</span><span class=nx>Fatal</span><span class=p>(</span><span class=nx>err</span><span class=p>)</span>
+    <span class=p>}</span>
+    <span class=nx>lineitem1</span> <span class=o>:=</span> <span class=nx>obj</span><span class=p>.</span><span class=nx>RequiredObject</span><span class=p>(</span><span class=s>&quot;lineitem1&quot;</span><span class=p>)</span>
+
+    <span class=c1>//------------------------------------------------</span>
+    <span class=c1>//        description == &quot;SSD Drive&quot;</span>
+    <span class=c1>//------------------------------------------------</span>
+    <span class=nx>s</span><span class=p>.</span><span class=nx>Equal</span><span class=p>(</span><span class=nx>lineitem1</span><span class=p>[</span><span class=s>&quot;description&quot;</span><span class=p>],</span> <span class=s>&quot;SSD Drive&quot;</span><span class=p>)</span>
+
+    <span class=c1>//------------------------------------------------</span>
+    <span class=c1>//               count == 2</span>
+    <span class=c1>//------------------------------------------------</span>
+    <span class=nx>lineitem1_count</span><span class=p>,</span> <span class=nx>err</span> <span class=o>:=</span> <span class=nx>u</span><span class=p>.</span><span class=nx>ConvNumToInt</span><span class=p>(</span><span class=nx>lineitem1</span><span class=p>[</span><span class=s>&quot;count&quot;</span><span class=p>])</span>
+    <span class=k>if</span> <span class=nx>err</span> <span class=o>!=</span> <span class=kc>nil</span> <span class=p>{</span>
+        <span class=nx>log</span><span class=p>.</span><span class=nx>Fatal</span><span class=p>(</span><span class=nx>err</span><span class=p>)</span>
+    <span class=p>}</span>
+    <span class=nx>s</span><span class=p>.</span><span class=nx>Equal</span><span class=p>(</span><span class=nx>lineitem1_count</span><span class=p>,</span> <span class=nb>int</span><span class=p>(</span><span class=mi>2</span><span class=p>))</span>
+
+    <span class=c1>//------------------------------------------------</span>
+    <span class=c1>//           priceUSD == 250.00</span>
+    <span class=c1>//------------------------------------------------</span>
+    <span class=nx>itemPriceUSD</span><span class=p>,</span> <span class=nx>err</span> <span class=o>:=</span> <span class=nx>c</span><span class=p>.</span><span class=nx>ParseUSD</span><span class=p>(</span><span class=nx>lineitem1</span><span class=p>[</span><span class=s>&quot;priceUSD&quot;</span><span class=p>].(</span><span class=kt>string</span><span class=p>))</span>
+    <span class=k>if</span> <span class=nx>err</span> <span class=o>!=</span> <span class=kc>nil</span> <span class=p>{</span>
+        <span class=nx>log</span><span class=p>.</span><span class=nx>Fatal</span><span class=p>(</span><span class=nx>err</span><span class=p>)</span>
+    <span class=p>}</span>
+    <span class=nx>usd250</span><span class=p>,</span> <span class=nx>err</span> <span class=o>:=</span> <span class=nx>c</span><span class=p>.</span><span class=nx>ParseUSD</span><span class=p>(</span><span class=s>&quot;250.00&quot;</span><span class=p>)</span>
+    <span class=k>if</span> <span class=nx>err</span> <span class=o>!=</span> <span class=kc>nil</span> <span class=p>{</span>
+        <span class=nx>log</span><span class=p>.</span><span class=nx>Fatal</span><span class=p>(</span><span class=nx>err</span><span class=p>)</span>
+    <span class=p>}</span>
+    <span class=nx>s</span><span class=p>.</span><span class=nx>Equal</span><span class=p>(</span><span class=nx>itemPriceUSD</span><span class=p>,</span> <span class=nx>usd250</span><span class=p>)</span>
+    <span class=nx>s</span><span class=p>.</span><span class=nx>Equal</span><span class=p>(</span><span class=nx>u</span><span class=p>.</span><span class=nx>TypeOf</span><span class=p>(</span><span class=nx>usd250</span><span class=p>),</span> <span class=s>&quot;go_currency.USD&quot;</span><span class=p>)</span>
+<span class=p>}</span>
+
+<span class=kd>func</span> <span class=nx>initLineItemPrices</span><span class=p>(</span><span class=nx>jsonFile</span> <span class=kt>string</span><span class=p>)</span> <span class=p>(</span><span class=nx>item1PriceUSD</span> <span class=nx>c</span><span class=p>.</span><span class=nx>USD</span><span class=p>,</span> <span class=nx>item2PriceUSD</span> <span class=nx>c</span><span class=p>.</span><span class=nx>USD</span><span class=p>)</span> <span class=p>{</span>
+    <span class=nx>obj</span><span class=p>,</span> <span class=nx>err</span> <span class=o>:=</span> <span class=nx>jc</span><span class=p>.</span><span class=nx>ReadFile</span><span class=p>(</span><span class=nx>jsonFile</span><span class=p>)</span>
+    <span class=k>if</span> <span class=nx>err</span> <span class=o>!=</span> <span class=kc>nil</span> <span class=p>{</span>
+        <span class=nx>log</span><span class=p>.</span><span class=nx>Fatal</span><span class=p>(</span><span class=nx>err</span><span class=p>)</span>
+    <span class=p>}</span>
+    <span class=nx>lineitem1</span> <span class=o>:=</span> <span class=nx>obj</span><span class=p>.</span><span class=nx>RequiredObject</span><span class=p>(</span><span class=s>&quot;lineitem1&quot;</span><span class=p>)</span>
+    <span class=nx>item1PriceUSD</span><span class=p>,</span> <span class=nx>_</span> <span class=p>=</span> <span class=nx>c</span><span class=p>.</span><span class=nx>ParseUSD</span><span class=p>(</span><span class=nx>lineitem1</span><span class=p>[</span><span class=s>&quot;priceUSD&quot;</span><span class=p>].(</span><span class=kt>string</span><span class=p>))</span>
+    <span class=nx>lineitem2</span> <span class=o>:=</span> <span class=nx>obj</span><span class=p>.</span><span class=nx>RequiredObject</span><span class=p>(</span><span class=s>&quot;lineitem2&quot;</span><span class=p>)</span>
+    <span class=nx>item2PriceUSD</span><span class=p>,</span> <span class=nx>_</span> <span class=p>=</span> <span class=nx>c</span><span class=p>.</span><span class=nx>ParseUSD</span><span class=p>(</span><span class=nx>lineitem2</span><span class=p>[</span><span class=s>&quot;priceUSD&quot;</span><span class=p>].(</span><span class=kt>string</span><span class=p>))</span>
+    <span class=k>return</span> <span class=nx>item1PriceUSD</span><span class=p>,</span> <span class=nx>item2PriceUSD</span>
+<span class=p>}</span>
+
+<span class=kd>func</span> <span class=p>(</span><span class=nx>s</span> <span class=o>*</span><span class=nx>mySuite</span><span class=p>)</span> <span class=nx>TestInvoice</span><span class=p>()</span> <span class=p>{</span>
+    <span class=nx>invoice</span> <span class=o>:=</span> <span class=nx>Invoice</span><span class=p>{</span>
+    <span class=p>[]</span><span class=nx>LineItem</span><span class=p>{</span>
+        <span class=nx>LineItem</span><span class=p>{</span><span class=s>&quot;SSD Drive&quot;</span><span class=p>,</span> <span class=mi>2</span><span class=p>,</span> <span class=s>&quot;250.00&quot;</span><span class=p>},</span>
+        <span class=nx>LineItem</span><span class=p>{</span><span class=s>&quot;RAM Chips&quot;</span><span class=p>,</span> <span class=mi>4</span><span class=p>,</span> <span class=s>&quot;125.50&quot;</span><span class=p>},</span>
+        <span class=p>},</span>
+    <span class=p>}</span>
+    <span class=nx>s</span><span class=p>.</span><span class=nx>Equal</span><span class=p>(</span><span class=nx>invoice</span><span class=p>.</span><span class=nx>LineItems</span><span class=p>[</span><span class=mi>0</span><span class=p>].</span><span class=nx>Description</span><span class=p>,</span> <span class=s>&quot;SSD Drive&quot;</span><span class=p>)</span>
+    <span class=nx>s</span><span class=p>.</span><span class=nx>Equal</span><span class=p>(</span><span class=nx>invoice</span><span class=p>.</span><span class=nx>LineItems</span><span class=p>[</span><span class=mi>0</span><span class=p>].</span><span class=nx>Count</span><span class=p>,</span> <span class=mi>2</span><span class=p>)</span>
+    <span class=nx>s</span><span class=p>.</span><span class=nx>Equal</span><span class=p>(</span><span class=nx>invoice</span><span class=p>.</span><span class=nx>LineItems</span><span class=p>[</span><span class=mi>0</span><span class=p>].</span><span class=nx>PriceUSD</span><span class=p>,</span> <span class=s>&quot;250.00&quot;</span><span class=p>)</span>
+    <span class=nx>s</span><span class=p>.</span><span class=nx>Equal</span><span class=p>(</span><span class=nx>invoice</span><span class=p>.</span><span class=nx>LineItems</span><span class=p>[</span><span class=mi>1</span><span class=p>].</span><span class=nx>Description</span><span class=p>,</span> <span class=s>&quot;RAM Chips&quot;</span><span class=p>)</span>
+    <span class=nx>s</span><span class=p>.</span><span class=nx>Equal</span><span class=p>(</span><span class=nx>invoice</span><span class=p>.</span><span class=nx>LineItems</span><span class=p>[</span><span class=mi>1</span><span class=p>].</span><span class=nx>Count</span><span class=p>,</span> <span class=mi>4</span><span class=p>)</span>
+    <span class=nx>s</span><span class=p>.</span><span class=nx>Equal</span><span class=p>(</span><span class=nx>invoice</span><span class=p>.</span><span class=nx>LineItems</span><span class=p>[</span><span class=mi>1</span><span class=p>].</span><span class=nx>PriceUSD</span><span class=p>,</span> <span class=s>&quot;125.50&quot;</span><span class=p>)</span>
+<span class=p>}</span>
+
+<span class=kd>func</span> <span class=p>(</span><span class=nx>s</span> <span class=o>*</span><span class=nx>mySuite</span><span class=p>)</span> <span class=nx>TestInvoiceTotal</span><span class=p>()</span> <span class=p>{</span>
+    <span class=nx>invoice</span> <span class=o>:=</span> <span class=nx>Invoice</span><span class=p>{</span>
+        <span class=p>[]</span><span class=nx>LineItem</span><span class=p>{</span>
+            <span class=nx>LineItem</span><span class=p>{</span><span class=s>&quot;SSD Drive&quot;</span><span class=p>,</span> <span class=mi>2</span><span class=p>,</span> <span class=s>&quot;250.00&quot;</span><span class=p>},</span>
+            <span class=nx>LineItem</span><span class=p>{</span><span class=s>&quot;RAM Chips&quot;</span><span class=p>,</span> <span class=mi>4</span><span class=p>,</span> <span class=s>&quot;125.50&quot;</span><span class=p>},</span>
+        <span class=p>},</span>
+    <span class=p>}</span>
+    <span class=nx>total</span><span class=p>,</span> <span class=nx>err</span> <span class=o>:=</span> <span class=nx>InvoiceTotalUSD</span><span class=p>(</span><span class=nx>invoice</span><span class=p>)</span>
+    <span class=k>if</span> <span class=nx>err</span> <span class=o>!=</span> <span class=kc>nil</span> <span class=p>{</span>
+        <span class=nx>log</span><span class=p>.</span><span class=nx>Fatal</span><span class=p>(</span><span class=nx>err</span><span class=p>)</span>
+    <span class=p>}</span>
+    <span class=nx>usd1002_00</span><span class=p>,</span> <span class=nx>err</span> <span class=o>:=</span> <span class=nx>c</span><span class=p>.</span><span class=nx>ParseUSD</span><span class=p>(</span><span class=s>&quot;1002.00&quot;</span><span class=p>)</span>
+    <span class=k>if</span> <span class=nx>err</span> <span class=o>!=</span> <span class=kc>nil</span> <span class=p>{</span>
+        <span class=nx>log</span><span class=p>.</span><span class=nx>Fatal</span><span class=p>(</span><span class=nx>err</span><span class=p>)</span>
+    <span class=p>}</span>
+    <span class=nx>s</span><span class=p>.</span><span class=nx>Equal</span><span class=p>(</span><span class=nx>total</span><span class=p>,</span> <span class=nx>usd1002_00</span><span class=p>)</span>
+<span class=p>}</span>
+
+<span class=kd>func</span> <span class=p>(</span><span class=nx>s</span> <span class=o>*</span><span class=nx>mySuite</span><span class=p>)</span> <span class=nx>TestRemoveItemsFromInvoice</span><span class=p>()</span> <span class=p>{</span>
+    <span class=nx>s</span><span class=p>.</span><span class=nx>Pending</span><span class=p>()</span>
+<span class=p>}</span>
+</code></pre></div><h3>testdata/invoice.json</h3><div class=highlight><pre><code class="json language-json" data-lang=json><span class=p>{</span>
   <span class=nt>&quot;lineitem1&quot;</span><span class=p>:</span> <span class=p>{</span>
       <span class=nt>&quot;description&quot;</span><span class=p>:</span> <span class=s2>&quot;SSD Drive&quot;</span><span class=p>,</span>
       <span class=nt>&quot;count&quot;</span><span class=p>:</span> <span class=mi>2</span><span class=p>,</span>
@@ -178,4 +299,4 @@
       <span class=nt>&quot;priceUSD&quot;</span><span class=p>:</span> <span class=s2>&quot;125.50&quot;</span>
   <span class=p>}</span>
 <span class=p>}</span>
-</code></pre></div><h2>Output</h2><p><img src=https://github.com/l3x/golang-code-examples/blob/master/pta.png alt=pta></p><hr><h2>References</h2><ul><li><a href="https://github.com/remogatto/prettytest/">prettytest</a></li><li><a href=http://godoc.org/github.com/remogatto/prettytest>API Documentation for prettytest</a></li><li><a href=https://github.com/go-goodies/go_currency>go_currencyt</a></li><li><a href=http://godoc.org/github.com/go-goodies/go_currency>API Documentation for go_currency</a></li><li><a href=https://github.com/l3x/golang-code-examples>Golang Code Examples</a></li><li><a href=https://github.com/mindreframer/golang-testing-stuff>Golang Testing Stuff</a></li><li><a href=http://en.wikipedia.org/wiki/Test-driven_development>Test-Driven Development (TDD)</a></li><li><a href="http://tour.golang.org/">Golang Tour</a></li></ul></section></div></div><div class=footer><div class=contact><div id=name-gravatar class=float-left><span>By Lex Sheehan</span> <span class=l3x-gravatar></span></div><div class=float-right><strong>It's Go Time!</strong></div></div></div><div class=license-notice>This work is licensed under the <a href="http://creativecommons.org/licenses/by/3.0/">Creative Commons Attribution 3.0 Unported License</a>.</div></div><script src=/golang-code-examples/scripts/scripts.db44.js></script></body></html>
+</code></pre></div><h2>Output</h2><p><img src=/images/pta.df96.png alt=pta></p><hr><h2>References</h2><ul><li><a href="https://github.com/remogatto/prettytest/">prettytest</a></li><li><a href=http://godoc.org/github.com/remogatto/prettytest>API Documentation for prettytest</a></li><li><a href=https://github.com/go-goodies/go_currency>go_currencyt</a></li><li><a href=http://godoc.org/github.com/go-goodies/go_currency>API Documentation for go_currency</a></li><li><a href=https://github.com/l3x/golang-code-examples>Golang Code Examples</a></li><li><a href=https://github.com/mindreframer/golang-testing-stuff>Golang Testing Stuff</a></li><li><a href=http://en.wikipedia.org/wiki/Test-driven_development>Test-Driven Development (TDD)</a></li><li><a href="http://tour.golang.org/">Golang Tour</a></li></ul></section></div></div><div class=footer><div class=contact><div id=name-gravatar class=float-left><span>By Lex Sheehan</span> <span class=l3x-gravatar></span></div><div class=float-right><strong>It's Go Time!</strong></div></div></div><div class=license-notice>This work is licensed under the <a href="http://creativecommons.org/licenses/by/3.0/">Creative Commons Attribution 3.0 Unported License</a>.</div></div><script src=/golang-code-examples/scripts/scripts.db44.js></script></body></html>
