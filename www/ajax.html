@@ -1,0 +1,45 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset='utf-8'>
+    <title>go server example</title>
+
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+    <script src="http://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.min.js"></script>
+
+    <script>
+    var ajaxHandler, ajax_handler, ajax_request, cookieNameForUsername, isUserNameValid, userName, username;
+
+    cookieNameForUsername = "testapp-username";
+    username = $.cookie(cookieNameForUsername);
+
+    ajaxHandler = function(json) {
+      console.log('json.name', json.name);
+      $("#full-name").html(json.name);
+    };
+
+    $(function() {
+      if ((typeof username != 'undefined') && (username.length > 0)) {
+        $("#not-found-msg").html('');
+        $.get("/user/" + username, ajaxHandler, "json")
+        .fail(function() {
+            $("#not-found-msg").html('Enter a valid username in the <strong>Debug Info (POST form)</strong>');
+         });
+      } else {
+        $("#not-found-msg").html('Enter a valid username in the <strong>Debug Info (POST form)</strong>');
+        console.log("Invalid username (" + username + ") found in cookie: " + cookieNameForUsername);
+      }
+    });
+    </script>
+</head>
+<body>
+<h1>Ajax Example</h1>
+
+<div id='fullname'>
+    <strong>The user's full name is:</strong> <span id="full-name">?</span>
+</div>
+<br/>
+<div id='not-found-msg'></div>
+
+</body>
+</html>
