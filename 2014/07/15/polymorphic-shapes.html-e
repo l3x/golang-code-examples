@@ -107,7 +107,7 @@
     <span class=nx>drawShape</span><span class=p>(</span><span class=nx>c2</span><span class=p>)</span>
     <span class=nx>drawShape</span><span class=p>(</span><span class=nx>r</span><span class=p>)</span>
 <span class=p>}</span>
-</code></pre></div><hr><h2>Output</h2><div class=highlight><pre><code class="text language-text" data-lang=text>Circle Area: 78.53981633974483
+</code></pre></div><hr><h2>Notes</h2><p>A language is considered object-oriented if it is object-based and also has the capability of polymorphism and inheritance. – Wikipedia</p><hr><h2>Output</h2><div class=highlight><pre><code class="text language-text" data-lang=text>Circle Area: 78.53981633974483
 Circle2 Area: 314.1592653589793
 Rectangle Area: 25
 Rectangle + Circle Area: 417.69908169872417
