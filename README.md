@@ -50,3 +50,6 @@ Each code example can be run from the command line like this:  ```$ go run <FILE
 * [An Introduction to Programming in Go] (http://www.golang-book.com/)
 * [How to Write Go Code] (http://golang.org/doc/code.html)
 * [Application Development with Lex Sheehan] (http://lexsheehan.blogspot.com/)
+
+### License
+This project is licensed under a Simplified BSD license. Please read the [LICENSE file](LICENSE).
