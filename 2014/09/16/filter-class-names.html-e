@@ -346,7 +346,7 @@ Process finished with exit code 0
 <span class=kd>func</span> <span class=p>(</span><span class=nx>tree</span> <span class=o>*</span><span class=nx>Tree</span><span class=p>)</span> <span class=nx>Top</span><span class=p>()</span> <span class=o>*</span><span class=nx>Level</span> <span class=p>{</span>
     <span class=k>return</span> <span class=nx>tree</span><span class=p>.</span><span class=nx>top</span>
 <span class=p>}</span>
-</code></pre></div><p><br></p><p>If you were to change the package name to <strong>main</strong> and rename the function mainSTOP to main, it would give a feel for how the classNames are stored in the tree and show and example of the filter:</p><pre><code>
+</code></pre></div><p><br></p><p>If you were to change the package name to <strong>main</strong> and rename the function mainSTOP to main, it would give a feel for how the classNames are stored in the tree and show a few examples of the filter in action:</p><pre><code>
 TREE:
 alpha[H] (6) : map[HiWorld:HiWorld]
 alpha[H] (9) : map[HelloWorld:HelloWorld]
