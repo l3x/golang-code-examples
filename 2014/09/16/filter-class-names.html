@@ -192,9 +192,10 @@
     <span class=nx>PrintTree</span><span class=p>(</span><span class=o>*</span><span class=nx>tree</span><span class=p>)</span>
 
     <span class=nx>Println</span><span class=p>(</span><span class=nx>Dashes</span><span class=p>(</span><span class=mi>50</span><span class=p>))</span>
-    <span class=c1>//FindAndPrintClassNames(&quot;H&quot;)</span>
+    <span class=nx>FindAndPrintClassNames</span><span class=p>(</span><span class=s>&quot;HW&quot;</span><span class=p>)</span>
+    <span class=nx>FindAndPrintClassNames</span><span class=p>(</span><span class=s>&quot;He&quot;</span><span class=p>)</span>
+    <span class=nx>FindAndPrintClassNames</span><span class=p>(</span><span class=s>&quot;Hi&quot;</span><span class=p>)</span>
     <span class=nx>FindAndPrintClassNames</span><span class=p>(</span><span class=s>&quot;HWW&quot;</span><span class=p>)</span>
-
 <span class=p>}</span>
 </code></pre></div><p><br><hr><br></p><h2>Test Code</h2><h3>classname<em>filter</em>test.go</h3><div class=highlight><pre><code class="go language-go" data-lang=go><span class=kn>package</span> <span class=nx>class_filter</span>
 
@@ -345,7 +346,29 @@ Process finished with exit code 0
 <span class=kd>func</span> <span class=p>(</span><span class=nx>tree</span> <span class=o>*</span><span class=nx>Tree</span><span class=p>)</span> <span class=nx>Top</span><span class=p>()</span> <span class=o>*</span><span class=nx>Level</span> <span class=p>{</span>
     <span class=k>return</span> <span class=nx>tree</span><span class=p>.</span><span class=nx>top</span>
 <span class=p>}</span>
-</code></pre></div><p><br><hr></p><h2>References</h2><ul><li><a href=https://github.com/l3x/golang-code-examples>Golang Code Examples</a></li><li><a href=https://github.com/go-goodies/go_utils>go-goodies/go_utils</a></li><li><a href="http://tour.golang.org/">Golang Tour</a></li></ul></section></div><!-- Add Disqus comments. --><div id=disqus_thread></div><script type=text/javascript>/* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+</code></pre></div><p><br></p><p>If you were to change the package name to <strong>main</strong> and rename the function mainSTOP to main, it would give a feel for how the classNames are stored in the tree and show and example of the filter:</p><pre><code>
+TREE:
+alpha[H] (6) : map[HiWorld:HiWorld]
+alpha[H] (9) : map[HelloWorld:HelloWorld]
+alpha[W] (9) : map[WordlHello:WordlHello]
+alpha[H] (13) : map[HelloWeirWorld:HelloWeirWorld]
+--------------------------------------------------
+ClassNames found for input: HW
+HiWorld
+HelloWorld
+HelloWeirWorld
+--------------------------------------------------
+ClassNames found for input: He
+HelloWorld
+HelloWeirWorld
+--------------------------------------------------
+ClassNames found for input: Hi
+HiWorld
+--------------------------------------------------
+ClassNames found for input: HWW
+HelloWeirWorld
+--------------------------------------------------
+</code></pre><hr><h2>References</h2><ul><li><a href=https://github.com/l3x/golang-code-examples>Golang Code Examples</a></li><li><a href=https://github.com/go-goodies/go_utils>go-goodies/go_utils</a></li><li><a href="http://tour.golang.org/">Golang Tour</a></li></ul></section></div><!-- Add Disqus comments. --><div id=disqus_thread></div><script type=text/javascript>/* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
     var disqus_shortname = 'golang-code-examples'; // required: replace example with your forum shortname
 
     /* * * DON'T EDIT BELOW THIS LINE * * */
