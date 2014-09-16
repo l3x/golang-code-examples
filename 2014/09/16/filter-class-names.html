@@ -1,0 +1,356 @@
+<!DOCTYPE html><html><head><meta charset=utf-8><meta http-equiv=X-UA-Compatible content="IE=edge,chrome=1"><title>Filter Class Names</title><meta name=description content="Go Golang Code Examples programming"><meta name=viewport content="width=device-width"><link rel="shortcut icon" href=/golang-code-examples/favicon.ico type=image/x-icon><link rel=icon href=/golang-code-examples/favicon.ico type=image/x-icon><link rel=stylesheet href=/golang-code-examples/styles/main.d9bf.css><script src=https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js></script><!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]--><meta name=viewport content="width=device-width, initial-scale=1, user-scalable=no"><script>(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+            (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+                m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+        })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+        ga('create', 'UA-53073815-1', 'auto');
+        ga('send', 'pageview');</script></head><body><div id=dialogoverlay class=dialogoverlay></div><div id=dialogbox class=dialogbox><div><div id=dialogboxhead class=dialogboxhead></div><div id=dialogboxbody class=dialogboxbody></div><div id=dialogboxfoot class=dialogboxfoot></div></div></div><div class=site><header><h1><a class=home-link href="/golang-code-examples">Golang Code Examples</a></h1></header><div id=banner><span id=logo></span> <a href=https://github.com/l3x/golang-code-examples class="button fork"><strong>View On GitHub</strong></a><div class=downloads><span>Downloads:</span><ul><li><a href=https://github.com/l3x/golang-code-examples/zipball/master class=button>ZIP</a></li><li><a href=https://github.com/l3x/golang-code-examples/tarball/master class=button>TAR</a></li></ul></div></div><!-- end banner --><div class=wrapper><nav><ul></ul></nav><div class=page-title><h2>Filter Class Names</h2><p class=meta>16 Sep 2014</p></div><div class=post><section><h2>Description</h2><p>This example demonstrates how to build a class name filter, like the one you see in Eclipse.</p><p>We use a tree structure, composed of linked Levels, composed of maps that map to the first letter of the class names:</p><p><img src=https://raw.githubusercontent.com/go-goodies/go_oops/master/factory_method_with_reuse/pta-factory-method-reuse.png alt=pta></p><p><br><hr></p><h2>Golang Features</h2><p>This golang code sample demonstrates the following go language features:</p><ul><li>switch</li><li>struct</li><li>slice</li><li>map</li><li>fmt</li></ul><p><br><hr></p><h2>3rd Party Libraries</h2><ul><li>github.com/go-goodies/go_utils</li></ul><p>Note that we preface github.com/go-goodies/go_utils with a &quot;.&quot; which makes its functions directly accessible in our go program without prefacing it with any package name alias.</p><p>Now, we can reference go_utils functions like so: c = <strong>IndexOf(input[i:i+1], className, c+1)</strong></p><p>Which, by the way, returns the index of the current input character input[i:i+1] found in the string, className, starting at the index of c+1.</p><p><br><hr></p><h2>Code Example</h2><h3>classname_filter.go</h3><div class=highlight><pre><code class="go language-go" data-lang=go><span class=kn>package</span> <span class=nx>class_filter</span>  <span class=c1>// main</span>
+
+<span class=kn>import</span> <span class=p>(</span>
+    <span class=p>.</span> <span class=s>&quot;fmt&quot;</span>
+    <span class=p>.</span> <span class=s>&quot;github.com/go-goodies/go_utils&quot;</span>
+<span class=p>)</span>
+
+<span class=kd>var</span> <span class=p>(</span>
+    <span class=nx>tree</span> <span class=o>*</span><span class=nx>Tree</span>
+<span class=p>)</span>
+
+<span class=c1>// Level is the node that contains the alpha map for each level</span>
+<span class=c1>// Each level contains words that match that level&#39;s levelNumber</span>
+<span class=c1>// The first letter of each entry in the alpha map matches that key, e.g. &quot;Hi&quot; is at level 2 at key &quot;H&quot;</span>
+<span class=kd>type</span> <span class=nx>Level</span> <span class=kd>struct</span> <span class=p>{</span>
+    <span class=nx>alpha</span>       <span class=kd>map</span><span class=p>[</span><span class=kt>string</span><span class=p>]</span><span class=kd>map</span><span class=p>[</span><span class=kt>string</span><span class=p>]</span><span class=kt>string</span>  <span class=c1>// a, b, ..z, A, B .. Z =&gt; HelloWorld, HiWorld, WordlHello, HelloWeirWorld</span>
+    <span class=nx>levelNumber</span> <span class=kt>int</span>
+    <span class=nx>nextLevel</span>   <span class=o>*</span><span class=nx>Level</span>
+<span class=p>}</span>
+
+<span class=c1>// Tree contains the pointer to the top of the tree of levels</span>
+<span class=kd>type</span> <span class=nx>Tree</span> <span class=kd>struct</span> <span class=p>{</span>
+    <span class=nx>top</span>     <span class=o>*</span><span class=nx>Level</span>
+<span class=p>}</span>
+<span class=c1>// The Top() method points to the top of the tree. (Only downward navigation is supported)</span>
+<span class=kd>func</span> <span class=p>(</span><span class=nx>tree</span> <span class=o>*</span><span class=nx>Tree</span><span class=p>)</span> <span class=nx>Top</span><span class=p>()</span> <span class=o>*</span><span class=nx>Level</span> <span class=p>{</span>
+    <span class=k>return</span> <span class=nx>tree</span><span class=p>.</span><span class=nx>top</span>
+<span class=p>}</span>
+
+<span class=c1>// PopulateAlphas populates the alphas map (one per level) with one letter per ALPHABET</span>
+<span class=kd>func</span> <span class=nx>PopulateAlphas</span><span class=p>()</span> <span class=p>(</span><span class=kd>map</span><span class=p>[</span><span class=kt>string</span><span class=p>]</span><span class=kd>map</span><span class=p>[</span><span class=kt>string</span><span class=p>]</span><span class=kt>string</span><span class=p>)</span> <span class=p>{</span>
+    <span class=nx>alphas</span> <span class=o>:=</span> <span class=nb>make</span><span class=p>(</span><span class=kd>map</span><span class=p>[</span><span class=kt>string</span><span class=p>]</span><span class=kd>map</span><span class=p>[</span><span class=kt>string</span><span class=p>]</span><span class=kt>string</span><span class=p>)</span>
+    <span class=kd>var</span> <span class=nx>thisChar</span> <span class=kt>string</span>
+    <span class=k>for</span> <span class=nx>_</span><span class=p>,</span> <span class=nx>c</span> <span class=o>:=</span> <span class=k>range</span> <span class=nx>ALPHABET</span> <span class=p>{</span>
+        <span class=nx>thisChar</span> <span class=p>=</span> <span class=nx>Sprintf</span><span class=p>(</span><span class=s>&quot;%c&quot;</span><span class=p>,</span> <span class=nx>c</span><span class=p>)</span>
+        <span class=nx>alphas</span><span class=p>[</span><span class=nx>thisChar</span><span class=p>]</span> <span class=p>=</span> <span class=nb>make</span><span class=p>(</span><span class=kd>map</span><span class=p>[</span><span class=kt>string</span><span class=p>]</span><span class=kt>string</span><span class=p>)</span>
+    <span class=p>}</span>
+    <span class=k>return</span> <span class=nx>alphas</span>
+<span class=p>}</span>
+
+<span class=c1>// PrintAlpha only prints letters that store classNames</span>
+<span class=kd>func</span> <span class=nx>PrintAlpha</span><span class=p>(</span><span class=nx>alpha</span> <span class=kd>map</span><span class=p>[</span><span class=kt>string</span><span class=p>]</span><span class=kd>map</span><span class=p>[</span><span class=kt>string</span><span class=p>]</span><span class=kt>string</span><span class=p>,</span> <span class=nx>levelNumber</span> <span class=kt>int</span><span class=p>)</span> <span class=p>{</span>
+    <span class=kd>var</span> <span class=nx>thisChar</span> <span class=kt>string</span>
+    <span class=k>for</span> <span class=nx>_</span><span class=p>,</span> <span class=nx>c</span> <span class=o>:=</span> <span class=k>range</span> <span class=nx>ALPHABET</span> <span class=p>{</span>
+        <span class=nx>thisChar</span> <span class=p>=</span> <span class=nx>Sprintf</span><span class=p>(</span><span class=s>&quot;%c&quot;</span><span class=p>,</span> <span class=nx>c</span><span class=p>)</span>
+        <span class=k>if</span> <span class=nb>len</span><span class=p>(</span><span class=nx>alpha</span><span class=p>[</span><span class=nx>thisChar</span><span class=p>])</span> <span class=p>&gt;</span> <span class=mi>0</span> <span class=p>{</span>
+            <span class=nx>Printf</span><span class=p>(</span><span class=s>&quot;alpha[%s] (%d) : %v\n&quot;</span><span class=p>,</span> <span class=nx>thisChar</span><span class=p>,</span> <span class=nx>levelNumber</span><span class=p>,</span> <span class=nx>alpha</span><span class=p>[</span><span class=nx>thisChar</span><span class=p>]</span> <span class=p>)</span>
+        <span class=p>}</span>
+    <span class=p>}</span>
+<span class=p>}</span>
+
+<span class=c1>// PrintTree prints the elements containing data for the alphas map, prefaced with (level_number)</span>
+<span class=c1>// Example:</span>
+<span class=c1>//   alpha[H] (8) : map[HelloWorld:]</span>
+<span class=c1>//   alpha[H] (5) : map[HiWorld:]</span>
+<span class=c1>//   alpha[W] (8) : map[WordlHello:]</span>
+<span class=c1>//   alpha[H] (12) : map[HelloWeirWorld:]</span>
+<span class=kd>func</span> <span class=nx>PrintTree</span><span class=p>(</span><span class=nx>tree</span> <span class=nx>Tree</span><span class=p>)</span> <span class=p>{</span>
+    <span class=k>for</span> <span class=nx>level</span> <span class=o>:=</span> <span class=nx>tree</span><span class=p>.</span><span class=nx>Top</span><span class=p>();</span> <span class=nx>level</span> <span class=o>!=</span> <span class=kc>nil</span><span class=p>;</span> <span class=nx>level</span> <span class=p>=</span> <span class=nx>level</span><span class=p>.</span><span class=nx>nextLevel</span> <span class=p>{</span>
+        <span class=nx>PrintAlpha</span><span class=p>(</span><span class=nx>level</span><span class=p>.</span><span class=nx>alpha</span><span class=p>,</span> <span class=nx>level</span><span class=p>.</span><span class=nx>levelNumber</span><span class=p>)</span>
+    <span class=p>}</span>
+<span class=p>}</span>
+
+
+<span class=c1>// PopulateTree stores each className in the tree at the level equal to the length at alpha[first_letter_of_classname]</span>
+<span class=kd>func</span> <span class=nx>PopulateTree</span><span class=p>(</span><span class=nx>classNames</span> <span class=p>[]</span><span class=kt>string</span><span class=p>)</span> <span class=p>(</span><span class=o>*</span><span class=nx>Tree</span><span class=p>)</span> <span class=p>{</span>
+    <span class=nx>alphas</span> <span class=o>:=</span> <span class=nx>PopulateAlphas</span><span class=p>()</span>
+    <span class=nx>tree</span> <span class=o>:=</span> <span class=nb>new</span><span class=p>(</span><span class=nx>Tree</span><span class=p>)</span>
+    <span class=nx>tree</span><span class=p>.</span><span class=nx>top</span> <span class=p>=</span> <span class=o>&amp;</span><span class=nx>Level</span><span class=p>{</span><span class=nx>DeepCopy</span><span class=p>(</span><span class=nx>alphas</span><span class=p>).(</span><span class=kd>map</span><span class=p>[</span><span class=kt>string</span><span class=p>]</span><span class=kd>map</span><span class=p>[</span><span class=kt>string</span><span class=p>]</span><span class=kt>string</span><span class=p>),</span> <span class=mi>0</span><span class=p>,</span> <span class=kc>nil</span><span class=p>}</span>  <span class=c1>// startPos with level0 alpha map ready</span>
+    <span class=nx>thisLevel</span> <span class=o>:=</span> <span class=nx>tree</span><span class=p>.</span><span class=nx>Top</span><span class=p>()</span>
+    <span class=kd>var</span> <span class=nx>curLevelNumber</span> <span class=kt>int</span>
+    <span class=k>for</span> <span class=nx>_</span><span class=p>,</span> <span class=nx>className</span> <span class=o>:=</span> <span class=k>range</span> <span class=nx>classNames</span> <span class=p>{</span>
+        <span class=nx>thisLevel</span> <span class=p>=</span> <span class=nx>tree</span><span class=p>.</span><span class=nx>Top</span><span class=p>()</span>
+        <span class=nx>curLevelNumber</span> <span class=p>=</span> <span class=mi>0</span>
+        <span class=c1>// loop thru each letter of className</span>
+        <span class=c1>// - if this is the last letter, store the className on this level in alpha[first_letter_of_className]</span>
+        <span class=c1>// - else if nextLevel is nil then create a new Level and point nextLevel to it</span>
+        <span class=k>for</span> <span class=nx>c</span> <span class=o>:=</span> <span class=mi>0</span><span class=p>;</span> <span class=nx>c</span> <span class=p>&lt;</span> <span class=nb>len</span><span class=p>(</span><span class=nx>className</span><span class=p>);</span> <span class=nx>c</span><span class=o>++</span> <span class=p>{</span>
+            <span class=c1>// thisLetter := Sprintf(&quot;%s&quot;, className[c:c+1])</span>
+            <span class=k>if</span> <span class=nx>c</span> <span class=o>==</span> <span class=nb>len</span><span class=p>(</span><span class=nx>className</span><span class=p>)</span><span class=o>-</span><span class=mi>1</span> <span class=p>{</span>
+                <span class=c1>// store className as key and as value</span>
+                <span class=nx>thisLevel</span><span class=p>.</span><span class=nx>alpha</span><span class=p>[</span><span class=nx>className</span><span class=p>[</span><span class=mi>0</span><span class=p>:</span><span class=mi>1</span><span class=p>]][</span><span class=nx>className</span><span class=p>]</span> <span class=p>=</span> <span class=nx>className</span>
+            <span class=p>}</span> <span class=k>else</span> <span class=p>{</span>
+                <span class=c1>// must keep going, populate nextLevel and set levelNumber if nextLevel is nil</span>
+                <span class=nx>curLevelNumber</span> <span class=o>+=</span> <span class=mi>1</span>
+                <span class=k>if</span> <span class=nx>thisLevel</span><span class=p>.</span><span class=nx>nextLevel</span> <span class=o>==</span> <span class=kc>nil</span> <span class=p>{</span>
+                    <span class=nx>thisLevel</span><span class=p>.</span><span class=nx>nextLevel</span> <span class=p>=</span> <span class=o>&amp;</span><span class=nx>Level</span><span class=p>{</span><span class=nx>DeepCopy</span><span class=p>(</span><span class=nx>alphas</span><span class=p>).(</span><span class=kd>map</span><span class=p>[</span><span class=kt>string</span><span class=p>]</span><span class=kd>map</span><span class=p>[</span><span class=kt>string</span><span class=p>]</span><span class=kt>string</span><span class=p>),</span> <span class=nx>curLevelNumber</span><span class=p>,</span> <span class=kc>nil</span><span class=p>}</span>
+                <span class=p>}</span>
+                <span class=nx>thisLevel</span> <span class=p>=</span> <span class=nx>thisLevel</span><span class=p>.</span><span class=nx>nextLevel</span>
+            <span class=p>}</span>
+            <span class=c1>//Printf(&quot;thisLevel: %v\n&quot;, *thisLevel)</span>
+        <span class=p>}</span>
+    <span class=p>}</span>
+    <span class=k>return</span> <span class=nx>tree</span>
+<span class=p>}</span>
+
+
+<span class=c1>// FindClassNames uses global tree</span>
+<span class=kd>func</span> <span class=nx>FindClassNames</span><span class=p>(</span><span class=nx>input</span> <span class=kt>string</span><span class=p>)</span> <span class=p>([]</span><span class=kt>string</span><span class=p>)</span> <span class=p>{</span>
+    <span class=c1>// First (cap) letter must be on level0</span>
+    <span class=kd>var</span> <span class=nx>levelsFound</span> <span class=p>[]</span><span class=kt>int</span>
+    <span class=kd>var</span> <span class=nx>classNames</span> <span class=p>[]</span><span class=kt>string</span>
+    <span class=nx>ptr</span> <span class=o>:=</span> <span class=nx>tree</span><span class=p>.</span><span class=nx>Top</span><span class=p>()</span>
+    <span class=nx>ptr</span> <span class=p>=</span> <span class=nx>ptr</span><span class=p>.</span><span class=nx>nextLevel</span>
+
+    <span class=k>for</span> <span class=nx>level</span> <span class=o>:=</span> <span class=nx>tree</span><span class=p>.</span><span class=nx>Top</span><span class=p>();</span> <span class=nx>level</span> <span class=o>!=</span> <span class=kc>nil</span><span class=p>;</span> <span class=nx>level</span> <span class=p>=</span> <span class=nx>level</span><span class=p>.</span><span class=nx>nextLevel</span> <span class=p>{</span>
+        <span class=k>if</span> <span class=nb>len</span><span class=p>(</span><span class=nx>level</span><span class=p>.</span><span class=nx>alpha</span><span class=p>[</span><span class=nx>input</span><span class=p>[</span><span class=mi>0</span><span class=p>:</span><span class=mi>1</span><span class=p>]])</span> <span class=p>&gt;</span> <span class=mi>0</span> <span class=p>{</span>
+            <span class=nx>levelsFound</span> <span class=p>=</span> <span class=nb>append</span><span class=p>(</span><span class=nx>levelsFound</span><span class=p>,</span> <span class=nx>level</span><span class=p>.</span><span class=nx>levelNumber</span><span class=p>)</span>
+            <span class=k>for</span> <span class=nx>k</span><span class=p>,</span> <span class=nx>_</span> <span class=o>:=</span> <span class=k>range</span> <span class=nx>level</span><span class=p>.</span><span class=nx>alpha</span><span class=p>[</span><span class=nx>input</span><span class=p>[</span><span class=mi>0</span><span class=p>:</span><span class=mi>1</span><span class=p>]]</span> <span class=p>{</span>
+                <span class=c1>// className is the key (level.alpha[input[input[0:1]]: map[Hi:])</span>
+                <span class=nx>classNames</span> <span class=p>=</span> <span class=nb>append</span><span class=p>(</span><span class=nx>classNames</span><span class=p>,</span> <span class=nx>k</span><span class=p>)</span>
+            <span class=p>}</span>
+        <span class=p>}</span>
+    <span class=p>}</span>
+<span class=c1>//  Printf(&quot;levelsFound for input[0:1] (%s): %v\n&quot;, input[0:1],levelsFound)</span>
+<span class=c1>//  Printf(&quot;classNames: %v\n&quot;, classNames)</span>
+    <span class=k>if</span> <span class=nb>len</span><span class=p>(</span><span class=nx>input</span><span class=p>)</span> <span class=o>==</span> <span class=mi>1</span> <span class=p>{</span>
+        <span class=k>return</span> <span class=nx>classNames</span>
+    <span class=p>}</span>
+
+    <span class=c1>// Start with slice of classNames that match 1st letter, now on to 2nd letter...and whittle it down</span>
+    <span class=kd>var</span> <span class=nx>passingClassNames</span> <span class=p>[]</span><span class=kt>string</span>
+    <span class=nx>fail</span> <span class=o>:=</span> <span class=kc>false</span>
+
+    <span class=k>for</span> <span class=nx>_</span><span class=p>,</span> <span class=nx>className</span> <span class=o>:=</span> <span class=k>range</span> <span class=nx>classNames</span> <span class=p>{</span>
+
+        <span class=c1>// Iterate thru each letter of input (i is input iterator)</span>
+        <span class=k>for</span> <span class=nx>i</span> <span class=o>:=</span> <span class=mi>1</span><span class=p>;</span> <span class=nx>i</span> <span class=p>&lt;</span> <span class=nb>len</span><span class=p>(</span><span class=nx>input</span><span class=p>)</span> <span class=o>&amp;&amp;</span> <span class=p>!</span><span class=nx>fail</span><span class=p>;</span> <span class=p>{</span>
+
+            <span class=c1>// Move thru each letter of className (c is className iterator)</span>
+            <span class=k>for</span> <span class=nx>c</span> <span class=o>:=</span> <span class=mi>1</span><span class=p>;</span> <span class=nx>i</span> <span class=p>&lt;</span> <span class=nb>len</span><span class=p>(</span><span class=nx>input</span><span class=p>)</span> <span class=o>&amp;&amp;</span> <span class=nx>c</span> <span class=p>&lt;</span> <span class=nb>len</span><span class=p>(</span><span class=nx>className</span><span class=p>)</span> <span class=o>&amp;&amp;</span> <span class=p>!</span><span class=nx>fail</span><span class=p>;</span> <span class=p>{</span>
+
+                <span class=c1>//Printf(&quot;*** input[i:i+1]: %s, className[c:c+1]: %s\n&quot;, input[i:i+1], className[c:c+1])</span>
+                <span class=k>if</span> <span class=nx>input</span><span class=p>[</span><span class=nx>i</span><span class=p>:</span><span class=nx>i</span><span class=o>+</span><span class=mi>1</span><span class=p>]</span> <span class=o>==</span> <span class=nx>className</span><span class=p>[</span><span class=nx>c</span><span class=p>:</span><span class=nx>c</span><span class=o>+</span><span class=mi>1</span><span class=p>]</span> <span class=p>{</span>
+                    <span class=c1>// happy path (matching characters)</span>
+                    <span class=nx>i</span> <span class=o>+=</span> <span class=mi>1</span>
+                    <span class=nx>c</span> <span class=o>+=</span> <span class=mi>1</span>
+                <span class=p>}</span> <span class=k>else</span> <span class=k>if</span> <span class=p>!</span><span class=nx>IsLower</span><span class=p>(</span><span class=nx>input</span><span class=p>[</span><span class=nx>i</span><span class=p>:</span><span class=nx>i</span><span class=o>+</span><span class=mi>1</span><span class=p>])</span> <span class=p>{</span>
+                    <span class=c1>// at upper case input character</span>
+                    <span class=nx>c</span> <span class=p>=</span> <span class=nx>IndexOf</span><span class=p>(</span><span class=nx>input</span><span class=p>[</span><span class=nx>i</span><span class=p>:</span><span class=nx>i</span><span class=o>+</span><span class=mi>1</span><span class=p>],</span> <span class=nx>className</span><span class=p>,</span> <span class=nx>c</span><span class=o>+</span><span class=mi>1</span><span class=p>)</span>
+                    <span class=k>if</span> <span class=nx>c</span> <span class=o>==</span> <span class=nx>NOT_FOUND_INDEX</span> <span class=p>{</span>
+                        <span class=c1>//Println(&quot;c == NOT_FOUND_INDEX&quot;)</span>
+                        <span class=nx>fail</span> <span class=p>=</span> <span class=kc>true</span>
+                    <span class=p>}</span> <span class=k>else</span> <span class=p>{</span>
+                        <span class=nx>i</span> <span class=o>+=</span> <span class=mi>1</span>
+                        <span class=nx>c</span> <span class=o>+=</span> <span class=mi>1</span>
+                    <span class=p>}</span>
+                <span class=p>}</span> <span class=k>else</span>  <span class=p>{</span>
+                    <span class=nx>fail</span> <span class=p>=</span> <span class=kc>true</span>
+                <span class=p>}</span>
+            <span class=p>}</span>
+        <span class=p>}</span>
+        <span class=k>if</span> <span class=p>!</span><span class=nx>fail</span> <span class=p>{</span><span class=nx>passingClassNames</span> <span class=p>=</span> <span class=nb>append</span><span class=p>(</span><span class=nx>passingClassNames</span><span class=p>,</span> <span class=nx>className</span><span class=p>)}</span>
+        <span class=nx>fail</span> <span class=p>=</span> <span class=kc>false</span>
+    <span class=p>}</span>
+    <span class=c1>//classNames := []string{&quot;HelloWorld&quot;, &quot;HiWorld&quot;}</span>
+    <span class=k>return</span> <span class=nx>passingClassNames</span>
+<span class=p>}</span>
+
+<span class=cm>/* </span>
+<span class=cm>    Helper functions</span>
+<span class=cm> */</span>
+<span class=kd>func</span> <span class=nx>PrintClassNames</span><span class=p>(</span><span class=nx>classNames</span> <span class=p>[]</span><span class=kt>string</span><span class=p>)</span> <span class=p>{</span>
+    <span class=k>for</span> <span class=nx>_</span><span class=p>,</span> <span class=nx>className</span> <span class=o>:=</span> <span class=k>range</span> <span class=nx>classNames</span> <span class=p>{</span>
+        <span class=nx>Printf</span><span class=p>(</span><span class=s>&quot;%s\n&quot;</span><span class=p>,</span> <span class=nx>className</span><span class=p>)</span>
+    <span class=p>}</span>
+<span class=p>}</span>
+
+<span class=kd>func</span> <span class=nx>FindAndPrintClassNames</span><span class=p>(</span><span class=nx>input</span> <span class=kt>string</span><span class=p>)</span> <span class=p>{</span>
+    <span class=nx>Printf</span><span class=p>(</span><span class=s>&quot;ClassNames found for input: %s\n&quot;</span><span class=p>,</span> <span class=nx>input</span><span class=p>)</span>
+    <span class=nx>foundClassNames</span> <span class=o>:=</span> <span class=nx>FindClassNames</span><span class=p>(</span><span class=nx>input</span><span class=p>)</span>
+    <span class=nx>PrintClassNames</span><span class=p>(</span><span class=nx>foundClassNames</span><span class=p>)</span>
+    <span class=nx>Println</span><span class=p>(</span><span class=nx>Dashes</span><span class=p>(</span><span class=mi>50</span><span class=p>))</span>
+<span class=p>}</span>
+
+
+<span class=kd>func</span> <span class=nx>mainSTOP</span><span class=p>()</span> <span class=p>{</span>
+
+    <span class=c1>// Insert ClassNames in tree structure</span>
+    <span class=nx>classNames</span> <span class=o>:=</span> <span class=p>[]</span><span class=kt>string</span><span class=p>{</span><span class=s>&quot;HelloWorld&quot;</span><span class=p>,</span> <span class=s>&quot;HiWorld&quot;</span><span class=p>,</span> <span class=s>&quot;WordlHello&quot;</span><span class=p>,</span> <span class=s>&quot;HelloWeirWorld&quot;</span><span class=p>}</span>
+    <span class=nx>tree</span> <span class=p>=</span> <span class=nx>PopulateTree</span><span class=p>(</span><span class=nx>classNames</span><span class=p>)</span>
+
+    <span class=nx>Println</span><span class=p>(</span><span class=s>&quot;TREE:&quot;</span><span class=p>)</span>
+    <span class=nx>PrintTree</span><span class=p>(</span><span class=o>*</span><span class=nx>tree</span><span class=p>)</span>
+
+    <span class=nx>Println</span><span class=p>(</span><span class=nx>Dashes</span><span class=p>(</span><span class=mi>50</span><span class=p>))</span>
+    <span class=c1>//FindAndPrintClassNames(&quot;H&quot;)</span>
+    <span class=nx>FindAndPrintClassNames</span><span class=p>(</span><span class=s>&quot;HWW&quot;</span><span class=p>)</span>
+
+<span class=p>}</span>
+</code></pre></div><p><br><hr><br></p><h2>Test Code</h2><h3>classname<em>filter</em>test.go</h3><div class=highlight><pre><code class="go language-go" data-lang=go><span class=kn>package</span> <span class=nx>class_filter</span>
+
+<span class=kn>import</span> <span class=p>(</span>
+    <span class=s>&quot;testing&quot;</span>
+    <span class=s>&quot;github.com/remogatto/prettytest&quot;</span>
+    <span class=p>.</span> <span class=s>&quot;github.com/go-goodies/go_utils&quot;</span>
+    <span class=p>.</span> <span class=s>&quot;fmt&quot;</span>
+<span class=p>)</span>
+
+<span class=kd>var</span> <span class=p>(</span>
+    <span class=nx>classNames</span> <span class=p>[]</span><span class=kt>string</span>
+<span class=c1>//  tree *Tree</span>
+<span class=p>)</span>
+
+<span class=kd>func</span> <span class=nx>init</span><span class=p>()</span> <span class=p>{</span>
+    <span class=c1>// Insert ClassNames in tree structure</span>
+    <span class=nx>classNames</span> <span class=p>=</span> <span class=p>[]</span><span class=kt>string</span><span class=p>{</span><span class=s>&quot;HelloWorld&quot;</span><span class=p>,</span> <span class=s>&quot;HiWorld&quot;</span><span class=p>,</span> <span class=s>&quot;WordlHello&quot;</span><span class=p>,</span> <span class=s>&quot;HelloWeirWorld&quot;</span><span class=p>}</span>
+    <span class=nx>tree</span> <span class=p>=</span> <span class=nx>PopulateTree</span><span class=p>(</span><span class=nx>classNames</span><span class=p>)</span>
+<span class=p>}</span>
+
+<span class=kd>type</span> <span class=nx>mySuite</span> <span class=kd>struct</span> <span class=p>{</span>
+    <span class=nx>prettytest</span><span class=p>.</span><span class=nx>Suite</span>
+<span class=p>}</span>
+
+<span class=kd>func</span> <span class=nx>TestRunner</span><span class=p>(</span><span class=nx>t</span> <span class=o>*</span><span class=nx>testing</span><span class=p>.</span><span class=nx>T</span><span class=p>)</span> <span class=p>{</span>
+    <span class=nx>prettytest</span><span class=p>.</span><span class=nx>Run</span><span class=p>(</span><span class=nx>t</span><span class=p>,</span> <span class=nb>new</span><span class=p>(</span><span class=nx>mySuite</span><span class=p>))</span>
+<span class=p>}</span>
+
+<span class=cm>/*</span>
+<span class=cm>    // Insert ClassNames in tree structure</span>
+<span class=cm>    classNames := []string{&quot;HelloWorld&quot;, &quot;HiWorld&quot;, &quot;WordlHello&quot;, &quot;HelloWeirWorld&quot;}</span>
+<span class=cm>    tree = PopulateTree(classNames)</span>
+
+<span class=cm>    TREE:</span>
+<span class=cm>    alpha[H] (8) : map[HelloWorld:]</span>
+<span class=cm>    alpha[H] (5) : map[HiWorld:]</span>
+<span class=cm>    alpha[W] (8) : map[WordlHello:]</span>
+<span class=cm>    alpha[H] (12) : map[HelloWeirWorld:]</span>
+<span class=cm> */</span>
+<span class=kd>func</span> <span class=p>(</span><span class=nx>s</span> <span class=o>*</span><span class=nx>mySuite</span><span class=p>)</span> <span class=nx>TestPopulateTree</span><span class=p>()</span> <span class=p>{</span>
+
+    <span class=k>for</span> <span class=nx>level</span> <span class=o>:=</span> <span class=nx>tree</span><span class=p>.</span><span class=nx>Top</span><span class=p>();</span> <span class=nx>level</span> <span class=o>!=</span> <span class=kc>nil</span><span class=p>;</span> <span class=nx>level</span> <span class=p>=</span> <span class=nx>level</span><span class=p>.</span><span class=nx>nextLevel</span> <span class=p>{</span>
+        <span class=c1>//PrintAlpha(level.alpha, level.levelNumber)</span>
+        <span class=kd>var</span> <span class=nx>thisChar</span> <span class=kt>string</span>
+        <span class=k>for</span> <span class=nx>_</span><span class=p>,</span> <span class=nx>c</span> <span class=o>:=</span> <span class=k>range</span> <span class=nx>ALPHABET</span> <span class=p>{</span>
+            <span class=nx>thisChar</span> <span class=p>=</span> <span class=nx>Sprintf</span><span class=p>(</span><span class=s>&quot;%c&quot;</span><span class=p>,</span> <span class=nx>c</span><span class=p>)</span>
+            <span class=k>if</span> <span class=nb>len</span><span class=p>(</span><span class=nx>level</span><span class=p>.</span><span class=nx>alpha</span><span class=p>[</span><span class=nx>thisChar</span><span class=p>])</span> <span class=p>&gt;</span> <span class=mi>0</span> <span class=p>{</span>
+                <span class=c1>//s.Error(Sprintf(&quot;***: level.alpha[%s]: %v, level.levelNumber: %d&quot;, thisChar, level.alpha[thisChar], level.levelNumber))</span>
+                <span class=k>if</span> <span class=nx>level</span><span class=p>.</span><span class=nx>alpha</span><span class=p>[</span><span class=nx>thisChar</span><span class=p>][</span><span class=s>&quot;HelloWorld&quot;</span><span class=p>]</span> <span class=o>==</span> <span class=s>&quot;HelloWorld&quot;</span> <span class=p>{</span>
+                    <span class=nx>s</span><span class=p>.</span><span class=nx>Equal</span><span class=p>(</span><span class=nx>level</span><span class=p>.</span><span class=nx>levelNumber</span><span class=p>,</span> <span class=mi>9</span><span class=p>)</span>
+                <span class=p>}</span>
+                <span class=k>if</span> <span class=nx>level</span><span class=p>.</span><span class=nx>alpha</span><span class=p>[</span><span class=nx>thisChar</span><span class=p>][</span><span class=s>&quot;HiWorld&quot;</span><span class=p>]</span> <span class=o>==</span> <span class=s>&quot;HiWorld&quot;</span> <span class=p>{</span>
+                    <span class=nx>s</span><span class=p>.</span><span class=nx>Equal</span><span class=p>(</span><span class=nx>level</span><span class=p>.</span><span class=nx>levelNumber</span><span class=p>,</span> <span class=mi>6</span><span class=p>)</span>
+                <span class=p>}</span>
+                <span class=k>if</span> <span class=nx>level</span><span class=p>.</span><span class=nx>alpha</span><span class=p>[</span><span class=nx>thisChar</span><span class=p>][</span><span class=s>&quot;WordlHello&quot;</span><span class=p>]</span> <span class=o>==</span> <span class=s>&quot;WordlHello&quot;</span> <span class=p>{</span>
+                    <span class=nx>s</span><span class=p>.</span><span class=nx>Equal</span><span class=p>(</span><span class=nx>level</span><span class=p>.</span><span class=nx>levelNumber</span><span class=p>,</span> <span class=mi>9</span><span class=p>)</span>
+                <span class=p>}</span>
+                <span class=k>if</span> <span class=nx>level</span><span class=p>.</span><span class=nx>alpha</span><span class=p>[</span><span class=nx>thisChar</span><span class=p>][</span><span class=s>&quot;HelloWeirWorld&quot;</span><span class=p>]</span> <span class=o>==</span> <span class=s>&quot;HelloWeirWorld&quot;</span> <span class=p>{</span>
+                    <span class=nx>s</span><span class=p>.</span><span class=nx>Equal</span><span class=p>(</span><span class=nx>level</span><span class=p>.</span><span class=nx>levelNumber</span><span class=p>,</span> <span class=mi>13</span><span class=p>)</span>
+                <span class=p>}</span>
+            <span class=p>}</span>
+        <span class=p>}</span>
+    <span class=p>}</span>
+<span class=p>}</span>
+
+<span class=kd>func</span> <span class=p>(</span><span class=nx>s</span> <span class=o>*</span><span class=nx>mySuite</span><span class=p>)</span> <span class=nx>TestClassNameFilter</span><span class=p>()</span> <span class=p>{</span>
+
+    <span class=kd>var</span> <span class=nx>thisIndex</span> <span class=kt>int</span>
+    <span class=kd>var</span> <span class=nx>foundClassNames</span> <span class=p>[]</span><span class=kt>string</span>
+    <span class=nx>foundClassNames</span> <span class=p>=</span> <span class=nx>FindClassNames</span><span class=p>(</span><span class=s>&quot;HW&quot;</span><span class=p>)</span>
+
+    <span class=nx>thisIndex</span> <span class=p>=</span> <span class=nx>IndexOfGeneric</span><span class=p>(</span><span class=nb>len</span><span class=p>(</span><span class=nx>foundClassNames</span><span class=p>),</span> <span class=kd>func</span><span class=p>(</span><span class=nx>i</span> <span class=kt>int</span><span class=p>)</span> <span class=kt>bool</span> <span class=p>{</span> <span class=k>return</span> <span class=nx>foundClassNames</span><span class=p>[</span><span class=nx>i</span><span class=p>]</span> <span class=o>==</span> <span class=s>&quot;HiWorld&quot;</span> <span class=p>})</span>
+    <span class=nx>s</span><span class=p>.</span><span class=nx>Equal</span><span class=p>(</span><span class=nx>thisIndex</span> <span class=o>&gt;=</span> <span class=mi>0</span><span class=p>,</span> <span class=kc>true</span><span class=p>)</span>
+
+    <span class=nx>thisIndex</span> <span class=p>=</span> <span class=nx>IndexOfGeneric</span><span class=p>(</span><span class=nb>len</span><span class=p>(</span><span class=nx>foundClassNames</span><span class=p>),</span> <span class=kd>func</span><span class=p>(</span><span class=nx>i</span> <span class=kt>int</span><span class=p>)</span> <span class=kt>bool</span> <span class=p>{</span> <span class=k>return</span> <span class=nx>foundClassNames</span><span class=p>[</span><span class=nx>i</span><span class=p>]</span> <span class=o>==</span> <span class=s>&quot;HelloWorld&quot;</span> <span class=p>})</span>
+    <span class=nx>s</span><span class=p>.</span><span class=nx>Equal</span><span class=p>(</span><span class=nx>thisIndex</span> <span class=o>&gt;=</span> <span class=mi>0</span><span class=p>,</span> <span class=kc>true</span><span class=p>)</span>
+
+    <span class=nx>thisIndex</span> <span class=p>=</span> <span class=nx>IndexOfGeneric</span><span class=p>(</span><span class=nb>len</span><span class=p>(</span><span class=nx>foundClassNames</span><span class=p>),</span> <span class=kd>func</span><span class=p>(</span><span class=nx>i</span> <span class=kt>int</span><span class=p>)</span> <span class=kt>bool</span> <span class=p>{</span> <span class=k>return</span> <span class=nx>foundClassNames</span><span class=p>[</span><span class=nx>i</span><span class=p>]</span> <span class=o>==</span> <span class=s>&quot;HelloWeirWorld&quot;</span> <span class=p>})</span>
+    <span class=nx>s</span><span class=p>.</span><span class=nx>Equal</span><span class=p>(</span><span class=nx>thisIndex</span> <span class=o>&gt;=</span> <span class=mi>0</span><span class=p>,</span> <span class=kc>true</span><span class=p>)</span>
+
+    <span class=nx>s</span><span class=p>.</span><span class=nx>Equal</span><span class=p>(</span><span class=nb>len</span><span class=p>(</span><span class=nx>foundClassNames</span><span class=p>),</span> <span class=mi>3</span><span class=p>)</span>
+
+
+    <span class=nx>foundClassNames</span> <span class=p>=</span> <span class=nx>FindClassNames</span><span class=p>(</span><span class=s>&quot;He&quot;</span><span class=p>)</span>
+
+    <span class=nx>thisIndex</span> <span class=p>=</span> <span class=nx>IndexOfGeneric</span><span class=p>(</span><span class=nb>len</span><span class=p>(</span><span class=nx>foundClassNames</span><span class=p>),</span> <span class=kd>func</span><span class=p>(</span><span class=nx>i</span> <span class=kt>int</span><span class=p>)</span> <span class=kt>bool</span> <span class=p>{</span> <span class=k>return</span> <span class=nx>foundClassNames</span><span class=p>[</span><span class=nx>i</span><span class=p>]</span> <span class=o>==</span> <span class=s>&quot;HelloWorld&quot;</span> <span class=p>})</span>
+    <span class=nx>s</span><span class=p>.</span><span class=nx>Equal</span><span class=p>(</span><span class=nx>thisIndex</span> <span class=o>&gt;=</span> <span class=mi>0</span><span class=p>,</span> <span class=kc>true</span><span class=p>)</span>
+
+    <span class=nx>thisIndex</span> <span class=p>=</span> <span class=nx>IndexOfGeneric</span><span class=p>(</span><span class=nb>len</span><span class=p>(</span><span class=nx>foundClassNames</span><span class=p>),</span> <span class=kd>func</span><span class=p>(</span><span class=nx>i</span> <span class=kt>int</span><span class=p>)</span> <span class=kt>bool</span> <span class=p>{</span> <span class=k>return</span> <span class=nx>foundClassNames</span><span class=p>[</span><span class=nx>i</span><span class=p>]</span> <span class=o>==</span> <span class=s>&quot;HelloWeirWorld&quot;</span> <span class=p>})</span>
+    <span class=nx>s</span><span class=p>.</span><span class=nx>Equal</span><span class=p>(</span><span class=nx>thisIndex</span> <span class=o>&gt;=</span> <span class=mi>0</span><span class=p>,</span> <span class=kc>true</span><span class=p>)</span>
+
+    <span class=nx>s</span><span class=p>.</span><span class=nx>Equal</span><span class=p>(</span><span class=nb>len</span><span class=p>(</span><span class=nx>foundClassNames</span><span class=p>),</span> <span class=mi>2</span><span class=p>)</span>
+
+
+    <span class=nx>foundClassNames</span> <span class=p>=</span> <span class=nx>FindClassNames</span><span class=p>(</span><span class=s>&quot;Hi&quot;</span><span class=p>)</span>
+
+    <span class=nx>thisIndex</span> <span class=p>=</span> <span class=nx>IndexOfGeneric</span><span class=p>(</span><span class=nb>len</span><span class=p>(</span><span class=nx>foundClassNames</span><span class=p>),</span> <span class=kd>func</span><span class=p>(</span><span class=nx>i</span> <span class=kt>int</span><span class=p>)</span> <span class=kt>bool</span> <span class=p>{</span> <span class=k>return</span> <span class=nx>foundClassNames</span><span class=p>[</span><span class=nx>i</span><span class=p>]</span> <span class=o>==</span> <span class=s>&quot;HiWorld&quot;</span> <span class=p>})</span>
+    <span class=nx>s</span><span class=p>.</span><span class=nx>Equal</span><span class=p>(</span><span class=nx>thisIndex</span> <span class=o>&gt;=</span> <span class=mi>0</span><span class=p>,</span> <span class=kc>true</span><span class=p>)</span>
+
+    <span class=nx>s</span><span class=p>.</span><span class=nx>Equal</span><span class=p>(</span><span class=nb>len</span><span class=p>(</span><span class=nx>foundClassNames</span><span class=p>),</span> <span class=mi>1</span><span class=p>)</span>
+
+
+    <span class=nx>foundClassNames</span> <span class=p>=</span> <span class=nx>FindClassNames</span><span class=p>(</span><span class=s>&quot;HWW&quot;</span><span class=p>)</span>
+
+    <span class=nx>thisIndex</span> <span class=p>=</span> <span class=nx>IndexOfGeneric</span><span class=p>(</span><span class=nb>len</span><span class=p>(</span><span class=nx>foundClassNames</span><span class=p>),</span> <span class=kd>func</span><span class=p>(</span><span class=nx>i</span> <span class=kt>int</span><span class=p>)</span> <span class=kt>bool</span> <span class=p>{</span> <span class=k>return</span> <span class=nx>foundClassNames</span><span class=p>[</span><span class=nx>i</span><span class=p>]</span> <span class=o>==</span> <span class=s>&quot;HelloWeirWorld&quot;</span> <span class=p>})</span>
+    <span class=nx>s</span><span class=p>.</span><span class=nx>Equal</span><span class=p>(</span><span class=nx>thisIndex</span> <span class=o>&gt;=</span> <span class=mi>0</span><span class=p>,</span> <span class=kc>true</span><span class=p>)</span>
+
+    <span class=nx>s</span><span class=p>.</span><span class=nx>Equal</span><span class=p>(</span><span class=nb>len</span><span class=p>(</span><span class=nx>foundClassNames</span><span class=p>),</span> <span class=mi>1</span><span class=p>)</span>
+
+<span class=p>}</span>
+
+<span class=kd>func</span> <span class=p>(</span><span class=nx>s</span> <span class=o>*</span><span class=nx>mySuite</span><span class=p>)</span> <span class=nx>TestRemoveItemsFromInvoice</span><span class=p>()</span> <span class=p>{</span>
+    <span class=nx>s</span><span class=p>.</span><span class=nx>Pending</span><span class=p>()</span>
+<span class=p>}</span>
+</code></pre></div><p><br><hr><br></p><h2>Test Results</h2><pre><code>
+Testing started at 5:22 PM ...
+=== RUN TestRunner
+
+class_filter.mySuite:
+
+    [32mOK[0m TestClassNameFilter           (11 assertion(s))
+    [32mOK[0m TestPopulateTree              (4 assertion(s))
+    [33mPE[0m TestRemoveItemsFromInvoice    (0 assertion(s))
+
+3 tests, 2 passed, 0 failed, 0 expected failures, 1 pending, 0 with no assertions
+--- PASS: TestRunner (0.00 seconds)
+PASS
+ok      bitbucket.org/l3x/class_filter  0.013s
+<span style=color:blue>
+Process finished with exit code 0
+</span>
+</code></pre><p><br><hr><br></p><h2>Notes</h2><p>Here are the structures we use:</p><div class=highlight><pre><code class="go language-go" data-lang=go><span class=c1>// Level is the node that contains the alpha map for each level</span>
+<span class=c1>// Each level contains words that match that level&#39;s levelNumber</span>
+<span class=c1>// The first letter of each entry in the alpha map matches that key, e.g. &quot;Hi&quot; is at level 2 at key &quot;H&quot;</span>
+<span class=kd>type</span> <span class=nx>Level</span> <span class=kd>struct</span> <span class=p>{</span>
+    <span class=nx>alpha</span>       <span class=kd>map</span><span class=p>[</span><span class=kt>string</span><span class=p>]</span><span class=kd>map</span><span class=p>[</span><span class=kt>string</span><span class=p>]</span><span class=kt>string</span>  
+    <span class=nx>levelNumber</span> <span class=kt>int</span>
+    <span class=nx>nextLevel</span>   <span class=o>*</span><span class=nx>Level</span>
+<span class=p>}</span>
+
+<span class=c1>// Tree contains the pointer to the top of the tree of levels</span>
+<span class=kd>type</span> <span class=nx>Tree</span> <span class=kd>struct</span> <span class=p>{</span>
+    <span class=nx>top</span>     <span class=o>*</span><span class=nx>Level</span>
+<span class=p>}</span>
+<span class=c1>// The Top() method points to the top of the tree. </span>
+<span class=c1>// Only downward navigation is supported.</span>
+<span class=kd>func</span> <span class=p>(</span><span class=nx>tree</span> <span class=o>*</span><span class=nx>Tree</span><span class=p>)</span> <span class=nx>Top</span><span class=p>()</span> <span class=o>*</span><span class=nx>Level</span> <span class=p>{</span>
+    <span class=k>return</span> <span class=nx>tree</span><span class=p>.</span><span class=nx>top</span>
+<span class=p>}</span>
+</code></pre></div><p><br><hr></p><h2>References</h2><ul><li><a href=https://github.com/l3x/golang-code-examples>Golang Code Examples</a></li><li><a href=https://github.com/go-goodies/go_utils>go-goodies/go_utils</a></li><li><a href="http://tour.golang.org/">Golang Tour</a></li></ul></section></div><!-- Add Disqus comments. --><div id=disqus_thread></div><script type=text/javascript>/* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+    var disqus_shortname = 'golang-code-examples'; // required: replace example with your forum shortname
+
+    /* * * DON'T EDIT BELOW THIS LINE * * */
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();</script><noscript>Please enable JavaScript to view the <a href=http://disqus.com/?ref_noscript>comments powered by Disqus.</a></noscript><a href=http://disqus.com class=dsq-brlink>comments powered by <span class=logo-disqus>Disqus</span></a></div><div class=footer><div class=contact><div id=name-gravatar class=float-left><span>By Lex Sheehan</span> <span class=l3x-gravatar></span></div><div class=float-right><strong>It's Go Time!</strong></div></div></div><div class=license-notice>The content of this site is licensed under the <a href="http://creativecommons.org/licenses/by/3.0/">Creative Commons 3.0License</a> and code is licensed under a <a href=https://github.com/l3x/golang-code-examples/blob/master/LICENSE>BSD license</a></div></div><script src=/golang-code-examples/scripts/scripts.db44.js></script></body></html>
