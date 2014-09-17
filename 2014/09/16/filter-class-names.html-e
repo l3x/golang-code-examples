@@ -229,12 +229,6 @@
 <span class=cm>    // Insert ClassNames in tree structure</span>
 <span class=cm>    classNames := []string{&quot;HelloWorld&quot;, &quot;HiWorld&quot;, &quot;WordlHello&quot;, &quot;HelloWeirWorld&quot;}</span>
 <span class=cm>    tree = PopulateTree(classNames)</span>
-
-<span class=cm>    TREE:</span>
-<span class=cm>    alpha[H] (8) : map[HelloWorld:]</span>
-<span class=cm>    alpha[H] (5) : map[HiWorld:]</span>
-<span class=cm>    alpha[W] (8) : map[WordlHello:]</span>
-<span class=cm>    alpha[H] (12) : map[HelloWeirWorld:]</span>
 <span class=cm> */</span>
 <span class=kd>func</span> <span class=p>(</span><span class=nx>s</span> <span class=o>*</span><span class=nx>mySuite</span><span class=p>)</span> <span class=nx>TestPopulateTree</span><span class=p>()</span> <span class=p>{</span>
 
