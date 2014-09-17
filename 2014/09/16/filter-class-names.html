@@ -57,12 +57,14 @@
     <span class=p>}</span>
 <span class=p>}</span>
 
+<span class=cm>/*</span>
+<span class=cm>  Example:</span>
+<span class=cm>  alpha[H] (6) : map[HiWorld:HiWorld]</span>
+<span class=cm>  alpha[H] (9) : map[HelloWorld:HelloWorld]</span>
+<span class=cm>  alpha[W] (9) : map[WordlHello:WordlHello]</span>
+<span class=cm>  alpha[H] (13) : map[HelloWeirWorld:HelloWeirWorld]</span>
+<span class=cm>*/</span>
 <span class=c1>// PrintTree prints the elements containing data for the alphas map, prefaced with (level_number)</span>
-<span class=c1>// Example:</span>
-<span class=c1>//   alpha[H] (8) : map[HelloWorld:]</span>
-<span class=c1>//   alpha[H] (5) : map[HiWorld:]</span>
-<span class=c1>//   alpha[W] (8) : map[WordlHello:]</span>
-<span class=c1>//   alpha[H] (12) : map[HelloWeirWorld:]</span>
 <span class=kd>func</span> <span class=nx>PrintTree</span><span class=p>(</span><span class=nx>tree</span> <span class=nx>Tree</span><span class=p>)</span> <span class=p>{</span>
     <span class=k>for</span> <span class=nx>level</span> <span class=o>:=</span> <span class=nx>tree</span><span class=p>.</span><span class=nx>Top</span><span class=p>();</span> <span class=nx>level</span> <span class=o>!=</span> <span class=kc>nil</span><span class=p>;</span> <span class=nx>level</span> <span class=p>=</span> <span class=nx>level</span><span class=p>.</span><span class=nx>nextLevel</span> <span class=p>{</span>
         <span class=nx>PrintAlpha</span><span class=p>(</span><span class=nx>level</span><span class=p>.</span><span class=nx>alpha</span><span class=p>,</span> <span class=nx>level</span><span class=p>.</span><span class=nx>levelNumber</span><span class=p>)</span>
