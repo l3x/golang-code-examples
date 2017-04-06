@@ -10,12 +10,12 @@ import (
 	"regexp"
 	"encoding/json"
 	"github.com/l3x/jsoncfgo"
-	"github.com/go-goodies/go_oops"
+	"github.com/go-goodies/go_utils"
 )
 
 var Dir string
 var Users jsoncfgo.Obj
-var AppContext *go_oops.Singleton
+var AppContext *go_utils.Singleton
 
 func HtmlFileHandler(response http.ResponseWriter, request *http.Request, filename string){
 	response.Header().Set("Content-type", "text/html")
